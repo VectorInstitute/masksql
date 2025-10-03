@@ -23,7 +23,7 @@ def filter_schema(schema: DatabaseSchema, schema_items: List[str]):
 
     filtered_schema = DatabaseSchema()
     for table_name, table_columns in schema.tables.items():
-        filtered_table_columns = dict()
+        filtered_table_columns = {}
         for col_name, col_data in table_columns.items():
             if f"{table_name}.{col_name}" in columns:
                 filtered_table_columns[col_name] = col_data

@@ -36,7 +36,7 @@ if __name__ == "__main__":
 
     # 2. Prepare data
     tables = json.load(open(args.table_file, "r"))
-    table_dict = dict()
+    table_dict = {}
     for t in tables:
         table_dict[t["db_id"]] = t
     sqls = json.load(open(args.natsql_file, "r"))

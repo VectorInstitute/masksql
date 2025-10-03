@@ -160,7 +160,7 @@ def generate_train_ranked_dataset(opt):
 
     output_dataset = []
     for data_id, data in enumerate(dataset):
-        ranked_data = dict()
+        ranked_data = {}
         ranked_data["question"] = data["question"]
         ranked_data["sql"] = data["sql"]  # unused
         ranked_data["norm_sql"] = data["norm_sql"]
@@ -198,7 +198,7 @@ def generate_train_ranked_dataset(opt):
             random.shuffle(topk_table_ids)
 
         for table_id in topk_table_ids:
-            new_table_info = dict()
+            new_table_info = {}
             new_table_info["table_name_original"] = data["db_schema"][table_id][
                 "table_name_original"
             ]
@@ -288,7 +288,7 @@ def generate_eval_ranked_dataset(opt):
     table_coverage_state_list, column_coverage_state_list = [], []
     output_dataset = []
     for data_id, data in enumerate(dataset):
-        ranked_data = dict()
+        ranked_data = {}
         ranked_data["question"] = data["question"]
         ranked_data["sql"] = data["sql"]
         ranked_data["norm_sql"] = data["norm_sql"]
@@ -334,7 +334,7 @@ def generate_eval_ranked_dataset(opt):
 
         # record top-k1 tables and top-k2 columns for each table
         for table_id in topk_table_ids:
-            new_table_info = dict()
+            new_table_info = {}
             new_table_info["table_name_original"] = data["db_schema"][table_id][
                 "table_name_original"
             ]

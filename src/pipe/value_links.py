@@ -7,7 +7,7 @@ class LinkValues(PromptProcessor):
     def _process_output(self, row, output):
         obj = extract_object(output)
         if obj is None:
-            return dict()
+            return {}
         return obj
 
     def _get_prompt(self, row):

@@ -3543,7 +3543,7 @@ def join2subquery(
         group_col_idx = table_json["tc_fast"].index(groupby_list[0].lower())
 
     if len(t_id_list) >= 2:
-        bridge_table = dict()
+        bridge_table = {}
         for fks in from_table_net[0]:
             if table_json["column_names"][fks[0]][0] not in bridge_table:
                 bridge_table[table_json["column_names"][fks[0]][0]] = set([fks[0]])

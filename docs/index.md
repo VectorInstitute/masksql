@@ -1,54 +1,82 @@
-# Vector AI Engineering template (uv edition) repository
+# MaskSQL
 
-This template repository can be used to bootstrap AI Engineering project repositories
-on Github! The template is meant for python codebases since Python is the most commonly
-used language by our team.
+# Table of Contents
 
-The template includes:
+- [Installation](#installation-and-setup-instruction)
+- [Run MaskSQL](#run-masksql)
+- [MaskSql Framework](Framework.md)
+- [MaskSQL Pipeline Stages](Stages.md)
 
-- [pyproject.toml](https://pip.pypa.io/en/stable/reference/build-system/pyproject-toml/)
-file to specify repository information and manage dependencies using
-[uv](https://docs.astral.sh/uv/).
+## Installation and Setup Instructions
 
-- [README.md](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-readmes) which should have basic information on why the project is
-useful, installation instructions and other information on how users can get started.
+### System Requirements
 
-- [.pre-commit-config.yaml](https://pre-commit.com/) for running pre-commit hooks that
-check for code-style, apply formatting, check for type hints and run tests.
+The development environment (tested on python 3.11) can be set up using
+[uv](https://github.com/astral-sh/uv?tab=readme-ov-file#installation). Hence, make sure it is
+installed and then run:
 
-- [.github/pull_request_template.md](https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/creating-a-pull-request-template-for-your-repository) for PRs.
+```sh
+uv sync --dev
+source .venv/bin/activate
+```
 
-- [.github/ISSUE_TEMPLATE](https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/configuring-issue-templates-for-your-repository) for bug reports and issues that can be raised on the repository.
+### Download Dataset
 
-- [.github/workflows](https://docs.github.com/en/actions/using-workflows) for running CI
-workflows using Github actions. The template includes CI workflows for code checks,
-documentation building and releasing python packages to PyPI.
+Download [this zip file](https://www.dropbox.com/scl/fi/vtraf79vfi1x105veaflk/data.zip?rlkey=7yq6d46aer6h45pdihrc9rht1&st=zdac3rqx&dl=0")
+and extract it to the `data` directory:
 
-- [LICENSE.md](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/licensing-a-repository) for adding a license to the project repository.
-By default, this is the [Apache-2.0 license](http://www.apache.org/licenses/). Please
-change according to your project!
+```sh
+wget -O data.zip "https://www.dropbox.com/scl/fi/vtraf79vfi1x105veaflk/data.zip?rlkey=7yq6d46aer6h45pdihrc9rht1&st=zdac3rqx&dl=0"
+unzip data.zip
+```
 
-- [docs](https://squidfunk.github.io/mkdocs-material/) for adding project documentation. Typically
-projects should have API reference documentation, user guides and tutorials.
+Your data directory should look like this:
 
-- [CONTRIBUTING.md](https://docs.github.com/en/communities/setting-up-your-project-for-healthy-contributions/setting-guidelines-for-repository-contributors) with basic guidelines on how others can
-contribute to the repository.
+```sh
+data/
+├── databases/
+├── 1_input.json
+.
+.
+.
+```
 
-- [CODE_OF_CONDUCT.md](https://docs.github.com/en/communities/setting-up-your-project-for-healthy-contributions/adding-a-code-of-conduct-to-your-project) with standards on how the community engages in
-a healthy and constructive manner.
+### Set Environment Variables
 
-- [.gitignore](https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files)
-with some standard file extensions to be ignored by git. Please add/modify as necessary.
+```sh
+cp .env.example .env
+```
 
-- [codecov.yml](https://docs.codecov.com/docs/codecov-yaml) for using codecov.io to
-generate code coverage information for your repository. You would need to add codecov.io
-app as an [integration to your repository](https://docs.codecov.com/docs/how-to-create-a-github-app-for-codecov-enterprise).
+The only required variable to set is `OPENAI_API_KEY`.
+By default, we are using [OpenRouter](https://openrouter.ai/), so you need to set the api key
+for OpenRouter.
 
+You may also change the `LIMIT` variable to modify the number of entries to be read from the dataset.
+`START` specifies the start index for reading from the dataset.
 
-If you are starting a new project, you can navigate to the [Use this template](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template) button
-on the top right corner of the [template repository home page](https://github.com/VectorInstitute/aieng-template)
-which will allow you to bootstrap your project repo using this template.
+For instance, set `LIMIT=10` to run the pipeline for a dataset of size 10.
 
-Please check out the user guide page for more detailed information on using the
-template features. For existing projects, the [user guide](user_guide.md)
-can be followed to migrate to following the template more closely.
+`SLM_MODEL` and `LLM_MODEL` specify the ID of small/large language models to be used in the pipeline.
+These IDs should be set based on the LM provider being used.
+For instance, since we are using OpenRouter, model identifiers should be specified accordingly, e.g.,
+`openai/gpt-4.1` for GPT-4.1.
+
+### Run RESDSQL
+To run MaskSQL, first we need to filter the schema items
+using RESDSQL.
+Follow these [instructions](./Resd.md) to run the RESDSQL
+and generated the file needed for the MaskSQL pipeline.
+Then, you need to run the MaskSQL with the `--resd` option.
+
+### Run MaskSQL
+
+Then you can run MaskSQL pipline as follows:
+```sh
+python3 main.py --resd
+```
+
+MaskSQL saves the intermediate results to files for later user.
+So, in order to run the pipeline from scratch you need to clean the data directory:
+```sh
+./clean.sh data
+```

@@ -11,7 +11,7 @@ from .spider_test_suite import compute_test_suite_metric
 class EvaluateTool(object):
     def __init__(self):
         # self.args = args
-        self.schema_cache = dict()
+        self.schema_cache = {}
         self.golds = []
 
     def register_golds(self, dataset_filepath, db_path):

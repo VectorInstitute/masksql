@@ -354,7 +354,7 @@ def build_table_network(table):
 
 
 def expand_foreign_key(table):
-    fk_d = dict()
+    fk_d = {}
     for fk in table["foreign_keys"]:
         if fk[0] not in fk_d:
             fk_d[fk[0]] = []
@@ -1197,9 +1197,9 @@ def label_disjoint_tables(tables, database_path):
 def bridge_table_for_many2many_relationship(tables):
     for it, table in enumerate(tables):
         table["bridge_table"] = []
-        table["many2many"] = dict()
+        table["many2many"] = {}
         for net in table["network"]:
-            net2dict = dict()
+            net2dict = {}
             if (
                 len(net[1]) == 3
                 and len(net[0]) == 2

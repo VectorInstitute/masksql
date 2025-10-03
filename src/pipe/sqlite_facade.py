@@ -67,7 +67,7 @@ class SqliteFacade:
         res_raw = self.exec_query_sync(
             db_id, f'PRAGMA foreign_key_list("{table_name}")'
         )
-        res_clean = list()
+        res_clean = []
         for row in res_raw:
             table, source, to = row[2:5]
             row_clean = f"({table_name}.{source}, {table}.{to})"
@@ -76,7 +76,7 @@ class SqliteFacade:
 
     def get_primary_key(self, db_id, table_name):
         res_raw = self.exec_query_sync(db_id, f'PRAGMA table_info("{table_name}");')
-        pks = list()
+        pks = []
         for row in res_raw:
             if row[5] == 1:
                 pks.append(row[1])

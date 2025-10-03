@@ -10,10 +10,10 @@ class RepairSchemaLinks(PromptProcessor):
         schema_links = extract_object(output)
         question = row["question"]
         schema_items = row["schema_items"]
-        refined_links = dict()
+        refined_links = {}
         if isinstance(schema_links, list) or isinstance(schema_links, str):
             logger.error(f"Invalid schema links: {schema_links}")
-            refined_links = dict()
+            refined_links = {}
 
         for question_term, schema_item in schema_links.items():
             if question_term not in question or schema_item not in schema_items:

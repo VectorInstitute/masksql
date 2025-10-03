@@ -50,7 +50,7 @@ class AddSymbolicSchema(JsonListTransformer):
         symbolic_schema = DatabaseSchema()
 
         for table_name, columns in list(schema.tables.items()):
-            symbolic_columns = dict()
+            symbolic_columns = {}
             for col_name, col_data in columns.items():
                 col_symbol = self.get_col_symbol(table_name, col_name, symbol_table)
                 symbolic_col_data = self.get_symbolic_col_data(col_data, symbol_table)
@@ -62,7 +62,7 @@ class AddSymbolicSchema(JsonListTransformer):
     def get_reverse_dict(
         self, schema: DatabaseSchema, symbol_table: Dict[str, str]
     ) -> Dict[str, str]:
-        reverse_dict = dict()
+        reverse_dict = {}
         for table_name, columns in list(schema.tables.items()):
             table_symbol = symbol_table[table_name]
             reverse_dict[table_symbol] = table_name

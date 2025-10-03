@@ -239,7 +239,7 @@ def get_all_table(table_match, col_match, db_match, schema):
 
 def get_all_table_from_sq(sq, schema, col_appear_min_num=2):
     tbs = []
-    tbs_c = dict()
+    tbs_c = {}
     for ts, cs, dbs in zip(sq.table_match, sq.col_match, sq.db_match):
         for t in ts:
             if t:
