@@ -3,19 +3,19 @@ import os
 
 from src.pipe.processor.list_transformer import JsonListTransformer
 
+
 START = int(os.environ.get("START", 0))
 LIMIT = int(os.environ.get("LIMIT", 10))
 
 
 class LimitJson(JsonListTransformer):
-
     async def run(self, input_file):
         output_file = self.get_output_file(input_file)
 
         with open(input_file) as f:
             in_data = json.load(f)
 
-        out_data = in_data[START:START + LIMIT]
+        out_data = in_data[START : START + LIMIT]
 
         out_rows = []
         for row in out_data:

@@ -14,5 +14,5 @@ class GenSqlEval(JsonListProcessor):
 
     async def _process_row(self, row):
         self.total += 1
-        self.score += row['pre_eval']['acc']
-        self.masked += row['symbolic']['masked']
+        self.score += row["pre_eval"]["acc"]
+        self.masked += row["symbolic"]["masked"]

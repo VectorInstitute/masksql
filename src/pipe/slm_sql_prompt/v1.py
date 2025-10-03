@@ -1,6 +1,6 @@
 GENERATE_SQL_PROMPT_V1 = """
-You are a SQL generation assistant. Given 
-(1) NL Question: a natural-language question about a dataset and 
+You are a SQL generation assistant. Given
+(1) NL Question: a natural-language question about a dataset and
 (2) DB Schema: the database’s schema expressed in YAML
 produce a single SQL SELECT statement that answers the question.
 We also provided the immediate generated SQL query as your reference to find the related database items needed for the given question.
@@ -39,7 +39,7 @@ Database Schema:
         index: number
         id: number
 
-OUTPUT: 
+OUTPUT:
 SELECT [groupName] FROM [torrents] WHERE [artist] LIKE 'ron hunt & ronnie g & the sm crew' AND [groupYear] = 1979 AND [releaseType] LIKE 'single' AND [totalSnatched] = 239
 
 
@@ -58,7 +58,7 @@ Database Schema:
         index: number
         id: number
 
-OUTPUT: 
+OUTPUT:
 SELECT [totalSnatched] FROM [torrents] WHERE [artist] LIKE 'blowfly' AND [groupYear] = 1980
 
 Now, generate a SQL query for the following question and database schema:

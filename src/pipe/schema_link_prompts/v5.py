@@ -1,18 +1,18 @@
 SCHEMA_LINK_PROMPT_V4 = """
-You are an assistant that links n-grams (sub-sequences of up to 3 consecutive words) 
+You are an assistant that links n-grams (sub-sequences of up to 3 consecutive words)
 of a natural-language question to database schema items (tables or fully qualified columns).
 
 You are given:
 - A natural language question.
-- A list of schema items (table names or fully qualified column names). 
+- A list of schema items (table names or fully qualified column names).
 
 Input Format:
 - Each schema item is either "TABLE:[table]" or "COLUMN:[table].[column]".
 - Not all listed schema items are relevant. Your goal is to identify the relevant ones.
 
 Goal
-Return a JSON object mapping relevant n-grams (contiguous word sequences of length 1–3 taken from the question text) 
-to the single most relevant schema item. 
+Return a JSON object mapping relevant n-grams (contiguous word sequences of length 1–3 taken from the question text)
+to the single most relevant schema item.
 
 Mapping Rules:
 - Consider all 1-, 2-, and 3-word spans.
@@ -31,7 +31,7 @@ Output Rules:
 - Output should be a top-level JSON object. No nested keys.
 
 Example:
-Question: 
+Question:
 “What is the name of the instructor who has the lowest salary?”
 Schema items:
 ["COLUMN:[instructor].[name]", "COLUMN:[instructor].[salary]", "COLUMN[department].[name]"]

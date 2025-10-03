@@ -11,7 +11,7 @@ class AnalyzeResults(JsonListProcessor):
         print("done")
 
     async def _process_row(self, row):
-        sql = row['query']
+        sql = row["query"]
         cat = self.catter.get_category(sql)
         sub = self.catter.get_sub_category(sql)
         print(f"{cat}:{sub}")

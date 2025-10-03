@@ -1,7 +1,7 @@
 GOLD_SCHEMA_LINKING_REPAIR_PROMPT_V1 = """
-You are an assistant that links n-grams (sub-sequences of up to 3 consecutive words) 
+You are an assistant that links n-grams (sub-sequences of up to 3 consecutive words)
 of a natural-language question to database schema items (tables or fully qualified columns).
-Schema links is a mapping from question terms to the database schema items. 
+Schema links is a mapping from question terms to the database schema items.
 
 You are given:
 - A natural language question.
@@ -11,14 +11,14 @@ You are given:
 
 Goal
 Inspect the given schema links
-Return a JSON object mapping relevant n-grams (contiguous word sequences of length 1–3 taken from the question text) 
-to the single most relevant schema item or a list of relevant schema items. 
-You should look at the SQL query and extract the mapping between the question terms and database 
+Return a JSON object mapping relevant n-grams (contiguous word sequences of length 1–3 taken from the question text)
+to the single most relevant schema item or a list of relevant schema items.
+You should look at the SQL query and extract the mapping between the question terms and database
 schema items.
 The keys of the mapping are n-grams of the question and values should be a schema item.
 Each schema item has one of the following forms:
 - "TABLE:[table]": if n-gram references a table
-- "COLUMN:[table].[column]": if n-gram references a column 
+- "COLUMN:[table].[column]": if n-gram references a column
 - "VALUE:[table].[column]": if n-gram is a literal value related to a column
 
 Schema items should be valid with respect to the given database schema.
@@ -39,7 +39,7 @@ Output Rules:
 - Output should be a top-level JSON object. No nested keys.
 
 Example:
-NL Question: What is the release title of the music that was released by Ron Hunt in 1979 that was downloaded 239 times? 
+NL Question: What is the release title of the music that was released by Ron Hunt in 1979 that was downloaded 239 times?
 Database Schema:
     songs:
         rt: text
@@ -52,7 +52,7 @@ Database Schema:
         index: number
         id: number
 
-SQL: 
+SQL:
 SELECT [rt] FROM [songs] WHERE [artist] LIKE 'ron hunt' AND [groupYear] = 1979 AND [totalSnatched] = 239
 
 OUTPUT:

@@ -1,10 +1,10 @@
 SCHEMA_LINK_PROMPT_V4 = """
-You are an assistant that links n-grams (sub-sequences of up to 3 consecutive words) 
+You are an assistant that links n-grams (sub-sequences of up to 3 consecutive words)
 of a natural-language question to database schema items (tables or fully qualified columns).
 
 You are given:
 - Question: a natural language question.
-- Schema Items: a list of schema items (table names or fully qualified column names). 
+- Schema Items: a list of schema items (table names or fully qualified column names).
 - Value List: a list of n-grams in the question that represent literal values, entities, constants, etc in the question.
 
 Input Format:
@@ -12,8 +12,8 @@ Input Format:
 - Not all listed schema items are relevant. Your goal is to identify the relevant ones.
 
 Goal
-Return a JSON object mapping relevant n-grams (contiguous word sequences of length 1–3 taken from the question text) 
-to the single most relevant schema item. 
+Return a JSON object mapping relevant n-grams (contiguous word sequences of length 1–3 taken from the question text)
+to the single most relevant schema item.
 
 Mapping Rules:
 - You should not provide mapping for the n-grams included in the Value List
@@ -26,7 +26,7 @@ Mapping Rules:
 
 Output Rules:
 - Output only a JSON object representing the mapping.
-- The value of each entry should only be selected from the given list of Schema Items. 
+- The value of each entry should only be selected from the given list of Schema Items.
 - Generating new values or using different values is not allowed.
 - You can only select values form the given list of schema items.
 - Each entry should be a key-value pair where the key is an n-gram and the value is a schema item.
@@ -39,11 +39,11 @@ Here are some examples:
 
 ---------------------------------------------
 Example 1:
-Question: 
+Question:
 “What is the name of the instructor who has the lowest salary and located in London?”
 Schema items:
 ["TABLE:[instructor]", "COLUMN:[instructor].[name]", "COLUMN:[instructor].[salary]", "TABLE:[department]", "COLUMN[department].[name]"]
-Value List: 
+Value List:
 [ "London" ]
 
 Output:
@@ -55,7 +55,7 @@ Output:
 
 ---------------------------------------------
 Example 2:
-Question: 
+Question:
 "Please calculate the total payment amount of customers who come from the USA. USA is a country; total amount payment refers to SUM(amount);",
 Schema items: [
     "TABLE:[customers]",
@@ -65,7 +65,7 @@ Schema items: [
     "COLUMN:[payments].[customernumber]",
     "COLUMN:[payments].[amount]"
 ]
-Value List: 
+Value List:
 [ "USA" ]
 
 Output:
@@ -108,6 +108,6 @@ Value List: {value_List}
 
 Iterate through each key,value pair of the answer and make sure that:
 - MAKE SURE THAT EACH KEY OF THE MAPPING SHOULD BE A TERM OF THE QUESTION
-- MAKE SURE THAT EACH VALUE OF THE MAPPING SHOULD BE A VALID SCHEMA ITEM INCLUDED IN THE GIVEN LIST OF SCHEMA ITEMS 
+- MAKE SURE THAT EACH VALUE OF THE MAPPING SHOULD BE A VALID SCHEMA ITEM INCLUDED IN THE GIVEN LIST OF SCHEMA ITEMS
 - MAKE SURE THAT EACH KEY BE MINIMAL, IF ANY WORD CAN BE DELETED WHILE THE RELATION STILL HOLDS, IT SHOULD BE REMOVED
 """

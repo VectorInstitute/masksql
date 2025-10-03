@@ -1,6 +1,5 @@
 from src.taxonomy.cat.tag_collector import TagCollector
 from src.taxonomy.cat.tags.sql_tag import SqlTag
-from src.taxonomy.parse.node import JoinClauseNode
 
 
 class NumJoins(SqlTag):
@@ -11,7 +10,6 @@ class NumJoins(SqlTag):
 
     @staticmethod
     class Collector(TagCollector):
-
         def __init__(self):
             super().__init__()
             self.cur_level = 0

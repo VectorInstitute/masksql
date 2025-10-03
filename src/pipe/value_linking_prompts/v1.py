@@ -2,10 +2,10 @@ VALUE_LINKING_PROMPT_V1 = """
 You are given:
 	Question: A natural language question.
 	Values List: A list of n-grams in the question that represent literal values, entities, constants, etc in the question.
-    Column Names: A list of fully qualified column names of an underlying database. 
-    
+    Column Names: A list of fully qualified column names of an underlying database.
+
 Goal
-Return a JSON object mapping from the Value List to the single most relevant column item. 
+Return a JSON object mapping from the Value List to the single most relevant column item.
 
 Mapping Rules:
 - Consider all 1-, 2-, and 3-word spans.
@@ -26,7 +26,7 @@ Here are some Examples:
 ---------------------------------------------
 Example 1:
 Question: “What is the name of the instructor who located in London?”
-Values List: 
+Values List:
 [ "London" ]
 Column Names:
 [
@@ -41,11 +41,11 @@ Output:
 
 ---------------------------------------------
 Example 2:
-Question: 
+Question:
 "How many different orders with a total price greater than 4000 are cancelled? total price = MULTIPLY(quantityOrdered, priceEach) > 4000; cancelled orders refer to status = 'Cancelled';",
 Value List:
 ["Euro+ Shopping Channel", "2004"]
-Column Names: [ 
+Column Names: [
     "[customers].[customernumber]",
     "[customers].[customername]",
     "[payments].[customernumber]",
@@ -61,11 +61,11 @@ Output:
 
 ---------------------------------------------
 Example 3:
-Question: 
+Question:
 "State the email of those who are staff of Murphy Diane whose number is 1002 and living in San Francisco staff of refers to reportsTO; San Francisco is a city;",
 Value List:
 [ "Murphy Diane", "1002", "San Francisco" ]
-Column Names: [ 
+Column Names: [
     "[employees].[employeenumber]",
     "[employees].[firstname]",
     "[employees].[lastname]",
@@ -82,7 +82,7 @@ Output:
     "San Francisco": "[offices].[city]"
 }}
 
-Now generate the mapping for the following Values List and Column Names based on the given question. 
+Now generate the mapping for the following Values List and Column Names based on the given question.
 Question: {question}
 Values List: {values}
 Column Names: {columns}

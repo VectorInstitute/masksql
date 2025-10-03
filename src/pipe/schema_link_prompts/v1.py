@@ -1,6 +1,6 @@
 SCHEMA_LINK_PROMPT_V1 = """
 Consider the following question:
-Question: 
+Question:
 {question}
 
 To write a SQL query for this question schema items from the following list are used:
@@ -10,10 +10,10 @@ Each schema item is either a table name or a fully qualified column name.
 
 Example:
 Question: "What is the name of the instructor who has the lowest salary?"
-Schema items: 
+Schema items:
 [ "[instructor].[name]", "[instructor].[salary]", "[department].[name]"]
 
-Output: 
+Output:
 ```json
 {{
     "name": "[instructor].[name]",
@@ -21,7 +21,7 @@ Output:
 }}
 ```
 
-Give me a dict from words in the most relevant schema items. 
+Give me a dict from words in the most relevant schema items.
 Exclude words that don't match with any schema item.
 Question: {question}
 Only output the result, no explanation.

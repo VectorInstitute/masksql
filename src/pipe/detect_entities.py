@@ -14,13 +14,15 @@ class DetectValues(PromptProcessor):
         return obj
 
     def _get_prompt(self, row):
-        schema_items = row['schema_items']
-        question = row['question']
+        schema_items = row["schema_items"]
+        question = row["question"]
         # slm_sql= row['slm_sql']
-        return DETECT_VALUES_PROMPT_V3.format(question=question, schema_items=schema_items)
+        return DETECT_VALUES_PROMPT_V3.format(
+            question=question, schema_items=schema_items
+        )
 
 
 class DetectValuesDummy(JsonListTransformer):
     async def _process_row(self, row: Dict) -> Dict:
-        row['values'] = []
+        row["values"] = []
         return row

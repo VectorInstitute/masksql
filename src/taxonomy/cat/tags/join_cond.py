@@ -14,5 +14,4 @@ class JoinConditions(OrderedTag):
             tags = super().visit_join_clause(node)
             if any(con is not None for con in node.constraints):
                 return tags + TagCollectorResult(JoinConditions.ConditionalJoin)
-            else:
-                return tags + TagCollectorResult(JoinConditions.UnconditionalJoin)
+            return tags + TagCollectorResult(JoinConditions.UnconditionalJoin)

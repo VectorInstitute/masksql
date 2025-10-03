@@ -13,7 +13,7 @@ class RankSchemaItems(PromptProcessor):
         return extract_object(output)
 
     def extract_schema_items(self, row):
-        db_id = row['db_id']
+        db_id = row["db_id"]
         schema = self.schema_repo.dbs[db_id]
         schema_items = []
 
@@ -24,6 +24,6 @@ class RankSchemaItems(PromptProcessor):
         return schema_items
 
     def _get_prompt(self, row):
-        question = row['question']
+        question = row["question"]
         schema_items = self.extract_schema_items(row)
         return RANK_SCHEMA_ITEMS_V1.format(question=question, schema_items=schema_items)

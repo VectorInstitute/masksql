@@ -1,7 +1,7 @@
 RANK_SCHEMA_ITEMS_V1 = """
 You are given:
 	1. A natural language question.
-	2. A list of schema items of an underlying database. Each schema item is either 
+	2. A list of schema items of an underlying database. Each schema item is either
 	"TABLE:[table_name]" or "COLUMN:[table_name].[column_name]
 
 Task:

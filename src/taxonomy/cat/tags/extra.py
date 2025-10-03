@@ -3,8 +3,15 @@ from enum import auto
 from src.taxonomy.cat.tag_collector import TagCollector
 from src.taxonomy.cat.tag_collector_result import TagCollectorResult
 from src.taxonomy.cat.tags.sql_tag import SqlTag
-from src.taxonomy.parse.node import LimitNode, OrderByNode, SelectClauseNode, ResultColumnNode, FunctionExpressionNode, \
-    BinOpExpressionNode, BetweenExpressionNode
+from src.taxonomy.parse.node import (
+    BetweenExpressionNode,
+    BinOpExpressionNode,
+    FunctionExpressionNode,
+    LimitNode,
+    OrderByNode,
+    ResultColumnNode,
+    SelectClauseNode,
+)
 from src.taxonomy.parse.parser import NULL_LITERAL
 
 
@@ -63,6 +70,8 @@ class ExtraKeywords(SqlTag):
                 tags += TagCollectorResult(ExtraKeywords.LIKE)
             if node.op.value.lower() == "in":
                 tags += TagCollectorResult(ExtraKeywords.IN)
-            if node.op.value.lower() in ["is not", "is"] and (node.left == NULL_LITERAL or node.right == NULL_LITERAL):
+            if node.op.value.lower() in ["is not", "is"] and (
+                node.left == NULL_LITERAL or node.right == NULL_LITERAL
+            ):
                 tags += TagCollectorResult(ExtraKeywords.IS_NULL)
             return tags

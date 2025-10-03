@@ -26,7 +26,7 @@ class TagExtractor:
             JoinType.Collector(),
             NestLevel.Collector(),
             StructureType.Collector(),
-            WhereType.Collector()
+            WhereType.Collector(),
         ]
 
         tags = TagCollectorResult()

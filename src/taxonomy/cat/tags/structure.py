@@ -22,8 +22,7 @@ class StructureType(SqlTag):
 
         def visit_select_statement(self, node: SelectStatementNode):
             self.cur_level += 1
-            if self.cur_level > self.max_level:
-                self.max_level = self.cur_level
+            self.max_level = max(self.max_level, self.cur_level)
             tags = super().visit_select_statement(node)
             if len(node.set_ops) > 0:
                 tags += TagCollectorResult(StructureType.Compound)

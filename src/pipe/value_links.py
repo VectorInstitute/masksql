@@ -11,9 +11,11 @@ class LinkValues(PromptProcessor):
         return obj
 
     def _get_prompt(self, row):
-        schema_items = row['schema_items']
-        question = row['question']
-        values = row['values']
+        schema_items = row["schema_items"]
+        question = row["question"]
+        values = row["values"]
         # slm_sql = row['slm_sql']
         columns = list(map(lambda x: x.split(":")[1], schema_items))
-        return VALUE_LINKING_PROMPT_V1.format(question=question, values=values, columns=columns)
+        return VALUE_LINKING_PROMPT_V1.format(
+            question=question, values=values, columns=columns
+        )

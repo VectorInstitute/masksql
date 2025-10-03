@@ -1,7 +1,7 @@
 from typing import List
 
 from src.pipe.processor.list_transformer import JsonListTransformer
-from src.pipe.schema_repo import DatabaseSchemaRepo, DatabaseSchema
+from src.pipe.schema_repo import DatabaseSchema, DatabaseSchemaRepo
 
 
 def filter_schema(schema: DatabaseSchema, schema_items: List[str]):
@@ -33,28 +33,26 @@ def filter_schema(schema: DatabaseSchema, schema_items: List[str]):
 
 
 class AddSchema(JsonListTransformer):
-
     def __init__(self, tables_path):
         super().__init__(force=True)
         self.schema_repo = DatabaseSchemaRepo(tables_path)
 
     async def _process_row(self, row):
-        schema = self.schema_repo.dbs[row['db_id']]
-        row['schema'] = schema.to_yaml()
+        schema = self.schema_repo.dbs[row["db_id"]]
+        row["schema"] = schema.to_yaml()
         return row
 
 
 class AddFilteredSchema(JsonListTransformer):
-
     def __init__(self, tables_path):
         super().__init__(force=True)
         self.schema_repo = DatabaseSchemaRepo(tables_path)
 
     async def _process_row(self, row):
-        schema = self.schema_repo.dbs[row['db_id']]
-        schema_items = row['schema_items']
+        schema = self.schema_repo.dbs[row["db_id"]]
+        schema_items = row["schema_items"]
         filtered_schema = filter_schema(schema, schema_items)
-        row['schema'] = filtered_schema.to_yaml()
+        row["schema"] = filtered_schema.to_yaml()
         return row
 
 
@@ -64,12 +62,12 @@ class AddSchemaItems(JsonListTransformer):
         self.schema_repo = DatabaseSchemaRepo(tables_path)
 
     async def _process_row(self, row):
-        schema = self.schema_repo.dbs[row['db_id']]
+        schema = self.schema_repo.dbs[row["db_id"]]
         schema_items = []
         for table, columns in schema.tables.items():
             schema_items.append(f"TABLE:{table}")
             for col, col_data in columns.items():
                 schema_items.append(f"COLUMN:{table}.{col}")
             schema_items.append(f"COLUMN:{table}.[*]")
-        row['schema_items'] = schema_items
+        row["schema_items"] = schema_items
         return row

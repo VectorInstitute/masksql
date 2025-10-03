@@ -3,6 +3,7 @@ import os
 
 from tqdm.asyncio import tqdm
 
+
 ASYNC_BATCH = int(os.environ.get("ASYNC_BATCH", 1))
 
 

@@ -16,4 +16,3 @@ do
   wget "https://storage.googleapis.com/sepiid/resd/$model.zip"
   unzip $model.zip
 done
-

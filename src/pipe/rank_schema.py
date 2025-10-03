@@ -8,8 +8,8 @@ class RankSchemaResd(JsonListTransformer):
         self.schema_repo = DatabaseSchemaRepo(tables_path)
 
     async def _process_row(self, row):
-        schema_items = row['tc_original']
-        schema = self.schema_repo.dbs[row['db_id']]
+        schema_items = row["tc_original"]
+        schema = self.schema_repo.dbs[row["db_id"]]
         refined_schema_items = []
         for item in schema_items:
             parts = item.split(".")
@@ -26,5 +26,5 @@ class RankSchemaResd(JsonListTransformer):
             if table_item not in refined_schema_items:
                 refined_schema_items.append(f"TABLE:{table_name}")
             refined_schema_items.append(f"COLUMN:{table_name}.{column_name}")
-        row['schema_items'] = refined_schema_items
+        row["schema_items"] = refined_schema_items
         return row

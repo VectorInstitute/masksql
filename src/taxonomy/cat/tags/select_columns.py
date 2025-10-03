@@ -2,8 +2,11 @@ from enum import auto
 
 from src.taxonomy.cat.tag_collector import TagCollector
 from src.taxonomy.cat.tag_collector_result import TagCollectorResult
-from src.taxonomy.cat.tags.sql_tag import OrderedTag, SqlTag
-from src.taxonomy.parse.node import SelectClauseNode, TerminalNode, ResultColumnNode, ColumnNode
+from src.taxonomy.cat.tags.sql_tag import SqlTag
+from src.taxonomy.parse.node import (
+    ColumnNode,
+    SelectClauseNode,
+)
 
 
 class SelectColumns(SqlTag):
@@ -13,7 +16,6 @@ class SelectColumns(SqlTag):
 
     @staticmethod
     class Collector(TagCollector):
-
         def visit_column(self, node: ColumnNode):
             if node.column_name.value == "*":
                 return TagCollectorResult(SelectColumns.StarColumn)

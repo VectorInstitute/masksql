@@ -6,11 +6,10 @@ from src.pipe.schema_link_prompts.repair import REPAIR_SCHEMA_LINK_PROMPT_V1
 
 
 class RepairSchemaLinks(PromptProcessor):
-
     def _process_output(self, row, output):
         schema_links = extract_object(output)
-        question = row['question']
-        schema_items = row['schema_items']
+        question = row["question"]
+        schema_items = row["schema_items"]
         refined_links = dict()
         if isinstance(schema_links, list) or isinstance(schema_links, str):
             logger.error(f"Invalid schema links: {schema_links}")
@@ -25,12 +24,16 @@ class RepairSchemaLinks(PromptProcessor):
 
     def get_n_grams(self, text: str, n):
         words = text.split(" ")
-        return [words[i:i + n] for i in range(len(words) - n + 1)]
+        return [words[i : i + n] for i in range(len(words) - n + 1)]
 
     def _get_prompt(self, row):
-        question = row['question']
-        schema_items = row['schema_items']
-        value_list = row['values']
-        schema_links = row['schema_links']
-        return REPAIR_SCHEMA_LINK_PROMPT_V1.format(schema_items=schema_items, question=question, value_List=value_list,
-                                                   schema_links=schema_links)
+        question = row["question"]
+        schema_items = row["schema_items"]
+        value_list = row["values"]
+        schema_links = row["schema_links"]
+        return REPAIR_SCHEMA_LINK_PROMPT_V1.format(
+            schema_items=schema_items,
+            question=question,
+            value_List=value_list,
+            schema_links=schema_links,
+        )

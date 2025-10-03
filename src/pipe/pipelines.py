@@ -1,10 +1,9 @@
-
 unmask_pipe_llm = [
     LimitJson("limit"),
     RankSchemaResd(tables_path),
     AddSchema(tables_path),
     GenSql("pred_sql", model="openai/gpt-4.1"),
-    ExecAccCalc(database_path)
+    ExecAccCalc(database_path),
 ]
 
 unmask_pipe_slm = [
@@ -13,7 +12,7 @@ unmask_pipe_slm = [
     AddSchema(tables_path),
     GenSql("pred_sql", model=PRIVATE_MODEL),
     ExecAccCalc(database_path),
-    PrintResults()
+    PrintResults(),
 ]
 
 value_link_eval = [
@@ -24,7 +23,7 @@ value_link_eval = [
     DetectValues("values", model=SLM_MODEL),
     LinkValues("value_links", model=SLM_MODEL),
     CopyTransformer("value_links", "filtered_value_links"),
-    ValueLinkEval()
+    ValueLinkEval(),
 ]
 
 schema_link_eval = [
@@ -36,7 +35,7 @@ schema_link_eval = [
     AddGoldValues(),
     LinkSchema("schema_links", model=SLM_MODEL),
     CopyTransformer("schema_links", "filtered_schema_links"),
-    SchemaLinkEval()
+    SchemaLinkEval(),
 ]
 
 gen_sql_eval = [
@@ -52,10 +51,10 @@ gen_sql_eval = [
     AddSymbolicSchema("symbolic", tables_path),
     AddSymbolicQuestion(),
     GenerateSymbolicSql("symbolic", model=LLM_MODEL),
-    RepairSymbolicSQL('symbolic', model=LLM_MODEL),
+    RepairSymbolicSQL("symbolic", model=LLM_MODEL),
     AddConcreteSql(),
     WrongExecAccOutput(database_path),
-    GenSqlEval()
+    GenSqlEval(),
 ]
 
 full_gold = [
@@ -71,11 +70,10 @@ full_gold = [
     AddSymbolicSchema("symbolic", tables_path),
     AddSymbolicQuestion(),
     GenerateSymbolicSql("symbolic", model=LLM_MODEL),
-    RepairSymbolicSQL('symbolic', model=LLM_MODEL),
+    RepairSymbolicSQL("symbolic", model=LLM_MODEL),
     AddConcreteSql(),
     WrongExecAccOutput(database_path),
-    RepairSQL('pred_sql', model=SLM_MODEL),
+    RepairSQL("pred_sql", model=SLM_MODEL),
     ExecAccCalc(database_path),
-    PrintResults()
+    PrintResults(),
 ]
-

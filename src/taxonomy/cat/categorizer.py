@@ -2,7 +2,7 @@ from typing import List
 
 from natsort import natsorted
 
-from src.taxonomy.cat.categories import CATS, CAT_INF, SUB_INF
+from src.taxonomy.cat.categories import CAT_INF, CATS, SUB_INF
 from src.taxonomy.cat.statement_category import StatementCategory
 from src.taxonomy.cat.sub_category import SubCategory
 
@@ -16,8 +16,7 @@ class Categorizer:
         self.categories = categories
 
     def get_category(self, tag_set: SubCategory):
-        for c in reversed(
-                self.categories):  # Check to find a match starting from
+        for c in reversed(self.categories):  # Check to find a match starting from
             # harder categories
             sub_cat = c.matches(tag_set)
             if sub_cat:

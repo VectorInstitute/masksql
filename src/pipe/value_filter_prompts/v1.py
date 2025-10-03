@@ -25,7 +25,7 @@ Output:
 
 ---------------------------------------------
 Example 2:
-Question: 
+Question:
 "State the email of those who are staff of Murphy Diane whose number is 1002 and living in San Francisco staff of refers to reportsTO; San Francisco is a city;",
 Value Links:
 {{
@@ -42,7 +42,7 @@ Output:
 
 ---------------------------------------------
 Example 3:
-Question: 
+Question:
 "How many customers who are in Norway and have credit line under 220000? Norway is a country;",
 Value Links:
 {{

@@ -2,13 +2,14 @@ import re
 
 from RESDSQL.pipeline_stage import PipelineStage
 
+
 PROMPT = """
 I give you a natural language question and a database schema.
 Give me the SQL that can answer the given question.
 
 Example:
 NL Question: "What is the name of the instructor who has the lowest salary?"
-DB Schema: 
+DB Schema:
 tables:
     instructor:
        - id: text
@@ -19,7 +20,7 @@ tables:
        - dept_name: text
        - building: text
        - budget: number
-       
+
 SQL: "SELECT name FROM instructor ORDER BY salary LIMIT 1"
 
 Now generate the SQL for the following data:
@@ -41,7 +42,7 @@ class EstimateSQL(PipelineStage):
         return final_answer
 
     def get_prompt(self, row):
-        schema = row['schema']
-        question = row['question']
+        schema = row["schema"]
+        question = row["question"]
         prompt = PROMPT.format(question=question, schema=schema)
         return prompt

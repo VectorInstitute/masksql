@@ -8,7 +8,6 @@ class PrintProps(JsonListProcessor):
         super().__init__()
         self.props = props
 
-
     async def _process_row(self, row):
         # if row['pre_eval']['acc'] == 0 and row['eval']['acc'] == 1:
         print("Entry: " + "-" * 20)

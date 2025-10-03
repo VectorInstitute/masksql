@@ -38,7 +38,7 @@ Install Python dependency via `pip install -r requirements.txt`.
 Download the datasets: [Spider](https://yale-lily.github.io/spider). Make sure to download the `06/07/2020` version or newer.
 Unpack the datasets somewhere outside this project and put `train_spider.json`, `dev.json`,  `tables.json` and `database` folder under `./data/` directory.
 
-Run `check_and_preprocess.sh` to check and preprocess the dataset. It will generate (1) the `train_spider.json` and `dev.json` with NatSQL<sub>G</sub> ; (2) preprocessed `tables.json` and `tables_for_natsql.json` ; under  `./NatSQLv1_6/` directory. 
+Run `check_and_preprocess.sh` to check and preprocess the dataset. It will generate (1) the `train_spider.json` and `dev.json` with NatSQL<sub>G</sub> ; (2) preprocessed `tables.json` and `tables_for_natsql.json` ; under  `./NatSQLv1_6/` directory.
 
 
 
@@ -50,8 +50,8 @@ You should get the SQL queries in `results.sql`.  The evaluation results are dif
 ##### Evaluation results of converting gold NatSQL with values into SQL:
 |    | Train <br /> Exact Match |  Train<br /> Execution Match  | Dev<br /> Exact Match  | Dev<br /> Execution Match  |
 | ----------- | ------------------------------------- | -------------------------------------- |-------------------------------------- |-------------------------------------- |
-| NatSQL<sub>G</sub>    | 96.6%                        | 95.7%                      |  97.3%                        | 96.8%                      | 
-| NatSQL | 92.9%                          | 93.8%                      |  92.7%                        | 93.4%                      | 
+| NatSQL<sub>G</sub>    | 96.6%                        | 95.7%                      |  97.3%                        | 96.8%                      |
+| NatSQL | 92.9%                          | 93.8%                      |  92.7%                        | 93.4%                      |
 
 
 ### Step 3: Convert NatSQL without Values to Executable SQL
@@ -61,14 +61,14 @@ Here, the preprocess code for finding out values is very complicated, which can 
 For example, this preprocess code brings values to the SQL and slightly improves the exact match accuracy.
 
 
-Run `natsql2sql_without_values.sh [train/dev] [natsql/natsqlg]` to convert the NatSQL without values to executable SQL. You should get the SQL queries in `results.sql`. 
+Run `natsql2sql_without_values.sh [train/dev] [natsql/natsqlg]` to convert the NatSQL without values to executable SQL. You should get the SQL queries in `results.sql`.
 
 
 ##### Evaluation results of converting gold NatSQL without values into executable SQL:
 |    | Train <br /> Exact Match |  Train<br /> Execution Match  | Dev<br /> Exact Match  | Dev<br /> Execution Match  |
 | ----------- | ------------------------------------- | -------------------------------------- |-------------------------------------- |-------------------------------------- |
-| NatSQL<sub>G</sub>    | 96.5%                        | 94.8%                      |  97.7%                        | 96.6%                      | 
-| NatSQL | 92.9%                          | 92.9%                      |  93.8%                        | 92.8%                      | 
+| NatSQL<sub>G</sub>    | 96.5%                        | 94.8%                      |  97.7%                        | 96.6%                      |
+| NatSQL | 92.9%                          | 92.9%                      |  93.8%                        | 92.8%                      |
 
 
 

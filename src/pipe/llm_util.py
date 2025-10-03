@@ -7,15 +7,14 @@ from typing import Tuple
 from loguru import logger
 from openai import AsyncClient
 
+
 VLM_ARCH = os.environ.get("VLM_ARCH")
 MAX_COMPLETION_TOKENS = os.environ.get("MAX_COMPLETION_TOKENS")
 
 wrappers = {
     "mistral": lambda prompt: f"<s>[INST] {prompt} [/INST]",
     "gemma": lambda prompt: f"<bos><start_of_turn>user\n{prompt}<end_of_turn>\n<start_of_turn>model\n",
-    "llama": lambda
-        prompt: f"<|begin_of_text|><|start_header_id|>user<|end_header_id|>\n{prompt}\n<|eot_id|><|start_header_id|>assistant<|end_header_id|>"
-
+    "llama": lambda prompt: f"<|begin_of_text|><|start_header_id|>user<|end_header_id|>\n{prompt}\n<|eot_id|><|start_header_id|>assistant<|end_header_id|>",
 }
 
 
@@ -46,7 +45,7 @@ async def send_prompt(prompt, model=os.getenv("OPENAI_MODEL")) -> Tuple[str, str
                 "content": prompt,
             },
         ],
-        max_completion_tokens=MAX_COMPLETION_TOKENS
+        max_completion_tokens=MAX_COMPLETION_TOKENS,
     )
     if response.choices is None:
         print(prompt)

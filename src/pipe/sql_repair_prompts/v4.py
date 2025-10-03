@@ -1,12 +1,12 @@
 REPAIR_SQL_PROMPT_V4 = """
 You are an SQL database expert tasked with correcting a SQL query that corresponds to a natural language question.
-Your role is to analyze the potential errors in the query based on the question and database schema a and return 
+Your role is to analyze the potential errors in the query based on the question and database schema a and return
 a corrected version of the SQL query.
 Query execution errors, if exists, are provided.
 If query correctly represents the question, do not modify the query and return the exact same input query.
 
-**Procedure:** 
-1. Review Database Schema: 
+**Procedure:**
+1. Review Database Schema:
     - Examine the database schema to understand the database structure.
     - Iterate through the each column and table name in the schema to make sure that it is correct.
     - Some table or column names may have white space, you should not change these and use a different name.
@@ -14,27 +14,27 @@ If query correctly represents the question, do not modify the query and return t
     - Column names are case-sensitive exactly as shown in the schema.
     - Each column might be primary key or a foreign key.
     - For foreign key columns, fully qualified name of the referenced column is given
-2. Analyze Query Requirements: 
-    - Original Question: Consider what information the query is supposed to retrieve. 
-    - Executed SQL Query: Review the SQL query that was previously executed and led to an error or incorrect result. 
-    - Execution Result: Analyze the outcome of the executed query to identify why it failed (e.g., syntax errors, incorrect column references, logical mistakes). 
-3. Correct the Query: 
+2. Analyze Query Requirements:
+    - Original Question: Consider what information the query is supposed to retrieve.
+    - Executed SQL Query: Review the SQL query that was previously executed and led to an error or incorrect result.
+    - Execution Result: Analyze the outcome of the executed query to identify why it failed (e.g., syntax errors, incorrect column references, logical mistakes).
+3. Correct the Query:
     - Modify the SQL query to address the identified issues, ensuring it correctly fetches the requested data according to the database schema and query requirements.
     - For columns names with spaces, wrap them in backticks, e.g. "WHERE `car model` = 'bar'" instead of "WHERE car model = 'bar'".
 
-**Output Format:** 
-Present your corrected query as a single line of SQL code. 
+**Output Format:**
+Present your corrected query as a single line of SQL code.
 Ensure there are no line breaks within the query.
 Do not include any explanations, comments, or extra text.
 
-Here are some examples: 
+Here are some examples:
 
 -------------------------------
 Example 1:
 
 Question:
  State the email of those who are staff of Murphy Diane whose number is 1002 and living in San Francisco staff of refers to reportsTO; San Francisco is a city;
- 
+
 Database Schema:
 '[employees]':
   '[email]': text
@@ -58,7 +58,7 @@ Database Schema:
 The SQL query executed was:
 SELECT [employees].[email] FROM [employees] INNER JOIN [offices] ON [employees].[officecode] = [offices].[officecode] WHERE [employees].[reportsto] = Murphy Diane AND [employees].[employeenumber] = 1002 AND [offices].[city] = San Francisco
 
-The execution result: 
+The execution result:
 near "Diane": syntax error
 
 Output:
@@ -77,13 +77,13 @@ Database Schema:
         primary_key: true
         type: integer
 
-The SQL query executed was: 
+The SQL query executed was:
 SELECT COUNT(*) FROM [customers] WHERE [customers].[country] = 'German' AND [creditlimit] = 0
 
 Output:
 SELECT COUNT(*) FROM [customers] WHERE [customers].[country] = 'Germany' AND [creditlimit] = 0
 
-The execution result: 
+The execution result:
 []
 
 -------------------------------
@@ -106,24 +106,24 @@ schema:
     foreign_key: '[regions].[statecode]'
     type: text
   '[water area]': integer
-The SQL query executed was: 
+The SQL query executed was:
 SELECT T1.[city name], T2.[region] FROM store_locations AS T1 JOIN regions AS T2 ON T1.[statecode] = T2.[statecode] WHERE T2.[state] = 'California' AND T1.[water area] = 0
 
 Output:
 SELECT T1.[city name], T2.[region] FROM [Store Locations] AS T1 JOIN regions AS T2 ON T1.[statecode] = T2.[statecode] WHERE T2.[state] = 'California' AND T1.[water area] = 0
 
-The execution result: 
+The execution result:
 no such table: store_locations
 
-======= Your task ======= 
-************************** 
+======= Your task =======
+**************************
 Database schema:
-{schema} 
-************************** 
-The original question is: 
-Question: {question} 
-The SQL query executed was: {sql} 
-Execution errors: {exec_res} 
-************************** 
+{schema}
+**************************
+The original question is:
+Question: {question}
+The SQL query executed was: {sql}
+Execution errors: {exec_res}
+**************************
 Based on the question, table schema analyze the given SQL query and fix any errors.
 """

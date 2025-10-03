@@ -6,13 +6,12 @@ from src.pipe.llm_util import extract_object
 
 
 class AddMaskedTerms(PromptProcessor):
-
     def _process_output(self, row, output):
         output = extract_object(output)
         if output is None:
             return []
         masked_terms = list(output.keys())
-        q = row['question']
+        q = row["question"]
         filtered_terms = []
         for m in masked_terms:
             if m.lower() in q.lower():
@@ -22,6 +21,8 @@ class AddMaskedTerms(PromptProcessor):
         return masked_terms
 
     def _get_prompt(self, row):
-        question = row['question']
-        symbolic_question = row['symbolic']['question']
-        return ADD_MASKED_TERMS_PROMPT_V1.format(question=question, masked_question=symbolic_question)
+        question = row["question"]
+        symbolic_question = row["symbolic"]["question"]
+        return ADD_MASKED_TERMS_PROMPT_V1.format(
+            question=question, masked_question=symbolic_question
+        )

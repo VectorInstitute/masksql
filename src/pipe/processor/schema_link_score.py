@@ -24,9 +24,9 @@ class SchemaLinkScore(DataPrinter):
         print(f"Mask Score: {self.score / self.count}")
 
     async def _process_row(self, row):
-        gold_links = row['gold_links']
-        pred_links = row['filtered_schema_links']
-        pred_values = row['filtered_value_links']
+        gold_links = row["gold_links"]
+        pred_links = row["filtered_schema_links"]
+        pred_values = row["filtered_value_links"]
         pred_keys = list(pred_links.keys()) + list(pred_values.keys())
 
         covered = 0

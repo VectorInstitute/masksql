@@ -6,6 +6,7 @@ from loguru import logger
 
 from src.pipe.processor.list_processor import JsonListProcessor
 
+
 FORCE = int(os.environ.get("FORCE", 0)) > 0
 
 

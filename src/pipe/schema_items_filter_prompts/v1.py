@@ -2,8 +2,8 @@ FILTER_SCHEMA_ITEMS_PROMPT_V1 = """
 You are an assistant that filters a list of a database schema items based on their relevance to a set of concepts.
 
 Input:
-    Schema Items: a list of table names and fully qualified column names. Each Schema Item is of the form 
-    "TABLE:[table_name]" or "COLUMN:[table_name].[column_name]". 
+    Schema Items: a list of table names and fully qualified column names. Each Schema Item is of the form
+    "TABLE:[table_name]" or "COLUMN:[table_name].[column_name]".
 
 Goal:
 Return a filtered list of schema items that contains only those that are related to at least one the following concepts:

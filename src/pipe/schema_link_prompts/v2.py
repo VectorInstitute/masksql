@@ -1,6 +1,6 @@
 SCHEMA_LINK_PROMPT_V2 = """
 Consider the following question:
-Question: 
+Question:
 {question}
 
 To write a SQL query for this question schema items from the following list are used:

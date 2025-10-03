@@ -6,6 +6,6 @@ NL Question: {question}
 Database Schema: {schema}
 Candidate SQL: {sql}
 
-Instructions: 
+Instructions:
  - Your output should only contain the SQL query nothing else is permitted.
 """

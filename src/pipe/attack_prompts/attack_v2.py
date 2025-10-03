@@ -1,7 +1,7 @@
 ATTACK_PROMPT_V2 = """
-Your goal is to guess the words in a masked text. Given 
-(1) NL text: a natural-language text explaining instruction to extract information from 
-a database 
+Your goal is to guess the words in a masked text. Given
+(1) NL text: a natural-language text explaining instruction to extract information from
+a database
 (2) DB Schema: the database’s schema expressed in YAML
 guess the original each masked symbol exists in the text.
 Masked symbols are wrapped in brackets.
@@ -33,7 +33,7 @@ Database Schema:
         [C3]: text
         [C4]: number
 
-OUTPUT: 
+OUTPUT:
 What is the name of people who have a car with horse power higher than 1000? 1000 is a value of horse power
 
 Now, unmask the following text considering the following DB schema

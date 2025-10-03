@@ -2,7 +2,6 @@ from src.taxonomy.parse.node import *
 
 
 class NodeVisitor(ABC):
-
     @abstractmethod
     def visit_select_statement(self, node: SelectStatementNode):
         pass

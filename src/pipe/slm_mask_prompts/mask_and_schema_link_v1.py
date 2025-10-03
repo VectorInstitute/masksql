@@ -1,7 +1,7 @@
 SLM_MASK_AND_LINK_PROMPT_V1 = """
-You are a database expert. 
+You are a database expert.
 Inputs:
-- A natural language question 
+- A natural language question
 - A database schema
 - A symbol lookup table
 - Value links
@@ -9,7 +9,7 @@ Inputs:
 Your goal is to mask all references to database items in the question with special symbols given in the symbol lookup table.
 
 The symbol lookup table is a mapping from schema items to their corresponding symbol that should be used for masking.
-[C1],[C2],... are for column names, [T1],[T2],... are for table names. 
+[C1],[C2],... are for column names, [T1],[T2],... are for table names.
 For literal values you should use the given value links that maps terms in the question with their related database column.
 
 Output Rules:
@@ -18,7 +18,7 @@ specifying that [V1] is related to the column [C1] of [T1].
 - Do not include any extra information in the output like comments or extra explanation
 
 Example:
-NL Question: What is the release title of the music that was released by Ron Hunt in 1979 that was downloaded 239 times? 
+NL Question: What is the release title of the music that was released by Ron Hunt in 1979 that was downloaded 239 times?
 Database Schema:
     songs:
         rt: text

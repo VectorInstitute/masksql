@@ -18,7 +18,9 @@ def _monitor_memory(interval: float, stop_event: threading.Event, mem_usage: lis
 async def track_memory_async(coro, *args, interval: float = 1, **kwargs):
     mem_usage = []
     stop_event = threading.Event()
-    monitor_thread = threading.Thread(target=_monitor_memory, args=(interval, stop_event, mem_usage))
+    monitor_thread = threading.Thread(
+        target=_monitor_memory, args=(interval, stop_event, mem_usage)
+    )
     monitor_thread.start()
 
     try:

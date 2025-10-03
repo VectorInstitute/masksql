@@ -1,7 +1,7 @@
 PROMPT = """
 You are given:
 	1.	A natural language question.
-	2.	A mapping (SchemaLinks) from n-grams in the question to relevant table or column names 
+	2.	A mapping (SchemaLinks) from n-grams in the question to relevant table or column names
 	in a database schema.
 
 Task:

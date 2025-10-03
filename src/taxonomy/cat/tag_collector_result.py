@@ -1,7 +1,6 @@
 from typing import Set
 
 from src.taxonomy.cat.sub_category import SubCategory
-
 from src.taxonomy.cat.tags.sql_tag import SqlTag
 from src.taxonomy.parse.visitor.visitor_result import MergeableVisitorResult
 
@@ -11,7 +10,7 @@ class TagCollectorResult(MergeableVisitorResult):
     extras: Set[str]
 
     def __init__(self, *tags: SqlTag):
-        self.tag_set = SubCategory('', frozenset([*tags]))
+        self.tag_set = SubCategory("", frozenset([*tags]))
         self.extras = set()
 
     def merge(self, other):

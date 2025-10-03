@@ -7,9 +7,9 @@ The schema linking is sorted in descending order of relevance to the question.
 The first 4 schema linking items are the most relevant schema linking items.
 So, the first 4 schema linking items are the most relevant schema linking items.
 Note that there might be schema linking items that are not relevant to the question but included in the schema linking because
-we always pick top 4 schema linking items.. 
+we always pick top 4 schema linking items..
 Each schema item is of the form table_name.column_name of the underlying database.
-Schema items are sorted in descending order of relevance to the question. 
+Schema items are sorted in descending order of relevance to the question.
 First we sort the most relevant tables and then we sort the most relevant columns within each table.
 We include the top 4 tables and top 5 columns within each table.
 So, we include the columns of the first table (the most relevant table), followed by the columns of the second table
@@ -17,7 +17,7 @@ and so on. Columns of the first table are sorted in descending order of relevanc
 Note that there might be tables or columns that are not relevant to the question but included in the schema items because
 we always pick top 4 tables and top 5 columns within each table.
 
-Additionally, I provide you with a list of schema linking items. 
+Additionally, I provide you with a list of schema linking items.
 Each schema linking item is a mapping from an schema item to an n-gram in the question that references the schema item.
 Each item has the following format.
 'table_name.column_name="n-gram in the question that references the schema item"'

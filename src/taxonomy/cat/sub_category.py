@@ -1,5 +1,5 @@
 from dataclasses import dataclass, replace
-from typing import FrozenSet, Type, Set
+from typing import FrozenSet, Type
 
 from src.taxonomy.cat.tags.sql_tag import SqlTag
 
@@ -10,7 +10,7 @@ class SubCategory:
     tags: FrozenSet[SqlTag]
     description: str = ""
 
-    def __ge__(self, other: 'SubCategory'):
+    def __ge__(self, other: "SubCategory"):
         for tag in other.tags:
             if not self.has_greater(tag):
                 return False
@@ -39,8 +39,7 @@ class SubCategory:
         intersection = self.tags.intersection(tag_type.__members__.values())
         if len(intersection) > 0:
             return next(iter(intersection)).name
-        else:
-            return 'None'
+        return "None"
 
     # def reduce(self):
     #     """Remove any tag if some other tag harder or equal than it exists"""

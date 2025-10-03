@@ -24,6 +24,7 @@ from src.pipe.slm_mask import SlmMask, SlmUnmask
 from src.pipe.symb_table import AddSymbolTable
 from src.pipe.wrong_exec_acc import ExecuteConcreteSql
 
+
 LLM_MODEL = os.getenv("LLM_MODEL")
 LINK_MODEL = os.getenv("LINK_MODEL")
 REPAIR_MODEL = os.getenv("REPAIR_MODEL")
@@ -51,7 +52,7 @@ mask_pipe = [
     CopyTransformer("schema_links", "filtered_schema_links"),
     AddSymbolicSchema("symbolic", tables_path),
     AddSymbolicQuestion(),
-    CustomPrinter()
+    CustomPrinter(),
 ]
 
 slm_mask = [
@@ -62,10 +63,10 @@ slm_mask = [
     SlmMask("symbolic", model=SLM_MODEL),
     AttackRaw("attack", model=LLM_MODEL),
     GenerateSymbolicSqlRaw("symbolic", model=LLM_MODEL),
-    RepairSymbolicSQLRaw('symbolic', model=LLM_MODEL),
+    RepairSymbolicSQLRaw("symbolic", model=LLM_MODEL),
     SlmUnmask("concrete_sql", model=SLM_MODEL),
     ExecuteConcreteSql(database_path),
-    RepairSQL('pred_sql', model=REPAIR_MODEL),
+    RepairSQL("pred_sql", model=REPAIR_MODEL),
     CalcExecAcc(database_path),
     PrivacyScore(),
     PrintResults(),
@@ -77,8 +78,13 @@ async def main():
         logger.remove(0)
     except Exception:
         pass
-    logger.add(sys.stderr, level=LOG_LEVEL, colorize=True, enqueue=True,
-               format="<green>{time:HH:mm:ss}[{process.id}] | </green><level> {level}: {message}</level>")
+    logger.add(
+        sys.stderr,
+        level=LOG_LEVEL,
+        colorize=True,
+        enqueue=True,
+        format="<green>{time:HH:mm:ss}[{process.id}] | </green><level> {level}: {message}</level>",
+    )
 
     pipeline = Pipeline(mask_pipe)
     # pipeline = Pipeline(slm_mask)
@@ -90,5 +96,5 @@ async def main():
     # print("REPAIR MODEL:", REPAIR_MODEL)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     asyncio.run(main())

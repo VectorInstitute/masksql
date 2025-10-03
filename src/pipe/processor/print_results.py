@@ -35,7 +35,7 @@ class PrintResults(DataPrinter):
     async def _process_row(self, row):
         self.total += 1
         # self.total_toks += row['total_toks']
-        exec_acc = row['eval']['acc']
+        exec_acc = row["eval"]["acc"]
         if exec_acc == 0:
             print(f"#{row['question_id']}")
             print(f"Q: {row['question']}")
@@ -43,9 +43,9 @@ class PrintResults(DataPrinter):
         self.score += exec_acc
         # pre_score = row['pre_eval']['acc']
         # self.pre_score += pre_score
-        return
-        masked_terms = row['symbolic']['masked_terms']
-        gold_links = row['gold_links']
+        return None
+        masked_terms = row["symbolic"]["masked_terms"]
+        gold_links = row["gold_links"]
         # pred_links = row['filtered_schema_links']
         # pred_values = row['filtered_value_links']
         # pred_keys = list(pred_links.keys()) + list(pred_values.keys())
@@ -59,7 +59,7 @@ class PrintResults(DataPrinter):
         self.masks += masks
         self.total_gold_masks += len(gold_links.keys())
 
-        guess = row['attack']
+        guess = row["attack"]
         leakage = 0
         leak_terms = []
         for term in masked_terms:
@@ -76,7 +76,7 @@ class PrintResults(DataPrinter):
         self.leakage += leakage
 
         if exec_acc == 1:
-            return
+            return None
         return row
         print(f"\nEntry #{self.total}" + "-" * 100)
         print(f"EXEC ACC: {exec_acc}")

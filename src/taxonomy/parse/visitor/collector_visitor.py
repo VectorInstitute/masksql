@@ -8,7 +8,8 @@ from src.taxonomy.parse.visitor.visitor_result import MergeableVisitorResult
 
 class CollectorVisitor(NodeVisitor):
     """Automatically visits all attributes of a node and
-    merges the results."""
+    merges the results.
+    """
 
     def __init__(self, result_class: Type[MergeableVisitorResult]):
         super().__init__()
@@ -55,11 +56,11 @@ class CollectorVisitor(NodeVisitor):
 
     def visit_attr(self, attr):
         """Visit the attribute if it is an instance of AstNode,
-        otherwise return an instance of result class"""
+        otherwise return an instance of result class
+        """
         if attr and isinstance(attr, SqlAstNode):
             return attr.accept(self)
-        else:
-            return self.get_new_result_instance(attr)
+        return self.get_new_result_instance(attr)
 
     def visit_ordering_term(self, node: OrderingTerm):
         return self.visit_node(node)

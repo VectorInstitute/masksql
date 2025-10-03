@@ -10,17 +10,13 @@ class AddConcreteSql(JsonListTransformer):
         super().__init__(force=True)
 
     def get_value_variations(self, value_symbol) -> List[str]:
-        return [
-            value_symbol,
-            f"\"{value_symbol[1:-1]}\"",
-            f"\'{value_symbol[1:-1]}\'"
-        ]
+        return [value_symbol, f'"{value_symbol[1:-1]}"', f"'{value_symbol[1:-1]}'"]
 
     async def _process_row(self, row):
-        reverse_dict = row['symbolic']['reverse_dict']
-        value_table = row['symbolic']['to_value']
+        reverse_dict = row["symbolic"]["reverse_dict"]
+        value_table = row["symbolic"]["to_value"]
 
-        symbolic_sql = row['symbolic']['repaired_sql']
+        symbolic_sql = row["symbolic"]["repaired_sql"]
         masked_term = dict()
 
         for symbol, name in reverse_dict.items():
@@ -43,7 +39,7 @@ class AddConcreteSql(JsonListTransformer):
                     r"(?<=\.){}(?!\w)".format(re.escape(col_symbol)),
                     col,
                     symbolic_sql,
-                    flags=re.IGNORECASE
+                    flags=re.IGNORECASE,
                 )
-        row['concrete_sql'] = symbolic_sql
+        row["concrete_sql"] = symbolic_sql
         return row

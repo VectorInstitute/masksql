@@ -7,11 +7,11 @@ from src.taxonomy.parse.visitor.visitor_result import MergeableVisitorResult
 
 class DiagramTreeNode(MergeableVisitorResult):
     name: str
-    parent: Optional['DiagramTreeNode']
-    children: List['DiagramTreeNode']
+    parent: Optional["DiagramTreeNode"]
+    children: List["DiagramTreeNode"]
     shape: str
 
-    def __init__(self, name: str, shape: str = 'box'):
+    def __init__(self, name: str, shape: str = "box"):
         self.name = name
         self.parent = None
         self.children = []
@@ -20,7 +20,7 @@ class DiagramTreeNode(MergeableVisitorResult):
     def merge(self, other):
         return self.add_child(other)
 
-    def add_child(self, child: 'DiagramTreeNode'):
+    def add_child(self, child: "DiagramTreeNode"):
         if child is not None:
             child.parent = self
             self.children.append(child)

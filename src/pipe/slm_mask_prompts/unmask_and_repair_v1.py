@@ -1,5 +1,5 @@
 SLM_UNMASK_AND_REPAIR_PROMPT_V1 = """
-Your task is to restore a complete and correct SQL query from a masked version, 
+Your task is to restore a complete and correct SQL query from a masked version,
 based on a given natural language question and a database schema.
 
 You are given:
@@ -35,15 +35,15 @@ You are given:
 **Your Goal:** Generate the correct and complete SQL query based on the above information."""
 
 SLM_UNMASK_AND_REPAIR_PROMPT_V1 = """
-You are a database expert. 
+You are a database expert.
 
 Your goal is to extract the original SQL query and replace all masked tokens in the SQL query with their actual values.
-Masked tokens include [C1],[C2],... for column names, [T1],[T2],... for table names, and [V1],[V2],... for literal 
+Masked tokens include [C1],[C2],... for column names, [T1],[T2],... for table names, and [V1],[V2],... for literal
 values.
-You should carefully inspect the original question and database schema and based on the masked versions 
+You should carefully inspect the original question and database schema and based on the masked versions
 find the proper mapping between mask tokens and actual values in order to restore the original SQL.
 You should return only a single sql, nothing else is permitted.
-If the masked query has any errors that prevent it from correctly answering the natural language question, fix them. 
+If the masked query has any errors that prevent it from correctly answering the natural language question, fix them.
 
 Output Rules:
 - No masked tokens should remain in the resulting SQL query
@@ -51,7 +51,7 @@ Output Rules:
 - Do not include any extra information in the output like comments or extra explanation
 
 Example:
-NL Question: What is the release title of the music that was released by Ron Hunt in 1979 that was downloaded 239 times? 
+NL Question: What is the release title of the music that was released by Ron Hunt in 1979 that was downloaded 239 times?
 Database Schema:
     songs:
         rt: text

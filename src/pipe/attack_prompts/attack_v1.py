@@ -1,6 +1,6 @@
 ATTACK_PROMPT_V1 = """
-Your goal is to guess the words in a masked question. Given 
-(1) NL Question: a natural-language question about a dataset and 
+Your goal is to guess the words in a masked question. Given
+(1) NL Question: a natural-language question about a dataset and
 (2) DB Schema: the database’s schema expressed in YAML
 guess the original each masked symbol exists in the question.
 Masked symbols are wrapped in brackets.
@@ -31,7 +31,7 @@ Database Schema:
         [C3]: text
         [C4]: number
 
-OUTPUT: 
+OUTPUT:
 What is the name of people who have a car with horse power higher than 1000?
 
 Now, unmask the following question considering the following DB schema

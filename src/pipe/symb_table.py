@@ -1,9 +1,8 @@
 from src.pipe.processor.list_transformer import JsonListTransformer
-from src.pipe.schema_repo import DatabaseSchemaRepo, DatabaseSchema
+from src.pipe.schema_repo import DatabaseSchema, DatabaseSchemaRepo
 
 
 class AddSymbolTable(JsonListTransformer):
-
     def __init__(self, tables_path):
         super().__init__(True)
         self.schema_repo = DatabaseSchemaRepo(tables_path)
@@ -15,7 +14,7 @@ class AddSymbolTable(JsonListTransformer):
         return f"[C{idx}]"
 
     async def _process_row(self, row):
-        schema = DatabaseSchema.from_yaml(row['schema'])
+        schema = DatabaseSchema.from_yaml(row["schema"])
         tid = 1
         cid = 1
         symbol_table = dict()
@@ -31,29 +30,25 @@ class AddSymbolTable(JsonListTransformer):
                 cid += 1
                 symbol_table[col_symbol] = col_ref
                 rev_table[col_ref] = col_symbol
-        row['symbolic'] = {
-            "to_name": symbol_table,
-            "to_symbol": rev_table
-        }
+        row["symbolic"] = {"to_name": symbol_table, "to_symbol": rev_table}
         return row
 
 
 class AddValueSymbolTable(JsonListTransformer):
-
     def __init__(self, tables_path):
         super().__init__(True)
         self.schema_repo = DatabaseSchemaRepo(tables_path)
 
     async def _process_row(self, row):
         vid = 1
-        value_links = row['value_links']
-        symbol_table = row['symbolic']['to_symbol']
+        value_links = row["value_links"]
+        symbol_table = row["symbolic"]["to_symbol"]
         to_value = dict()
         for value in value_links.keys():
             symbol = f"[V{vid}]"
             symbol_table[value] = symbol
             to_value[symbol] = value
             vid += 1
-        row['symbolic']['to_symbol'] = symbol_table
-        row['symbolic']['to_value'] = to_value
+        row["symbolic"]["to_symbol"] = symbol_table
+        row["symbolic"]["to_value"] = to_value
         return row

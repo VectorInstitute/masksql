@@ -14,5 +14,4 @@ class GroupType(OrderedTag):
             tags = super().visit_group_clause(node)
             if node.having:
                 return tags + TagCollectorResult(GroupType.ConditionalGroup)
-            else:
-                return tags + TagCollectorResult(GroupType.UnconditionalGroup)
+            return tags + TagCollectorResult(GroupType.UnconditionalGroup)

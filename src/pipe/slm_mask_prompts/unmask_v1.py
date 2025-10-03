@@ -7,9 +7,9 @@ You are a database expert. You are given
 - A masked SQL query
 
 Your goal is to replace all masked tokens in the SQL query with their actual values.
-Masked tokens include [C1],[C2],... for column names, [T1],[T2],... for table names, and [V1],[V2],... for literal 
+Masked tokens include [C1],[C2],... for column names, [T1],[T2],... for table names, and [V1],[V2],... for literal
 values.
-You should carefully inspect the original question and database schema and based on the masked versions 
+You should carefully inspect the original question and database schema and based on the masked versions
 find the proper mapping between mask tokens and actual values in order to restore the original SQL.
 You should return only a single sql, nothing else is permitted.
 Output Rules:
@@ -18,7 +18,7 @@ Output Rules:
 - Do not include any extra information in the output like comments or extra explanation
 
 Example:
-NL Question: What is the release title of the music that was released by Ron Hunt in 1979 that was downloaded 239 times? 
+NL Question: What is the release title of the music that was released by Ron Hunt in 1979 that was downloaded 239 times?
 Database Schema:
     songs:
         rt: text

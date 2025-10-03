@@ -3,9 +3,9 @@ import sqlite3
 import time
 from contextlib import contextmanager
 from sqlite3 import Connection
-from typing import Optional, List, Tuple
 
 from loguru import logger
+
 
 DB_TIMEOUT = 10000
 
@@ -46,7 +46,12 @@ class SqliteFacade:
         cols_str = "\t".join(cols)
         sample_rows = self.exec_query_sync(db_id, f"SELECT * FROM {table} LIMIT 3")
         if sample_rows:
-            rows_str = "\n".join(map(lambda r: "\t".join(list(map(lambda cv: str(cv)[:50], r))), sample_rows))
+            rows_str = "\n".join(
+                map(
+                    lambda r: "\t".join(list(map(lambda cv: str(cv)[:50], r))),
+                    sample_rows,
+                )
+            )
         else:
             rows_str = "\n"
         schema_str += f"\n {create_sql}\n"
@@ -59,7 +64,9 @@ class SqliteFacade:
         return col_names
 
     def get_foreign_key(self, db_id, table_name):
-        res_raw = self.exec_query_sync(db_id, f'PRAGMA foreign_key_list("{table_name}")')
+        res_raw = self.exec_query_sync(
+            db_id, f'PRAGMA foreign_key_list("{table_name}")'
+        )
         res_clean = list()
         for row in res_raw:
             table, source, to = row[2:5]
@@ -76,7 +83,9 @@ class SqliteFacade:
         return pks
 
     def get_tables(self, db_id: str):
-        result = self.exec_query_sync(db_id, "SELECT name FROM sqlite_master WHERE type='table'")
+        result = self.exec_query_sync(
+            db_id, "SELECT name FROM sqlite_master WHERE type='table'"
+        )
         table_names = [_[0] for _ in result]
         return table_names
 
@@ -91,7 +100,7 @@ class SqliteFacade:
 
                 rows = cursor.fetchall()
             except Exception as e:
-                if e.args == ('interrupted',):
+                if e.args == ("interrupted",):
                     logger.debug(f"SQLite Timed out: {db_id} {sql}")
                 else:
                     logger.debug(f"SQLite Error: {e}, {sql}")

@@ -7,8 +7,8 @@ class MaskSqlConfig:
     data_dir: str
     resd: bool
     policy: str
-    slm: str = os.environ['SLM_MODEL']
-    llm: str = os.environ['LLM_MODEL']
+    slm: str = os.environ["SLM_MODEL"]
+    llm: str = os.environ["LLM_MODEL"]
     __input_file: str = "1_input.json"
     __db_dir: str = "databases"
     __tables_file: str = "tables.json"

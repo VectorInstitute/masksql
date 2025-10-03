@@ -1,4 +1,3 @@
-
 from loguru import logger
 
 from src.taxonomy.cat.categorizer import Categorizer

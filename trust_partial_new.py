@@ -1,10 +1,6 @@
 import argparse
 import asyncio
-import os
-import sys
 from typing import Dict
-
-from loguru import logger
 
 from config import MaskSqlConfig
 from src.pipe.add_schema import AddFilteredSchema
@@ -29,14 +25,12 @@ from src.pipe.results import Results
 from src.pipe.symb_table import AddSymbolTable
 from src.pipe.unmask import AddConcreteSql
 from src.pipe.value_links import LinkValues
-from src.util.json_utils import read_json
 from src.util.log_utils import configure_logging
 
 
 class FixFormat(JsonListTransformer):
-
     async def _process_row(self, row: Dict) -> Dict:
-        row['query'] = row['SQL']
+        row["query"] = row["SQL"]
         return row
 
 
@@ -49,29 +43,32 @@ def create_pipeline_stages(conf: MaskSqlConfig):
         AddSymbolTable(conf.tables_path),
         DetectValues("values", model=conf.slm),
         LinkValues("value_links", model=conf.slm),
-        #For Category-based!
+        # For Category-based!
         FilterValueLinks("filtered_value_links", model=conf.slm),
         # CopyTransformer("value_links", "filtered_value_links"),
         LinkSchema("schema_links", model=conf.slm),
-        #For Category-based!
+        # For Category-based!
         FilterSchemaLinks("filtered_schema_links", model=conf.slm),
         AddFilteredSymbolicSchema(conf.tables_path),
         AddSymbolicQuestion(),
         GenerateSymbolicSql("symbolic", model=conf.llm),
-        RepairSymbolicSQL('symbolic', model=conf.llm),
+        RepairSymbolicSQL("symbolic", model=conf.llm),
         AddConcreteSql(),
         ExecuteConcreteSql(conf.db_path),
-        RepairSQL('pred_sql', model=conf.slm),
+        RepairSQL("pred_sql", model=conf.slm),
         CalcExecAcc(conf.db_path, policy=conf.policy),
         AddInferenceAttack("attack", model=conf.llm),
-        Results()
+        Results(),
     ]
 
     return mask_pipe
 
+
 async def main():
     parser = argparse.ArgumentParser(description="MaskSQL")
-    parser.add_argument("--data", type=str, required=False, help="Data directory", default="data")
+    parser.add_argument(
+        "--data", type=str, required=False, help="Data directory", default="data"
+    )
     parser.add_argument("--resd", action="store_true", dest="resd", help="Use RESDSQL")
     args = parser.parse_args()
     configure_logging()
@@ -81,7 +78,5 @@ async def main():
     await pipeline.run(conf.input_path)
 
 
-
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     asyncio.run(main())

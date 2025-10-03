@@ -11,7 +11,7 @@ class AddResd(JsonListTransformer):
 
     async def _process_row(self, row: Dict) -> Dict:
         for r in self.resd:
-            if r['question_id'] == row['question_id']:
-                row['tc_original'] = r['tc_original']
+            if r["question_id"] == row["question_id"]:
+                row["tc_original"] = r["tc_original"]
                 return row
         raise RuntimeError(f"Row with qid = {row['question_id']} not found")

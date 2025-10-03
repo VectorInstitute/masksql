@@ -1,7 +1,7 @@
 GEN_UNMASKED_SQL_PROMPT_V1 = """
 I'll give you a natural language question and the schema of the underlying database.
 Your task is to generate a SQL query that answers the question based on the database schema.
-Database schema is given in yaml format. 
+Database schema is given in yaml format.
 
 Here are some examples:
 

@@ -9,6 +9,8 @@ class FilterValueLinks(PromptProcessor):
         return extract_object(output)
 
     def _get_prompt(self, row):
-        question = row['question']
-        value_links = row['value_links']
-        return VALUE_LINKS_FILTER_PROMPT_V1.format(concepts=CONCEPTS, question=question, value_links=value_links)
+        question = row["question"]
+        value_links = row["value_links"]
+        return VALUE_LINKS_FILTER_PROMPT_V1.format(
+            concepts=CONCEPTS, question=question, value_links=value_links
+        )

@@ -20,7 +20,7 @@ then
 python run.py --natsql_file $Path --remove_groupby_from_natsql 1>results.sql
 elif [ "$natsql_or_natsqlg" = "natsqlg" ];
 then
-python run.py --natsql_file $Path  
+python run.py --natsql_file $Path
 else
 echo "The second paprmeter must be natsql or natsqlg."
 exit

@@ -1,10 +1,10 @@
 REPAIR_SQL_PROMPT_V5 = """
-You are an expert SQL database assistant. 
-Your task is to correct a SQL query based on a natural language question and a database schema. 
+You are an expert SQL database assistant.
+Your task is to correct a SQL query based on a natural language question and a database schema.
 If the query is already correct, return it as is.
 
 ### Instructions
-1.  **Analyze the Schema**: Review the database schema, provided in YAML format. The schema defines tables, their columns, data types, primary keys, and foreign keys. 
+1.  **Analyze the Schema**: Review the database schema, provided in YAML format. The schema defines tables, their columns, data types, primary keys, and foreign keys.
 2.  **Examine the Query**:
     -   **Original Question**: Understand the user's intent.
     -   **Executed SQL Query**: Identify potential errors.

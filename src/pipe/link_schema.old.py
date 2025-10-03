@@ -2,13 +2,14 @@ import re
 
 from RESDSQL.pipeline_stage import PipelineStage
 
+
 PROMPT = """
 I give you a natural language question, a database schema, and a SQL query.
 
 
 Example:
 NL Question: "What is the name of the instructor who has the lowest salary?"
-DB Schema: 
+DB Schema:
 tables:
     instructor:
        - id: text
@@ -45,8 +46,8 @@ class LinkSchema(PipelineStage):
         return final_answer
 
     def get_prompt(self, row):
-        schema = row['schema']
-        question = row['question']
-        sql = row['estimate_sql']
+        schema = row["schema"]
+        question = row["question"]
+        sql = row["estimate_sql"]
         prompt = PROMPT.format(question=question, schema=schema, sql=sql)
         return prompt

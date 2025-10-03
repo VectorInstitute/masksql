@@ -9,5 +9,7 @@ class FilterSchemaItems(PromptProcessor):
         return extract_object(output)
 
     def _get_prompt(self, row):
-        schema_items = row['schema_items']
-        return FILTER_SCHEMA_ITEMS_PROMPT_V1.format(concepts=CONCEPTS, schema_items=schema_items)
+        schema_items = row["schema_items"]
+        return FILTER_SCHEMA_ITEMS_PROMPT_V1.format(
+            concepts=CONCEPTS, schema_items=schema_items
+        )

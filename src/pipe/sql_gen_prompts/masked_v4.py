@@ -1,6 +1,6 @@
 MASKED_GEN_SQL_PROMPT_V4 = """
-You are a SQL generation assistant. Given 
-(1) NL Question: a natural-language question about a dataset and 
+You are a SQL generation assistant. Given
+(1) NL Question: a natural-language question about a dataset and
 (2) DB Schema: the database’s schema expressed in YAML
 produce a single SQL SELECT statement that answers the question.
 

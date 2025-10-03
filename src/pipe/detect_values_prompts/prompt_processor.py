@@ -10,7 +10,13 @@ from src.pipe.utils import Timer
 
 
 class PromptProcessor(JsonListTransformer):
-    def __init__(self, prop_name, model=os.environ['DEFAULT_MODEL'], force=False, include_stats=True):
+    def __init__(
+        self,
+        prop_name,
+        model=os.environ["DEFAULT_MODEL"],
+        force=False,
+        include_stats=True,
+    ):
         super().__init__(force)
         self.model = model
         self.prop_name = prop_name
@@ -48,14 +54,14 @@ class PromptProcessor(JsonListTransformer):
             f.write(f"######################\n {res}\n")
 
         if self.include_stats:
-            if 'total_latency' not in row:
-                row['total_latency'] = 0
+            if "total_latency" not in row:
+                row["total_latency"] = 0
             latency = timer.lap()
-            row['total_latency'] += latency
+            row["total_latency"] += latency
 
-            if 'total_toks' not in row:
-                row['total_toks'] = 0
-            row['total_toks'] += toks
+            if "total_toks" not in row:
+                row["total_toks"] = 0
+            row["total_toks"] += toks
 
         if self.prop_name in row and not isinstance(row[self.prop_name], str):
             row[self.prop_name].update(res)

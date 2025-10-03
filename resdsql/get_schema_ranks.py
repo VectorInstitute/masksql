@@ -1,8 +1,7 @@
-import argparse
-
 from preprocessing import main as preprocess
 from schema_item_classifier import classify_schema
 from text2sql_data_generator import generate_text2sql_data
+
 
 opts = {
     "mode": "test",
@@ -41,10 +40,8 @@ other_opts = {
     "use_contents": True,
     "add_fk_info": True,
     "output_skeleton": True,
-    "target_type": "sql"
+    "target_type": "sql",
 }
-
-
 
 
 class AttrDict(dict):
@@ -65,5 +62,5 @@ def main():
     generate_text2sql_data(AttrDict(other_opts))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

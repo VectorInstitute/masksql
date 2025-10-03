@@ -6,7 +6,6 @@ from src.pipe.processor.list_transformer import JsonListTransformer
 
 
 class Results(JsonListTransformer):
-
     def __init__(self):
         super().__init__()
         self.stat_rows = []
@@ -32,20 +31,20 @@ class Results(JsonListTransformer):
 
     async def _process_row(self, row: Dict) -> Dict:
         stat = dict()
-        if 'eval' in row:
-            ea = row['eval']['acc']
-            stat['EA'] = ea
-        if 'total_latency' in row:
-            stat['Tokens'] = row['total_toks']
-            stat['Latency'] = row['total_latency']
-        if 'pre_eval' in row:
-            stat['pre_acc'] = row['pre_eval']['acc']
+        if "eval" in row:
+            ea = row["eval"]["acc"]
+            stat["EA"] = ea
+        if "total_latency" in row:
+            stat["Tokens"] = row["total_toks"]
+            stat["Latency"] = row["total_latency"]
+        if "pre_eval" in row:
+            stat["pre_acc"] = row["pre_eval"]["acc"]
         self.count += 1
         self.stat_rows.append(stat)
-        if 'attack' in row and 'annotated_links' in row:
-            masked_terms = row['symbolic']['masked_terms']
-            attack = row['attack']
-            a_links = row['annotated_links']
+        if "attack" in row and "annotated_links" in row:
+            masked_terms = row["symbolic"]["masked_terms"]
+            attack = row["attack"]
+            a_links = row["annotated_links"]
             # a_links = row['filt_anon_links']
 
             ri_terms = 0
@@ -57,7 +56,7 @@ class Results(JsonListTransformer):
                 ris = ri_terms / num_masks
             else:
                 ris = 0
-            stat['ris'] = 1 - ris
+            stat["ris"] = 1 - ris
 
             mask_covering = 0
             a_masks = len(a_links)
@@ -73,8 +72,7 @@ class Results(JsonListTransformer):
             else:
                 mcs = mask_covering / a_masks
                 self.recall_scores.append(mcs)
-            stat['mcs'] = mcs
-            stat['a_masks'] = a_masks
+            stat["mcs"] = mcs
+            stat["a_masks"] = a_masks
 
         return row
-

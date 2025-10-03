@@ -15,5 +15,4 @@ class JoinTables(OrderedTag):
             tags = super().visit_join_clause(node)
             if len(node.tables) == 2:
                 return tags + TagCollectorResult(JoinTables.SingleJoin)
-            else:
-                return tags + TagCollectorResult(JoinTables.MultiJoin)
+            return tags + TagCollectorResult(JoinTables.MultiJoin)

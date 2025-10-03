@@ -4,7 +4,6 @@ import subprocess
 from datetime import datetime
 
 import pandas as pd
-from loguru import logger
 
 
 class TimeLogger:
@@ -48,15 +47,21 @@ def confidence_interval(column: pd.Series) -> str:
     mean = column.mean()
     interval_start = mean - err_margin
     interval_end = mean + err_margin
-    if interval_start >= 0 and interval_end <= 1 and interval_start >= 0 and interval_end <= 1:
+    if (
+        interval_start >= 0
+        and interval_end <= 1
+        and interval_start >= 0
+        and interval_end <= 1
+    ):
         return "({:.2f}%, {:.2f}%)".format(interval_start * 100, interval_end * 100)
-    else:
-        return "({:.2f}, {:.2f})".format(interval_start * 100, interval_end * 100)
+    return "({:.2f}, {:.2f})".format(interval_start * 100, interval_end * 100)
     # return f"({interval_start}, {interval_end})"
 
 
 def execute_command(command: str):
-    with subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, bufsize=1, universal_newlines=True) as p:
+    with subprocess.Popen(
+        command, shell=True, stdout=subprocess.PIPE, bufsize=1, universal_newlines=True
+    ) as p:
         output, errors = p.communicate()
         print(output, errors)
     if p.returncode != 0:

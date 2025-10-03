@@ -14,9 +14,9 @@ class ExecuteConcreteSql(JsonListTransformer):
         self.dbf = SqliteFacade(database_dir)
 
     async def get_exec_acc(self, row):
-        gold = row['query']
-        pred = row['concrete_sql']
-        db_id = row['db_id']
+        gold = row["query"]
+        pred = row["concrete_sql"]
+        db_id = row["db_id"]
         try:
             gold_res, _ = self.dbf.exec_query_sync(db_id, gold)
             pred_res, pred_err = self.dbf.exec_query_sync(db_id, pred)
@@ -25,7 +25,9 @@ class ExecuteConcreteSql(JsonListTransformer):
             else:
                 acc = 0
             if pred_res is not None and len(pred_res) > 5:
-                logger.debug(f"Pred results was limited: original size = {len(pred_res)}")
+                logger.debug(
+                    f"Pred results was limited: original size = {len(pred_res)}"
+                )
                 pred_res = pred_res[:5]
             if pred_err is None:
                 pred_err = ""
@@ -35,11 +37,7 @@ class ExecuteConcreteSql(JsonListTransformer):
             #     err = "The predicted SQL is executable but the execution result is different from the gold execution result"
             # else:
             #     err = None
-            row["pre_eval"] = {
-                "acc": acc,
-                "err": pred_err,
-                "pred_res": pred_res
-            }
+            row["pre_eval"] = {"acc": acc, "err": pred_err, "pred_res": pred_res}
             return row
         except Exception as e:
             print(e)

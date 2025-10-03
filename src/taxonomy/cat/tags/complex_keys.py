@@ -3,7 +3,11 @@ from enum import auto
 from src.taxonomy.cat.tag_collector import TagCollector
 from src.taxonomy.cat.tag_collector_result import TagCollectorResult
 from src.taxonomy.cat.tags.sql_tag import SqlTag
-from src.taxonomy.parse.node import WithClauseNode, WindowExpressionNode, FunctionExpressionNode
+from src.taxonomy.parse.node import (
+    FunctionExpressionNode,
+    WindowExpressionNode,
+    WithClauseNode,
+)
 
 
 class ComplexKeywords(SqlTag):
@@ -13,7 +17,6 @@ class ComplexKeywords(SqlTag):
 
     @staticmethod
     class Collector(TagCollector):
-
         def visit_with_clause(self, node: WithClauseNode):
             tags = super().visit_with_clause(node)
             tags += TagCollectorResult(ComplexKeywords.CTE)

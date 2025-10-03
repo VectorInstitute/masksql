@@ -10,18 +10,18 @@ class SchemaLinkEval(JsonListProcessor):
 
     def _post_run(self):
         df = pd.DataFrame(self.scores)
-        df['bin'] = (df['score'] == df['total']).astype(int)
-        avg = (df['score'].sum() / df['total'].sum())
-        overall_avg = (df['score'] / df['total']).mean()
-        bin_avg = df['bin'].mean()
+        df["bin"] = (df["score"] == df["total"]).astype(int)
+        avg = df["score"].sum() / df["total"].sum()
+        overall_avg = (df["score"] / df["total"]).mean()
+        bin_avg = df["bin"].mean()
         print(f"Score: {df['score'].sum()}/{df['total'].sum()}")
         print(f"AVG Score: {avg}")
         print(f"Overall AVG Score: {overall_avg}")
         print(f"Binary Score: {bin_avg}")
 
     async def _process_row(self, row):
-        gold = row['gold_schema_links']
-        pred = row['filtered_schema_links']
+        gold = row["gold_schema_links"]
+        pred = row["filtered_schema_links"]
         print("##############################")
         print(f"GOLD: {gold}")
         print("------------------------------")
@@ -34,7 +34,4 @@ class SchemaLinkEval(JsonListProcessor):
             if gk in pred:
                 if pred[gk] == gv:
                     score += 1
-        self.scores.append({
-            'score': score,
-            'total': total
-        })
+        self.scores.append({"score": score, "total": total})

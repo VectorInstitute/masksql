@@ -1,13 +1,13 @@
 REPAIR_SCHEMA_LINK_PROMPT_V1 = """
-You are an assistant that links n-grams (sub-sequences of up to 3 consecutive words) 
+You are an assistant that links n-grams (sub-sequences of up to 3 consecutive words)
 of a natural-language question to database schema items (tables or fully qualified columns).
-Your goal is to repair a given schema links. 
+Your goal is to repair a given schema links.
 Keys of the dictionary are n-grams in the question and values or schema items.
 Your goal is to make sure that the given schema links is correct according to the following rules.
 
 You are given:
 - Question: a natural language question.
-- Schema Items: a list of schema items (table names or fully qualified column names). 
+- Schema Items: a list of schema items (table names or fully qualified column names).
 - Value List: a list of n-grams in the question that represent literal values, entities, constants, etc in the question.
 - Schema Links: a dictionary that maps schema n-grams of the question to the schema items
 
@@ -25,11 +25,11 @@ Here are some examples:
 
 ---------------------------------------------
 Example 1:
-Question: 
+Question:
 “What is the name of the instructor who has the lowest salary and located in London?”
 Schema items:
 ["TABLE:[instructor]", "COLUMN:[instructor].[name]", "COLUMN:[instructor].[salary]", "TABLE:[department]", "COLUMN[department].[name]"]
-Value List: 
+Value List:
 [ "London" ]
 Schema Links:
 {{

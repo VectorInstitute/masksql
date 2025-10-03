@@ -1,10 +1,11 @@
-from dataclasses import dataclass
-from enum import auto
-
 from src.taxonomy.cat.tag_collector import TagCollector
 from src.taxonomy.cat.tag_collector_result import TagCollectorResult
 from src.taxonomy.cat.tags.sql_tag import SqlTag
-from src.taxonomy.parse.node import JoinClauseNode, JoinConstraintNode, BinOpExpressionNode
+from src.taxonomy.parse.node import (
+    BinOpExpressionNode,
+    JoinClauseNode,
+    JoinConstraintNode,
+)
 
 
 class JoinSub(SqlTag):
@@ -22,7 +23,6 @@ class JoinType(SqlTag):
 
     @staticmethod
     class Collector(TagCollector):
-
         def visit_join_clause(self, node: JoinClauseNode):
             tags = super().visit_join_clause(node)
             if all(constr is None for constr in node.constraints):
