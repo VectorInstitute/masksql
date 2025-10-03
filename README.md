@@ -1,73 +1,102 @@
-# AI Engineering template (with uv)
+# MaskSQL
 
-----------------------------------------------------------------------------------------
+# Table of Contents
 
-[![code checks](https://github.com/VectorInstitute/aieng-template-uv/actions/workflows/code_checks.yml/badge.svg)](https://github.com/VectorInstitute/aieng-template-uv/actions/workflows/code_checks.yml)
-[![integration tests](https://github.com/VectorInstitute/aieng-template-uv/actions/workflows/integration_tests.yml/badge.svg)](https://github.com/VectorInstitute/aieng-template-uv/actions/workflows/integration_tests.yml)
-[![docs](https://github.com/VectorInstitute/aieng-template-uv/actions/workflows/docs.yml/badge.svg)](https://github.com/VectorInstitute/aieng-template-uv/actions/workflows/docs.yml)
-[![codecov](https://codecov.io/github/VectorInstitute/aieng-template-uv/graph/badge.svg?token=83MYFZ3UPA)](https://codecov.io/github/VectorInstitute/aieng-template-uv)
-![GitHub License](https://img.shields.io/github/license/VectorInstitute/aieng-template-uv)
+- [Installation](#installation-and-setup-instruction)
+- [Run MaskSQL](#run-masksql)
+- [MaskSql Framework](Framework.md)
+- [MaskSQL Pipeline Stages](Stages.md)
 
-A template repo for AI Engineering projects (using ``python``) and ``uv``. This
-template is like our original AI Engineering [template](https://github.com/VectorInstitute/aieng-template),
-however, unlike how that template uses poetry, this one uses uv for dependency
-management (as well as packaging and publishing).
+## Installation and Setup Instructions
 
-## 🧑🏿‍💻 Developing
+### System Requirements
 
-### Installing dependencies
+python 3.11, virtualenv
 
-The development environment can be set up using
-[uv](https://github.com/astral-sh/uv?tab=readme-ov-file#installation). Hence, make sure it is
-installed and then run:
+You can use pyenv to setup Python 3.11
 
-```bash
-uv sync
+```shell
+pyenv local 3.11
+```
+
+On the Alliance clusters you can run the following command to
+load the Python3.11:
+```shell
+module load StdEnv/2023
+```
+
+### Install Requirements
+
+```shell
+python3.11 -m venv .venv
 source .venv/bin/activate
+pip3 install -r requirements.txt
 ```
 
-In order to install dependencies for testing (codestyle, unit tests, integration tests),
-run:
+### Download Dataset
 
-```bash
-uv sync --dev
+Download [this zip file](https://www.dropbox.com/scl/fi/vtraf79vfi1x105veaflk/data.zip?rlkey=7yq6d46aer6h45pdihrc9rht1&st=zdac3rqx&dl=0")
+and extract it to the `data` directory:
+
+```shell
+wget -O data.zip "https://www.dropbox.com/scl/fi/vtraf79vfi1x105veaflk/data.zip?rlkey=7yq6d46aer6h45pdihrc9rht1&st=zdac3rqx&dl=0"
+unzip data.zip
+```
+
+Your data directory should look like this:
+
+```shell
+data/
+├── databases/
+├── 1_input.json
+.
+.
+.
+```
+
+### Set Environment Variables
+
+```shell
+cp .env.example .env
+```
+
+The only required variable to set is `OPENAI_API_KEY`.
+By default, we are using [OpenRouter](https://openrouter.ai/), so you need to set the api key
+for OpenRouter.
+
+You may also change the `LIMIT` variable to modify the number of entries to be read from the dataset.
+`START` specifies the start index for reading from the dataset.
+
+For instance, set `LIMIT=10` to run the pipeline for a dataset of size 10.
+
+`SLM_MODEL` and `LLM_MODEL` specify the ID of small/large language models to be used in the pipeline.
+These IDs should be set based on the LM provider being used.
+For instance, since we are using OpenRouter, model identifiers should be specified accordingly, e.g.,
+`openai/gpt-4.1` for GPT-4.1.
+
+### Run RESDSQL
+To run MaskSQL, first we need to filter the schema items
+using RESDSQL.
+Follow these [instructions](./Resd.md) to run the RESDSQL
+and generated the file needed for the MaskSQL pipeline.
+Then, you need to run the MaskSQL with the `--resd` option.
+
+### Run MaskSQL
+To run the MaskSQL, first you need to activate the venv and set the environment variables:
+
+```shell
 source .venv/bin/activate
+export $(cat .env | xargs)
+export PYTHONPATH=.
 ```
 
-In order to exclude installation of packages from a specific group (e.g. docs),
-run:
-
-```bash
-uv sync --no-group docs
+Then you can run MaskSQL pipline as follows:
+```shell
+python main.py --resd
 ```
 
-If you're coming from `poetry` then you'll notice that the virtual environment
-is actually stored in the project root folder and is by default named as `.venv`.
-The other important note is that while `poetry` uses a "flat" layout of the project,
-`uv` opts for the the "src" layout. (For more info, see [here](https://packaging.python.org/en/latest/discussions/src-layout-vs-flat-layout/))
-
-### Poetry to UV
-
-The table below provides the `uv` equivalent counterparts for some of the more
-common `poetry` commands.
-
-| Poetry                                               | UV                                          |
-|------------------------------------------------------|---------------------------------------------|
-| `poetry new <project-name>`  # creates new project   | `uv init <project-name>`                    |
-| `poetry install`  # installs existing project        | `uv sync`                                   |
-| `poetry install --with docs,test`                    | `uv sync --group docs --group test`         |
-| `poetry add numpy`                                   | `uv add numpy`                              |
-| `poetry add pytest pytest-asyncio --groups dev`      | `uv add pytest pytest-asyncio --groups dev` |
-| `poetry remove numpy`                                | `uv remove numpy`                           |
-| `poetry lock`                                        | `uv lock`                                   |
-| `poetry run <cmd>`  # runs cmd with the project venv | `uv run <cmd>`                              |
-| `poetry build`                                       | `uv build`                                  |
-| `poetry publish`                                     | `uv publish`                                |
-| `poetry cache clear pypi --all`                      | `uv cache clean`                            |
-
-For the full list of `uv` commands, you can visit the official [docs](https://docs.astral.sh/uv/reference/cli/#uv).
-
-### Tidbit
-
-If you're curious about what "uv" stands for, it appears to have been more or
-less chosen [randomly](https://github.com/astral-sh/uv/issues/1349#issuecomment-1986451785).
+MaskSQL saves the intermediate results to files for later user.
+So, in order to run the pipeline from scratch you need to clean the data directory:
+```shell
+./clean.sh data
+```
