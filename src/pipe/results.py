@@ -30,7 +30,7 @@ class Results(JsonListTransformer):
         #     print(sum(self.recall_scores) / len(self.recall_scores))
 
     async def _process_row(self, row: Dict) -> Dict:
-        stat = dict()
+        stat = {}
         if "eval" in row:
             ea = row["eval"]["acc"]
             stat["EA"] = ea

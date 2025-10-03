@@ -130,7 +130,7 @@ def get_matched_entries(
     else:
         n_grams = s
 
-    matched = dict()
+    matched = {}
     for field_value in field_values:
         if not isinstance(field_value, str):
             continue

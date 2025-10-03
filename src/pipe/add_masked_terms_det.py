@@ -88,7 +88,7 @@ class AddMaskedTermsDeterministic(JsonListTransformer):
 
     async def _process_row(self, row):
         self.vid = 1
-        self.value_dict = dict()
+        self.value_dict = {}
         filtered_schema_links = row["filtered_schema_links"]
         schema_links = row["schema_links"]
         question = row["question"]
@@ -106,13 +106,13 @@ class AddMaskedTermsDeterministic(JsonListTransformer):
 
         if isinstance(value_links, list) or isinstance(value_links, str):
             logger.error(f"Invalid value links: {value_links}")
-            value_links = dict()
+            value_links = {}
 
         if isinstance(filtered_value_links, list) or isinstance(
             filtered_value_links, str
         ):
             logger.error(f"Invalid value links: {filtered_value_links}")
-            filtered_value_links = dict()
+            filtered_value_links = {}
 
         for question_term, schema_item in value_links.items():
             try:

@@ -17,8 +17,8 @@ class AddSymbolTable(JsonListTransformer):
         schema = DatabaseSchema.from_yaml(row["schema"])
         tid = 1
         cid = 1
-        symbol_table = dict()
-        rev_table = dict()
+        symbol_table = {}
+        rev_table = {}
         for table_name, columns in schema.tables.items():
             table_symbol = self.table_symbol(tid)
             tid += 1
@@ -43,7 +43,7 @@ class AddValueSymbolTable(JsonListTransformer):
         vid = 1
         value_links = row["value_links"]
         symbol_table = row["symbolic"]["to_symbol"]
-        to_value = dict()
+        to_value = {}
         for value in value_links.keys():
             symbol = f"[V{vid}]"
             symbol_table[value] = symbol

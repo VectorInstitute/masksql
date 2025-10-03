@@ -90,7 +90,7 @@ if __name__ == "__main__":
         opt.save_path = save_path + "/{}".format(ckpt_name)
         em, exec = _test(opt)
 
-        eval_result = dict()
+        eval_result = {}
         eval_result["ckpt"] = opt.save_path
         eval_result["EM"] = em
         eval_result["EXEC"] = exec

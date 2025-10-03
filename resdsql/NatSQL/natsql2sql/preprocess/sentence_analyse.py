@@ -547,7 +547,7 @@ def reshap_token(token_list):
         reshap_list.extend([tl[1]] * (tl[0].text.count(" ") + 1))
     set_reshap_list = list(set(reshap_list))
     set_reshap_list.sort()
-    new_v = dict()
+    new_v = {}
     if -1 in set_reshap_list:
         for idx_l, val in zip(set_reshap_list, range(len(set_reshap_list))):
             new_v[idx_l] = val

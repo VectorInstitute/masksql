@@ -14,7 +14,7 @@ def compute_test_suite_metric(
 ) -> Dict[str, Any]:
     if db_dir is None:
         db_dir = references[0]["db_path"]
-    foreign_key_maps = dict()
+    foreign_key_maps = {}
     for reference in references:
         if reference["db_id"] not in foreign_key_maps:
             foreign_key_maps[reference["db_id"]] = (

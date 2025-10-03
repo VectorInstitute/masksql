@@ -4,8 +4,8 @@ from src.pipe.processor.list_transformer import JsonListTransformer
 class AddValueLinksFromSchemaLinks(JsonListTransformer):
     async def _process_row(self, row):
         schema_links = row["schema_links"]
-        value_links = dict()
-        updated_schema_links = dict()
+        value_links = {}
+        updated_schema_links = {}
         for q_term, item in schema_links.items():
             if "VALUE:" in item:
                 item = item.replace("VALUE:", "")

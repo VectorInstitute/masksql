@@ -23,7 +23,7 @@ class Schema_Token:
                     )
                 else:
                     self.original_table["tc_fast"].append("*")
-        self.original_table["tc_fast_st"] = dict()
+        self.original_table["tc_fast_st"] = {}
         for tctc in self.original_table["table_names_original"]:
             self.original_table["tc_fast_st"][tctc.lower()] = []
         for tctc in self.original_table["column_names"]:
@@ -64,7 +64,7 @@ class Schema_Token:
 
         self.primaryKey = table_dict["primary_keys"]
         self.foreignKey = list(set([j for i in table_dict["foreign_keys"] for j in i]))
-        self.foreignKeyDict = dict()
+        self.foreignKeyDict = {}
         for fk in table_dict["foreign_keys"]:
             if fk[0] not in self.foreignKeyDict.keys():
                 self.foreignKeyDict[fk[0]] = [fk[1]]

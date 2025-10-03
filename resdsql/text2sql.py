@@ -297,7 +297,7 @@ def _test(opt):
 
     if opt.target_type == "natsql":
         tables = json.load(open(opt.tables_for_natsql, "r"))
-        table_dict = dict()
+        table_dict = {}
         for t in tables:
             table_dict[t["db_id"]] = t
 

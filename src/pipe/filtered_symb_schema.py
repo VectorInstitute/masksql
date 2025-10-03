@@ -104,7 +104,7 @@ class AddFilteredSymbolicSchema(JsonListTransformer):
         symbolic_schema = DatabaseSchema()
 
         for table_name, columns in list(schema.tables.items()):
-            symbolic_columns = dict()
+            symbolic_columns = {}
             for col_name, col_data in columns.items():
                 col_symbol = self.get_col_symbol(
                     table_name, col_name, col_refs, symbol_table
@@ -120,7 +120,7 @@ class AddFilteredSymbolicSchema(JsonListTransformer):
     def get_reverse_dict(
         self, tables: Set[str], col_refs: Set[str], symbol_table: Dict[str, str]
     ) -> Dict[str, str]:
-        reverse_dict = dict()
+        reverse_dict = {}
         for table in tables:
             if table not in symbol_table:
                 logger.error(
