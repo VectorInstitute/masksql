@@ -1,3 +1,5 @@
+#!/bin/sh
+
 set -euo pipefail
 
 for d in eval_results models tensorboard_log third_party predictions; do

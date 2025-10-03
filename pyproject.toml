@@ -1,13 +1,37 @@
 [project]
-name = "aieng-template-uv"
+name = "masksql"
 version = "0.1.0"
-description = "Add your description here"
+description = "MaskSQL: Safeguarding Privacy for LLM-Based Text-to-SQL via Abstraction"
 readme = "README.md"
 authors = [ {name = "Vector AI Engineering", email = "ai_engineering@vectorinstitute.ai"}]
 license = "Apache-2.0"
-repository = "https://github.com/VectorInstitute/aieng-template-uv"
-requires-python = ">=3.12"
-dependencies = []
+repository = "https://github.com/VectorInstitute/masksql"
+requires-python = ">=3.11"
+dependencies = [
+    "absl-py>=2.3.1",
+    "dotenv>=0.9.9",
+    "func-timeout>=4.3.5",
+    "hf-xet>=1.1.5",
+    "huggingface-hub>=0.33.2",
+    "loguru>=0.7.3",
+    "matplotlib>=3.7.5",
+    "natsort>=8.4.0",
+    "nltk>=3.9.1",
+    "numpy>=1.24.4,<2.0.0",
+    "openai>=1.93.0",
+    "pandas>=2.2.3",
+    "protobuf>=3.20.3",
+    "psutil>=7.0.0",
+    "pydantic>=2.10.6",
+    "pyyaml>=6.0.2",
+    "rapidfuzz>=3.9.7",
+    "requests>=2.32.4",
+    "seaborn>=0.13.2",
+    "sql-metadata>=2.15.0",
+    "sqlparse>=0.5.3",
+    "tokenizers>=0.13.3",
+    "tqdm>=4.67.1",
+]
 
 [build-system]
 requires = ["hatchling"]

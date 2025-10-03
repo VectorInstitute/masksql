@@ -11,26 +11,13 @@
 
 ### System Requirements
 
-python 3.11, virtualenv
+The development environment (tested on python 3.11) can be set up using
+[uv](https://github.com/astral-sh/uv?tab=readme-ov-file#installation). Hence, make sure it is
+installed and then run:
 
-You can use pyenv to setup Python 3.11
-
-```shell
-pyenv local 3.11
-```
-
-On the Alliance clusters you can run the following command to
-load the Python3.11:
-```shell
-module load StdEnv/2023
-```
-
-### Install Requirements
-
-```shell
-python3.11 -m venv .venv
+```sh
+uv sync --dev
 source .venv/bin/activate
-pip3 install -r requirements.txt
 ```
 
 ### Download Dataset
@@ -38,14 +25,14 @@ pip3 install -r requirements.txt
 Download [this zip file](https://www.dropbox.com/scl/fi/vtraf79vfi1x105veaflk/data.zip?rlkey=7yq6d46aer6h45pdihrc9rht1&st=zdac3rqx&dl=0")
 and extract it to the `data` directory:
 
-```shell
+```sh
 wget -O data.zip "https://www.dropbox.com/scl/fi/vtraf79vfi1x105veaflk/data.zip?rlkey=7yq6d46aer6h45pdihrc9rht1&st=zdac3rqx&dl=0"
 unzip data.zip
 ```
 
 Your data directory should look like this:
 
-```shell
+```sh
 data/
 ├── databases/
 ├── 1_input.json
@@ -56,7 +43,7 @@ data/
 
 ### Set Environment Variables
 
-```shell
+```sh
 cp .env.example .env
 ```
 
@@ -82,21 +69,14 @@ and generated the file needed for the MaskSQL pipeline.
 Then, you need to run the MaskSQL with the `--resd` option.
 
 ### Run MaskSQL
-To run the MaskSQL, first you need to activate the venv and set the environment variables:
-
-```shell
-source .venv/bin/activate
-export $(cat .env | xargs)
-export PYTHONPATH=.
-```
 
 Then you can run MaskSQL pipline as follows:
-```shell
-python main.py --resd
+```sh
+python3 main.py --resd
 ```
 
 MaskSQL saves the intermediate results to files for later user.
 So, in order to run the pipeline from scratch you need to clean the data directory:
-```shell
+```sh
 ./clean.sh data
 ```
