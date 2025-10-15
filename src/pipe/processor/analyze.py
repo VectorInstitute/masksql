@@ -1,8 +1,12 @@
+"""SQL query result analysis utilities."""
+
 from src.pipe.processor.list_processor import JsonListProcessor
 from src.taxonomy.cat.catter import Catter
 
 
 class AnalyzeResults(JsonListProcessor):
+    """Analyze and categorize SQL query results."""
+
     def __init__(self):
         super().__init__()
         self.catter = Catter()
@@ -11,7 +15,7 @@ class AnalyzeResults(JsonListProcessor):
         print("done")
 
     async def _process_row(self, row):
-        sql = row['query']
+        sql = row["query"]
         cat = self.catter.get_category(sql)
         sub = self.catter.get_sub_category(sql)
         print(f"{cat}:{sub}")

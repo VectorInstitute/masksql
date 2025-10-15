@@ -1,3 +1,5 @@
+"""LLM-based schema ranking."""
+
 from src.pipe.detect_values_prompts.prompt_processor import PromptProcessor
 from src.pipe.llm_util import extract_object
 from src.pipe.rank_schema_prompts.v1 import RANK_SCHEMA_ITEMS_V1
@@ -5,6 +7,19 @@ from src.pipe.schema_repo import DatabaseSchemaRepo
 
 
 class RankSchemaItems(PromptProcessor):
+    """
+    Rank schema items using language model.
+
+    Parameters
+    ----------
+    prop_name : str
+        Property name for output
+    tables_path : str
+        Path to tables JSON file
+    model : str
+        Model identifier to use
+    """
+
     def __init__(self, prop_name, tables_path, model):
         super().__init__(prop_name, model=model)
         self.schema_repo = DatabaseSchemaRepo(tables_path)
@@ -13,7 +28,20 @@ class RankSchemaItems(PromptProcessor):
         return extract_object(output)
 
     def extract_schema_items(self, row):
-        db_id = row['db_id']
+        """
+        Extract all schema items from database.
+
+        Parameters
+        ----------
+        row : dict
+            Data row with database ID
+
+        Returns
+        -------
+        list
+            List of schema item strings
+        """
+        db_id = row["db_id"]
         schema = self.schema_repo.dbs[db_id]
         schema_items = []
 
@@ -24,6 +52,6 @@ class RankSchemaItems(PromptProcessor):
         return schema_items
 
     def _get_prompt(self, row):
-        question = row['question']
+        question = row["question"]
         schema_items = self.extract_schema_items(row)
         return RANK_SCHEMA_ITEMS_V1.format(question=question, schema_items=schema_items)

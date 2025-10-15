@@ -1,3 +1,5 @@
+"""Pipeline execution and management."""
+
 from typing import List
 
 from src.pipe.monitor.lib import Timer
@@ -6,6 +8,15 @@ from src.pipe.processor.list_processor import JsonListProcessor
 
 
 class Pipeline:
+    """
+    Pipeline for sequential execution of processing stages.
+
+    Parameters
+    ----------
+    stages : List[JsonListProcessor]
+        List of processing stages to execute in order
+    """
+
     def __init__(self, stages: List[JsonListProcessor]):
         self.stages = stages
 
@@ -20,6 +31,19 @@ class Pipeline:
         return tmp_file
 
     async def run(self, input_file):
+        """
+        Execute pipeline on input file.
+
+        Parameters
+        ----------
+        input_file : str
+            Path to input data file
+
+        Returns
+        -------
+        str
+            Path to final output file
+        """
         timer = Timer.start()
         _, avg_mem, peak_mem = await track_memory_async(self.__run_internal, input_file)
         total_time = timer.lap()

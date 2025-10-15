@@ -1,13 +1,15 @@
+"""Value filtering prompt template version 2."""
+
 FILTER_SCHEMA_LINKS_PROMPT_V2 = """
 You are an assistant that filters a given dictionary to retain items that are related to a set of concepts.
 
 You are given:
 	1.	A natural language question.
-	2.	A mapping (SchemaLinks) from n-grams in the question to relevant table or column names 
+	2.	A mapping (SchemaLinks) from n-grams in the question to relevant table or column names
 	in a database schema.
 
 Goal:
-Return a filtered JSON object that contains only those key-value pairs from SchemaLinks that are 
+Return a filtered JSON object that contains only those key-value pairs from SchemaLinks that are
 related to at least one the following concepts:
 {concepts}
 

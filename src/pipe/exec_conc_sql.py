@@ -1,3 +1,5 @@
+"""Concurrent SQL execution utilities."""
+
 from loguru import logger
 
 from src.pipe.processor.list_transformer import JsonListTransformer
@@ -5,6 +7,18 @@ from src.pipe.sqlite_facade import SqliteFacade
 
 
 class ExecuteConcreteSql(JsonListTransformer):
+    """
+    Execute concrete SQL queries and compare results with gold standard.
+
+    Executes generated concrete SQL queries against the database and compares
+    their results with expected gold standard query results.
+
+    Parameters
+    ----------
+    database_dir : str
+        Directory containing SQLite database files
+    """
+
     async def _process_row(self, row):
         result = await self.get_exec_acc(row)
         return result
@@ -14,9 +28,22 @@ class ExecuteConcreteSql(JsonListTransformer):
         self.dbf = SqliteFacade(database_dir)
 
     async def get_exec_acc(self, row):
-        gold = row['query']
-        pred = row['concrete_sql']
-        db_id = row['db_id']
+        """
+        Calculate execution accuracy for a row.
+
+        Parameters
+        ----------
+        row : dict
+            Data row with query, concrete_sql, and db_id
+
+        Returns
+        -------
+        dict
+            Row with pre_eval results added
+        """
+        gold = row["query"]
+        pred = row["concrete_sql"]
+        db_id = row["db_id"]
         try:
             gold_res, _ = self.dbf.exec_query_sync(db_id, gold)
             pred_res, pred_err = self.dbf.exec_query_sync(db_id, pred)
@@ -25,21 +52,20 @@ class ExecuteConcreteSql(JsonListTransformer):
             else:
                 acc = 0
             if pred_res is not None and len(pred_res) > 5:
-                logger.debug(f"Pred results was limited: original size = {len(pred_res)}")
+                logger.debug(
+                    f"Pred results was limited: original size = {len(pred_res)}"
+                )
                 pred_res = pred_res[:5]
             if pred_err is None:
                 pred_err = ""
             # if pred_err is not None:
             #     err = pred_err
             # elif acc == 0:
-            #     err = "The predicted SQL is executable but the execution result is different from the gold execution result"
+            #     err = "The predicted SQL is executable but the execution result is
+            #           different from the gold execution result"
             # else:
             #     err = None
-            row["pre_eval"] = {
-                "acc": acc,
-                "err": pred_err,
-                "pred_res": pred_res
-            }
+            row["pre_eval"] = {"acc": acc, "err": pred_err, "pred_res": pred_res}
             return row
         except Exception as e:
             print(e)
@@ -55,7 +81,8 @@ class ExecuteConcreteSql(JsonListTransformer):
     #         in_data = json.load(f)
     #
     #     output_rows = []
-    #     for i, row in enumerate(tqdm.tqdm(in_data, desc=self.name, total=len(in_data))):
+    #     for i, row in enumerate(
+    #         tqdm.tqdm(in_data, desc=self.name, total=len(in_data))):
     #         exec_acc = await self.get_exec_acc(row)
     #         row['exec_acc'] = exec_acc
     #         if exec_acc == 0:

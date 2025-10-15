@@ -2,19 +2,14 @@ import os
 
 import torch
 
-device = torch.device(os.environ.get("TORCH_DEVICE"))
-import torch.nn as nn
 
+device = torch.device(os.environ.get("TORCH_DEVICE"))
+from torch import nn
 from transformers import AutoConfig, RobertaModel, XLMRobertaModel
 
 
 class MyClassifier(nn.Module):
-    def __init__(
-            self,
-            model_name_or_path,
-            vocab_size,
-            mode
-    ):
+    def __init__(self, model_name_or_path, vocab_size, mode):
         super(MyClassifier, self).__init__()
         model_class = XLMRobertaModel if "xlm" in model_name_or_path else RobertaModel
         if mode in ["eval", "test"]:
@@ -24,10 +19,12 @@ class MyClassifier(nn.Module):
             print(torch.cuda.is_available())
             self.plm_encoder = model_class(config).to(device)
         elif mode == "train":
-            self.plm_encoder = model_class.from_pretrained(model_name_or_path).to(device)
+            self.plm_encoder = model_class.from_pretrained(model_name_or_path).to(
+                device
+            )
             self.plm_encoder.resize_token_embeddings(vocab_size)
         else:
-            raise ValueError()
+            raise ValueError
 
         # column cls head
         self.column_info_cls_head_linear1 = nn.Linear(1024, 256).to(device)
@@ -39,7 +36,7 @@ class MyClassifier(nn.Module):
             hidden_size=512,
             num_layers=2,
             dropout=0,
-            bidirectional=True
+            bidirectional=True,
         ).to(device)
 
         # linear layer after column bi-lstm layer
@@ -55,7 +52,7 @@ class MyClassifier(nn.Module):
             hidden_size=512,
             num_layers=2,
             dropout=0,
-            bidirectional=True
+            bidirectional=True,
         ).to(device)
         # linear layer after table bi-lstm layer
         self.table_name_linear_after_pooling = nn.Linear(1024, 1024).to(device)
@@ -65,56 +62,64 @@ class MyClassifier(nn.Module):
         self.tanh = nn.Tanh()
 
         # table-column cross-attention layer
-        self.table_column_cross_attention_layer = nn.MultiheadAttention(embed_dim=1024, num_heads=8).to(device)
+        self.table_column_cross_attention_layer = nn.MultiheadAttention(
+            embed_dim=1024, num_heads=8
+        ).to(device)
 
         # dropout function, p=0.2 means randomly set 20% neurons to 0
         self.dropout = nn.Dropout(p=0.2).to(device)
 
     def table_column_cross_attention(
-            self,
-            table_name_embeddings_in_one_db,
-            column_info_embeddings_in_one_db,
-            column_number_in_each_table
+        self,
+        table_name_embeddings_in_one_db,
+        column_info_embeddings_in_one_db,
+        column_number_in_each_table,
     ):
         table_num = table_name_embeddings_in_one_db.shape[0]
         table_name_embedding_attn_list = []
         for table_id in range(table_num):
             table_name_embedding = table_name_embeddings_in_one_db[[table_id], :]
             column_info_embeddings_in_one_table = column_info_embeddings_in_one_db[
-                                                  sum(column_number_in_each_table[:table_id]): sum(
-                                                      column_number_in_each_table[:table_id + 1]), :]
+                sum(column_number_in_each_table[:table_id]) : sum(
+                    column_number_in_each_table[: table_id + 1]
+                ),
+                :,
+            ]
 
             table_name_embedding_attn, _ = self.table_column_cross_attention_layer(
                 table_name_embedding,
                 column_info_embeddings_in_one_table,
-                column_info_embeddings_in_one_table
+                column_info_embeddings_in_one_table,
             )
 
             table_name_embedding_attn_list.append(table_name_embedding_attn)
 
         # residual connection
-        table_name_embeddings_in_one_db = table_name_embeddings_in_one_db + torch.cat(table_name_embedding_attn_list,
-                                                                                      dim=0)
+        table_name_embeddings_in_one_db = table_name_embeddings_in_one_db + torch.cat(
+            table_name_embedding_attn_list, dim=0
+        )
         # row-wise L2 norm
-        table_name_embeddings_in_one_db = torch.nn.functional.normalize(table_name_embeddings_in_one_db, p=2.0, dim=1)
+        table_name_embeddings_in_one_db = torch.nn.functional.normalize(
+            table_name_embeddings_in_one_db, p=2.0, dim=1
+        )
 
         return table_name_embeddings_in_one_db
 
     def table_column_cls(
-            self,
-            encoder_input_ids,
-            encoder_input_attention_mask,
-            batch_aligned_question_ids,
-            batch_aligned_column_info_ids,
-            batch_aligned_table_name_ids,
-            batch_column_number_in_each_table
+        self,
+        encoder_input_ids,
+        encoder_input_attention_mask,
+        batch_aligned_question_ids,
+        batch_aligned_column_info_ids,
+        batch_aligned_table_name_ids,
+        batch_column_number_in_each_table,
     ):
         batch_size = encoder_input_ids.shape[0]
 
         encoder_output = self.plm_encoder(
             input_ids=encoder_input_ids,
             attention_mask=encoder_input_attention_mask,
-            return_dict=True
+            return_dict=True,
         )  # encoder_output["last_hidden_state"].shape = (batch_size x seq_length x hidden_size)
 
         batch_table_name_cls_logits, batch_column_info_cls_logits = [], []
@@ -122,11 +127,14 @@ class MyClassifier(nn.Module):
         # handle each data in current batch
         for batch_id in range(batch_size):
             column_number_in_each_table = batch_column_number_in_each_table[batch_id]
-            sequence_embeddings = encoder_output["last_hidden_state"][batch_id, :, :].to(
-                device)  # (seq_length x hidden_size)
+            sequence_embeddings = encoder_output["last_hidden_state"][
+                batch_id, :, :
+            ].to(device)  # (seq_length x hidden_size)
 
             # obtain the embeddings of tokens in the question
-            question_token_embeddings = sequence_embeddings[batch_aligned_question_ids[batch_id], :]
+            question_token_embeddings = sequence_embeddings[
+                batch_aligned_question_ids[batch_id], :
+            ]
 
             # obtain table ids for each table
             aligned_table_name_ids = batch_aligned_table_name_ids[batch_id]
@@ -140,43 +148,65 @@ class MyClassifier(nn.Module):
                 table_name_embeddings = sequence_embeddings[table_name_ids, :]
 
                 # BiLSTM pooling
-                output_t, (hidden_state_t, cell_state_t) = self.table_name_bilstm(table_name_embeddings)
+                output_t, (hidden_state_t, cell_state_t) = self.table_name_bilstm(
+                    table_name_embeddings
+                )
                 table_name_embedding = hidden_state_t[-2:, :].view(1, 1024)
                 table_name_embedding_list.append(table_name_embedding)
-            table_name_embeddings_in_one_db = torch.cat(table_name_embedding_list, dim=0)
+            table_name_embeddings_in_one_db = torch.cat(
+                table_name_embedding_list, dim=0
+            )
             # non-linear mlp layer
             table_name_embeddings_in_one_db = self.leakyrelu(
-                self.table_name_linear_after_pooling(table_name_embeddings_in_one_db))
+                self.table_name_linear_after_pooling(table_name_embeddings_in_one_db)
+            )
 
             # obtain column embedding via bi-lstm pooling + a non-linear layer
             for column_info_ids in aligned_column_info_ids:
                 column_info_embeddings = sequence_embeddings[column_info_ids, :]
 
                 # BiLSTM pooling
-                output_c, (hidden_state_c, cell_state_c) = self.column_info_bilstm(column_info_embeddings)
+                output_c, (hidden_state_c, cell_state_c) = self.column_info_bilstm(
+                    column_info_embeddings
+                )
                 column_info_embedding = hidden_state_c[-2:, :].view(1, 1024)
                 column_info_embedding_list.append(column_info_embedding)
-            column_info_embeddings_in_one_db = torch.cat(column_info_embedding_list, dim=0)
+            column_info_embeddings_in_one_db = torch.cat(
+                column_info_embedding_list, dim=0
+            )
             # non-linear mlp layer
             column_info_embeddings_in_one_db = self.leakyrelu(
-                self.column_info_linear_after_pooling(column_info_embeddings_in_one_db))
+                self.column_info_linear_after_pooling(column_info_embeddings_in_one_db)
+            )
 
             # table-column (tc) cross-attention
             table_name_embeddings_in_one_db = self.table_column_cross_attention(
                 table_name_embeddings_in_one_db,
                 column_info_embeddings_in_one_db,
-                column_number_in_each_table
+                column_number_in_each_table,
             )
 
             # calculate table 0-1 logits
-            table_name_embeddings_in_one_db = self.table_name_cls_head_linear1(table_name_embeddings_in_one_db)
-            table_name_embeddings_in_one_db = self.dropout(self.leakyrelu(table_name_embeddings_in_one_db))
-            table_name_cls_logits = self.table_name_cls_head_linear2(table_name_embeddings_in_one_db)
+            table_name_embeddings_in_one_db = self.table_name_cls_head_linear1(
+                table_name_embeddings_in_one_db
+            )
+            table_name_embeddings_in_one_db = self.dropout(
+                self.leakyrelu(table_name_embeddings_in_one_db)
+            )
+            table_name_cls_logits = self.table_name_cls_head_linear2(
+                table_name_embeddings_in_one_db
+            )
 
             # calculate column 0-1 logits
-            column_info_embeddings_in_one_db = self.column_info_cls_head_linear1(column_info_embeddings_in_one_db)
-            column_info_embeddings_in_one_db = self.dropout(self.leakyrelu(column_info_embeddings_in_one_db))
-            column_info_cls_logits = self.column_info_cls_head_linear2(column_info_embeddings_in_one_db)
+            column_info_embeddings_in_one_db = self.column_info_cls_head_linear1(
+                column_info_embeddings_in_one_db
+            )
+            column_info_embeddings_in_one_db = self.dropout(
+                self.leakyrelu(column_info_embeddings_in_one_db)
+            )
+            column_info_cls_logits = self.column_info_cls_head_linear2(
+                column_info_embeddings_in_one_db
+            )
 
             batch_table_name_cls_logits.append(table_name_cls_logits)
             batch_column_info_cls_logits.append(column_info_cls_logits)
@@ -184,13 +214,13 @@ class MyClassifier(nn.Module):
         return batch_table_name_cls_logits, batch_column_info_cls_logits
 
     def forward(
-            self,
-            encoder_input_ids,
-            encoder_attention_mask,
-            batch_aligned_question_ids,
-            batch_aligned_column_info_ids,
-            batch_aligned_table_name_ids,
-            batch_column_number_in_each_table,
+        self,
+        encoder_input_ids,
+        encoder_attention_mask,
+        batch_aligned_question_ids,
+        batch_aligned_column_info_ids,
+        batch_aligned_table_name_ids,
+        batch_column_number_in_each_table,
     ):
         encoder_input_ids = encoder_input_ids.to(device)
         encoder_attention_mask = encoder_attention_mask.to(device)
@@ -202,19 +232,22 @@ class MyClassifier(nn.Module):
         if isinstance(batch_aligned_table_name_ids, torch.Tensor):
             batch_aligned_table_name_ids = batch_aligned_table_name_ids.to(device)
         if isinstance(batch_column_number_in_each_table, torch.Tensor):
-            batch_column_number_in_each_table = batch_column_number_in_each_table.to(device)
+            batch_column_number_in_each_table = batch_column_number_in_each_table.to(
+                device
+            )
 
-        batch_table_name_cls_logits, batch_column_info_cls_logits \
-            = self.table_column_cls(
-            encoder_input_ids,
-            encoder_attention_mask,
-            batch_aligned_question_ids,
-            batch_aligned_column_info_ids,
-            batch_aligned_table_name_ids,
-            batch_column_number_in_each_table
+        batch_table_name_cls_logits, batch_column_info_cls_logits = (
+            self.table_column_cls(
+                encoder_input_ids,
+                encoder_attention_mask,
+                batch_aligned_question_ids,
+                batch_aligned_column_info_ids,
+                batch_aligned_table_name_ids,
+                batch_column_number_in_each_table,
+            )
         )
 
         return {
             "batch_table_name_cls_logits": batch_table_name_cls_logits,
-            "batch_column_info_cls_logits": batch_column_info_cls_logits
+            "batch_column_info_cls_logits": batch_column_info_cls_logits,
         }

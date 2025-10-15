@@ -1,3 +1,5 @@
+"""SQL repair prompt template version 2."""
+
 REPAIR_SQL_PROMPT_V2 = """
 You are a SQL repair assistant. Given a natural language question, a database schema, and a candidate SQL query,
 repair the given SQL and fix any errors to make it a valid SQL query that can be executed on the given database schema.

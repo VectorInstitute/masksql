@@ -1,7 +1,11 @@
+"""SQL generation evaluation processor."""
+
 from src.pipe.processor.list_processor import JsonListProcessor
 
 
 class GenSqlEval(JsonListProcessor):
+    """Evaluate SQL generation accuracy and masking coverage."""
+
     def __init__(self):
         super().__init__()
         self.total = 0
@@ -14,5 +18,5 @@ class GenSqlEval(JsonListProcessor):
 
     async def _process_row(self, row):
         self.total += 1
-        self.score += row['pre_eval']['acc']
-        self.masked += row['symbolic']['masked']
+        self.score += row["pre_eval"]["acc"]
+        self.masked += row["symbolic"]["masked"]

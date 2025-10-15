@@ -1,15 +1,32 @@
+"""Schema linking score calculation."""
+
 from src.pipe.processor.printer import DataPrinter
 
 
 def similar(a: str, b: str) -> bool:
+    """
+    Check if two strings are similar after normalization.
+
+    Parameters
+    ----------
+    a : str
+        First string
+    b : str
+        Second string
+
+    Returns
+    -------
+    bool
+        True if strings match after lowercasing and stripping
+    """
     a = a.strip().lower()
     b = b.strip().lower()
-    if a == b:
-        return True
-    return False
+    return a == b
 
 
 class SchemaLinkScore(DataPrinter):
+    """Calculate schema linking coverage scores."""
+
     def __init__(self):
         super().__init__()
         self.sum = 0
@@ -24,9 +41,9 @@ class SchemaLinkScore(DataPrinter):
         print(f"Mask Score: {self.score / self.count}")
 
     async def _process_row(self, row):
-        gold_links = row['gold_links']
-        pred_links = row['filtered_schema_links']
-        pred_values = row['filtered_value_links']
+        gold_links = row["gold_links"]
+        pred_links = row["filtered_schema_links"]
+        pred_values = row["filtered_value_links"]
         pred_keys = list(pred_links.keys()) + list(pred_values.keys())
 
         covered = 0

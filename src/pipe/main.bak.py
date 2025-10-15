@@ -1,3 +1,5 @@
+"""Backup of main pipeline script."""
+
 import asyncio
 import os
 import sys
@@ -22,6 +24,7 @@ from src.pipe.symb_table import AddSymbolTable
 from src.pipe.unmask import AddConcreteSql
 from src.pipe.value_links import LinkValues
 from src.pipe.wrong_exec_acc import ExecuteConcreteSql
+
 
 LLM_MODEL = os.getenv("LLM_MODEL")
 LINK_MODEL = os.getenv("LINK_MODEL")
@@ -50,39 +53,44 @@ mask_pipe = [
     AddSymbolTable(tables_path),
     DetectValues("values", model=SLM_MODEL),
     LinkValues("value_links", model=SLM_MODEL),
-
     CopyTransformer("value_links", "filtered_value_links"),
     # FilterValueLinks("filtered_value_links", model=SLM_MODEL),
-
     LinkSchema("schema_links", model=SLM_MODEL),
     CopyTransformer("schema_links", "filtered_schema_links"),
     # FilterSchemaLinks("filtered_schema_links", model=SLM_MODEL),
-
     # AddFilteredSymbolicSchema("symbolic", tables_path),
     AddSymbolicSchema("symbolic", tables_path),
     AddSymbolicQuestion(),
     GenerateSymbolicSql("symbolic", model=LLM_MODEL),
-    RepairSymbolicSQL('symbolic', model=LLM_MODEL),
+    RepairSymbolicSQL("symbolic", model=LLM_MODEL),
     AddConcreteSql(),
     ExecuteConcreteSql(database_path),
-    RepairSQL('pred_sql', model=REPAIR_MODEL),
+    RepairSQL("pred_sql", model=REPAIR_MODEL),
     # CopyTransformer("pred_sql", "concrete_sql"),
     CalcExecAcc(database_path),
-    # PrintProps(["schema", "query","symbolic.question", "pred_sql", "concrete_sql", "symbolic.sql", "question", "pre_eval.err", "eval.acc",
+    # PrintProps(["schema", "query","symbolic.question", "pred_sql",
+    #             "concrete_sql", "symbolic.sql", "question", "pre_eval.err",
+    #             "eval.acc",
     #             "eval.pred_err",
     #             "pre_eval.pred_res"]),
     # AnalyzeResults()
-    PrintResults()
+    PrintResults(),
 ]
 
 
 async def main():
+    """Execute backup pipeline processing."""
     try:
         logger.remove(0)
     except Exception:
         pass
-    logger.add(sys.stderr, level=LOG_LEVEL, colorize=True, enqueue=True,
-               format="<green>{time:HH:mm:ss}[{process.id}] | </green><level> {level}: {message}</level>")
+    logger.add(
+        sys.stderr,
+        level=LOG_LEVEL,
+        colorize=True,
+        enqueue=True,
+        format="<green>{time:HH:mm:ss}[{process.id}] | </green><level> {level}: {message}</level>",
+    )
 
     # pipeline = Pipeline(value_link_eval)
     # pipeline = Pipeline(schema_link_eval)
@@ -99,5 +107,5 @@ async def main():
     print("REPAIR MODEL:", REPAIR_MODEL)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     asyncio.run(main())

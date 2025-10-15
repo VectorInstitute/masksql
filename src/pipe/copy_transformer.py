@@ -1,3 +1,5 @@
+"""Transformers for copying and modifying data fields."""
+
 import json
 import os
 
@@ -5,6 +7,16 @@ from src.pipe.processor.list_transformer import JsonListTransformer
 
 
 class CopyTransformer(JsonListTransformer):
+    """
+    Transformer for copying values from one field to another.
+
+    Parameters
+    ----------
+    src : str
+        Source field path.
+    dst : str
+        Destination field path.
+    """
 
     def __init__(self, src, dst):
         super().__init__(force=True)
@@ -16,7 +28,17 @@ class CopyTransformer(JsonListTransformer):
         self.set_prop(row, self.dst, src_value)
         return row
 
+
 class DeleteProp(JsonListTransformer):
+    """
+    Transformer for deleting a property from data rows.
+
+    Parameters
+    ----------
+    prop : str
+        Property name to delete.
+    """
+
     def __init__(self, prop):
         super().__init__(force=True)
         self.prop = prop
@@ -26,9 +48,17 @@ class DeleteProp(JsonListTransformer):
         return row
 
 
-
-
 class CopyFromPrevStage(JsonListTransformer):
+    """
+    Transformer for copying values from a previous pipeline stage.
+
+    Parameters
+    ----------
+    stage : str
+        Name of the previous stage to copy from.
+    src : str
+        Source field to copy.
+    """
 
     def __init__(self, stage, src):
         super().__init__(force=True)
@@ -36,11 +66,37 @@ class CopyFromPrevStage(JsonListTransformer):
         self.src = src
 
     def get_prev_stage(self, input_file):
+        """
+        Load data from previous pipeline stage.
+
+        Parameters
+        ----------
+        input_file : str
+            Path to current input file
+
+        Returns
+        -------
+        list
+            Data from previous stage
+        """
         dir_path = os.path.dirname(input_file)
         prev_stage_file_path = os.path.join(dir_path, f"{self.stage}.json")
         return super()._get_input_data(prev_stage_file_path)
 
     async def run(self, input_file):
+        """
+        Run the transformer and copy values from previous stage.
+
+        Parameters
+        ----------
+        input_file : str
+            Path to input file
+
+        Returns
+        -------
+        str
+            Path to output file
+        """
         output_file = await super().run(input_file)
 
         with open(output_file) as f:
@@ -62,12 +118,17 @@ class CopyFromPrevStage(JsonListTransformer):
 
 
 class AddGoldValues(JsonListTransformer):
+    """
+    Transformer for extracting gold value links as a list.
+
+    Extracts keys from gold_value_links and stores them in a 'values' field.
+    """
 
     def __init__(self):
         super().__init__(force=True)
 
     async def _process_row(self, row):
-        value_links = row['gold_value_links']
+        value_links = row["gold_value_links"]
         keys = list(value_links.keys())
-        row['values'] = keys
+        row["values"] = keys
         return row

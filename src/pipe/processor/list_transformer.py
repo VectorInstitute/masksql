@@ -1,3 +1,5 @@
+"""List transformation base classes."""
+
 import json
 import os
 from abc import ABC
@@ -6,20 +8,56 @@ from loguru import logger
 
 from src.pipe.processor.list_processor import JsonListProcessor
 
+
 FORCE = int(os.environ.get("FORCE", 0)) > 0
 
 
 class JsonListTransformer(JsonListProcessor, ABC):
+    """
+    Base class for transformers that write output to new files.
+
+    Parameters
+    ----------
+    force : bool, optional
+        Force reprocessing even if output exists, default True
+    """
+
     def __init__(self, force=True):
         self.force = force or FORCE
 
     def get_output_file(self, input_file):
+        """
+        Generate output filename from input filename.
+
+        Parameters
+        ----------
+        input_file : str
+            Path to input file
+
+        Returns
+        -------
+        str
+            Path to output file
+        """
         file_name = os.path.basename(input_file)
         dir_path = os.path.dirname(input_file)
         num = int(file_name.split("_", 1)[0])
         return os.path.join(dir_path, f"{num + 1}_{self.name}.json")
 
     async def run(self, input_file):
+        """
+        Transform input file and write to new output file.
+
+        Parameters
+        ----------
+        input_file : str
+            Path to input JSON file
+
+        Returns
+        -------
+        str
+            Path to output file
+        """
         output_file = self.get_output_file(input_file)
 
         if not self.force and os.path.exists(output_file):
@@ -37,7 +75,9 @@ class JsonListTransformer(JsonListProcessor, ABC):
         #         elif isinstance(prop, int):
         #             row[self.prop_name] += int(output[i])
         #         else:
-        #             raise Exception(f"Invalid prop type being updated: {self.prop_name}, {type(prop)}")
+        #             raise Exception(
+        #                 f"Invalid prop type being updated: "
+        #                 f"{self.prop_name}, {type(prop)}")
         #     else:
         #         row[self.prop_name] = output[i]
         #     updated_rows.append(row)

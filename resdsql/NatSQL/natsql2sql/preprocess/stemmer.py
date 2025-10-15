@@ -1,21 +1,24 @@
 import nltk
+
 from .match import ALL_JJS
 
-DICT = {"weight":"weigh",
-"won":"win",
-"nation":"country",
 
+DICT = {
+    "weight": "weigh",
+    "won": "win",
+    "nation": "country",
 }
 
-class MyStemmer():
+
+class MyStemmer:
     def __init__(self):
         self.stemmer = nltk.stem.LancasterStemmer()
-    
-    def stem(self,w):
+
+    def stem(self, w):
         result = w.lower()
         if result == "january":
             return "jan"
-        elif result == "february":
+        if result == "february":
             result = "feb"
         elif result == "march":
             return "mar"
@@ -29,9 +32,7 @@ class MyStemmer():
             return "jul"
         elif result == "august":
             return "aug"
-        elif result == "september":
-            return "sep"
-        elif result == "sept":
+        elif result == "september" or result == "sept":
             return "sep"
         elif result == "october":
             return "oct"

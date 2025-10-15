@@ -19,30 +19,30 @@ a list of schema items ranked by relevance.
 ## RankSchemaResd
 
 This stage just changes the format of the schema items from the previous stage by
-prefixing them with `COLUMN:`. We also add items of the form `TABLE:` for each 
-table that is included in the schema items. 
-Moreover, all table and column names are wrapped in `[]` to prevent problems 
+prefixing them with `COLUMN:`. We also add items of the form `TABLE:` for each
+table that is included in the schema items.
+Moreover, all table and column names are wrapped in `[]` to prevent problems
 when column or table names include whitespace.
 
 ## AddFilteredSchema
 
-This stage adds a YAML representation of the schema which is limited to only those that 
-are filtered with RESDSQL. 
+This stage adds a YAML representation of the schema which is limited to only those that
+are filtered with RESDSQL.
 This representation includes the type of columns as well as the foreign key and primary key
 information.
 
 ## AddSymbolicTable
 
-This stage adds a symbol table to each entry. 
-The symbol table includes a `to_symbol` dictionary, 
-which maps each schema item to a unique symbolic name. 
-We use `C1`,`C2` for column names and `T1`,`T2` for table names. 
+This stage adds a symbol table to each entry.
+The symbol table includes a `to_symbol` dictionary,
+which maps each schema item to a unique symbolic name.
+We use `C1`,`C2` for column names and `T1`,`T2` for table names.
 A reverse mapping named `to_name` is also recorded, which maps each symbol to its original value.
 These two mappings are then stored in the `symbolic` property of each entry.
 
 ## DetectValues
 
-This stage is a prompt-based stage. 
+This stage is a prompt-based stage.
 This stage first creates a prompt using the schema items from the previous step and the natural language
 question.
 The output of the prompt, which is a list of values, is then set to property of `values` in each entry.
@@ -126,21 +126,21 @@ property `pred_sql`, which is the final result of the pipeline.
 
 In this stage, we execute the final output of the pipeline, `pred_sql`, on its
 corresponding database (`db_id`). We then execute the gold `SQL` which exists
-In each entry and compare the results. If the result of `pred_sql` equals 
-The result of `SQL`, we record an execution accuracy of 1 for the `pred_sql`. 
-Otherwise, we record a score of zero. 
-For each entry, we record the execution accuracy in the property `eval.acc`, which 
+In each entry and compare the results. If the result of `pred_sql` equals
+The result of `SQL`, we record an execution accuracy of 1 for the `pred_sql`.
+Otherwise, we record a score of zero.
+For each entry, we record the execution accuracy in the property `eval.acc`, which
 is either 0 or 1.
 
 ## AddInferenceAttack
 In this stage, we perform an inference attack on the `symbolic question` to evaluate
 robustness of the masked question against inference attacks.
-To do so, we create a prompt with `symbolic.question` and `symbolic.schema` and 
+To do so, we create a prompt with `symbolic.question` and `symbolic.schema` and
 ask LLM to infer the abstract symbols.
 The output of LLM is a question where some of the tokens are re-identified.
 We store this re-identified question in the `attack` property.
 
 ## Results
-The final stage of the pipeline is for reporting the evaluation results. 
-It does not modify the data entries and only calculates the accuracy, privacy, 
+The final stage of the pipeline is for reporting the evaluation results.
+It does not modify the data entries and only calculates the accuracy, privacy,
 and efficiency metrics and prints the results.

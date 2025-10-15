@@ -14,7 +14,7 @@ python -u text2sql.py \
     --use_adafactor \
     --mode train \
     --train_filepath "./data/preprocessed_data/resdsql_train_spider_natsql.json"
-    
+
 # select the best text2natsql-t5-base ckpt
 python -u evaluate_text2sql_ckpts.py \
     --batch_size 32 \

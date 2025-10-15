@@ -1,3 +1,5 @@
+"""SQL query generation from natural language."""
+
 import re
 
 from loguru import logger
@@ -5,12 +7,26 @@ from loguru import logger
 from src.pipe.detect_values_prompts.prompt_processor import PromptProcessor
 from src.pipe.sql_gen_prompts.masked_v3 import MASKED_GEN_SQL_PROMPT_V3
 
+
 DATA_DIR = "data"
 
 
 def extract_sql(output):
+    """
+    Extract SQL query from LLM output.
+
+    Parameters
+    ----------
+    output : str
+        Raw LLM output containing SQL
+
+    Returns
+    -------
+    str
+        Extracted SQL query
+    """
     output = output.strip()
-    output = output.strip("\"")
+    output = output.strip('"')
     sql = "SELECT"
     if output.startswith("SELECT"):
         sql = output
@@ -31,13 +47,14 @@ def extract_sql(output):
 
 
 class GenSql(PromptProcessor):
+    """Generate SQL queries from natural language questions."""
 
     def _process_output(self, row, output):
         return extract_sql(output)
 
     def _get_prompt(self, row):
-        question = row['question']
+        question = row["question"]
         # schema_items = row['schema_items']
         # return GEN_SQL_PROMPT_V1.format(question=question, schema_items=schema_items)
-        schema = row['schema']
+        schema = row["schema"]
         return MASKED_GEN_SQL_PROMPT_V3.format(question=question, schema=schema)

@@ -1,11 +1,10 @@
+#!/bin/sh
+
 set -euo pipefail
 
 for d in eval_results models tensorboard_log third_party predictions; do
     mkdir -p "$d"
 done
-
-python3.8 -m venv .venv
-source .venv/bin/activate
 
 pip install -r requirements.txt
 
@@ -19,4 +18,3 @@ do
   wget "https://storage.googleapis.com/sepiid/resd/$model.zip"
   unzip $model.zip
 done
-

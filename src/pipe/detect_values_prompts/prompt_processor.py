@@ -1,3 +1,5 @@
+"""Base processor for LLM-based value detection."""
+
 import os
 from abc import abstractmethod
 from json import JSONDecodeError
@@ -10,7 +12,32 @@ from src.pipe.utils import Timer
 
 
 class PromptProcessor(JsonListTransformer):
-    def __init__(self, prop_name, model=os.environ['DEFAULT_MODEL'], force=False, include_stats=True):
+    """
+    Base processor for LLM-based prompt processing.
+
+    This abstract class provides common functionality for processors that use
+    LLM prompts to transform data rows, including prompt logging and statistics
+    tracking.
+
+    Parameters
+    ----------
+    prop_name : str
+        Name of the property to store the processed output in
+    model : str, optional
+        LLM model identifier, defaults to DEFAULT_MODEL environment variable
+    force : bool, optional
+        Whether to force reprocessing, by default False
+    include_stats : bool, optional
+        Whether to track latency and token statistics, by default True
+    """
+
+    def __init__(
+        self,
+        prop_name,
+        model=os.environ["DEFAULT_MODEL"],
+        force=False,
+        include_stats=True,
+    ):
         super().__init__(force)
         self.model = model
         self.prop_name = prop_name
@@ -48,14 +75,14 @@ class PromptProcessor(JsonListTransformer):
             f.write(f"######################\n {res}\n")
 
         if self.include_stats:
-            if 'total_latency' not in row:
-                row['total_latency'] = 0
+            if "total_latency" not in row:
+                row["total_latency"] = 0
             latency = timer.lap()
-            row['total_latency'] += latency
+            row["total_latency"] += latency
 
-            if 'total_toks' not in row:
-                row['total_toks'] = 0
-            row['total_toks'] += toks
+            if "total_toks" not in row:
+                row["total_toks"] = 0
+            row["total_toks"] += toks
 
         if self.prop_name in row and not isinstance(row[self.prop_name], str):
             row[self.prop_name].update(res)
@@ -64,6 +91,19 @@ class PromptProcessor(JsonListTransformer):
         return row
 
     async def run(self, input_file):
+        """
+        Run the processor and log prompts/responses.
+
+        Parameters
+        ----------
+        input_file : str
+            Path to input JSON file
+
+        Returns
+        -------
+        str
+            Path to output file
+        """
         os.makedirs("logs", exist_ok=True)
         self.prompt_file = f"logs/{self.name}.prompt.txt"
         self.response_file = f"logs/{self.name}.response.txt"

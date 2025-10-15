@@ -1,3 +1,5 @@
+"""Symbolic SQL query repair and error correction."""
+
 from src.pipe.detect_values_prompts.prompt_processor import PromptProcessor
 from src.pipe.gen_sql import extract_sql
 from src.pipe.symb_sql_repair_prompts.raw_v2 import REPAIR_SYMBOLIC_SQL_RAW_PROMPT_V2
@@ -5,30 +7,31 @@ from src.pipe.symb_sql_repair_prompts.v2 import REPAIR_SYMBOLIC_SQL_PROMPT_V2
 
 
 class RepairSymbolicSQL(PromptProcessor):
+    """Repair symbolic SQL queries with schema context."""
 
     def _process_output(self, row, output):
         sql = extract_sql(output)
-        return {
-            "repaired_sql": sql
-        }
+        return {"repaired_sql": sql}
 
     def _get_prompt(self, row):
-        symbolic_question = row['symbolic']['question']
-        symbolic_schema = row['symbolic']['schema']
-        symbolic_sql = row['symbolic']['sql']
-        return REPAIR_SYMBOLIC_SQL_PROMPT_V2.format(question=symbolic_question, schema=symbolic_schema,
-                                                    sql=symbolic_sql)
+        symbolic_question = row["symbolic"]["question"]
+        symbolic_schema = row["symbolic"]["schema"]
+        symbolic_sql = row["symbolic"]["sql"]
+        return REPAIR_SYMBOLIC_SQL_PROMPT_V2.format(
+            question=symbolic_question, schema=symbolic_schema, sql=symbolic_sql
+        )
 
 
 class RepairSymbolicSQLRaw(PromptProcessor):
+    """Repair symbolic SQL from raw inputs without schema."""
 
     def _process_output(self, row, output):
         sql = extract_sql(output)
-        return {
-            "repaired_sql": sql
-        }
+        return {"repaired_sql": sql}
 
     def _get_prompt(self, row):
-        symbolic_raw = row['symbolic']['raw']
-        symbolic_sql = row['symbolic']['sql']
-        return REPAIR_SYMBOLIC_SQL_RAW_PROMPT_V2.format(symbolic_raw=symbolic_raw, sql=symbolic_sql)
+        symbolic_raw = row["symbolic"]["raw"]
+        symbolic_sql = row["symbolic"]["sql"]
+        return REPAIR_SYMBOLIC_SQL_RAW_PROMPT_V2.format(
+            symbolic_raw=symbolic_raw, sql=symbolic_sql
+        )

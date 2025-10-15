@@ -1,3 +1,5 @@
+#!/bin/sh
+
 set -euo pipefail
 
 mkdir -p data/resd

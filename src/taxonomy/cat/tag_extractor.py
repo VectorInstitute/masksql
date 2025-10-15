@@ -1,3 +1,5 @@
+"""Tag extraction from SQL AST."""
+
 from src.taxonomy.cat.tag_collector import *
 from src.taxonomy.cat.tags.complex_keys import ComplexKeywords
 from src.taxonomy.cat.tags.expr_type import ExprType
@@ -14,7 +16,21 @@ from src.taxonomy.parse.node import SqlAstNode
 
 
 class TagExtractor:
+    """Extracts SQL tags from an abstract syntax tree."""
+
     def extract_tags(self, ast: SqlAstNode) -> TagCollectorResult:
+        """Extract all SQL tags from an AST.
+
+        Parameters
+        ----------
+        ast : SqlAstNode
+            The SQL abstract syntax tree to extract tags from.
+
+        Returns
+        -------
+        TagCollectorResult
+            The collected tags from the AST.
+        """
         collectors = [
             SelectColumns.Collector(),
             ExprType.Collector(),
@@ -26,7 +42,7 @@ class TagExtractor:
             JoinType.Collector(),
             NestLevel.Collector(),
             StructureType.Collector(),
-            WhereType.Collector()
+            WhereType.Collector(),
         ]
 
         tags = TagCollectorResult()

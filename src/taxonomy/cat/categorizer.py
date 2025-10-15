@@ -1,13 +1,17 @@
+"""SQL statement categorizer."""
+
 from typing import List
 
 from natsort import natsorted
 
-from src.taxonomy.cat.categories import CATS, CAT_INF, SUB_INF
+from src.taxonomy.cat.categories import CAT_INF, CATS, SUB_INF
 from src.taxonomy.cat.statement_category import StatementCategory
 from src.taxonomy.cat.sub_category import SubCategory
 
 
 class Categorizer:
+    """Categorizes SQL statements based on their tags."""
+
     categories: List[StatementCategory]
 
     def __init__(self, categories=None):
@@ -16,8 +20,19 @@ class Categorizer:
         self.categories = categories
 
     def get_category(self, tag_set: SubCategory):
-        for c in reversed(
-                self.categories):  # Check to find a match starting from
+        """Get the statement category for a given tag set.
+
+        Parameters
+        ----------
+        tag_set : SubCategory
+            The tag set to categorize.
+
+        Returns
+        -------
+        StatementCategory
+            The matching category or CAT_INF if no match found.
+        """
+        for c in reversed(self.categories):  # Check to find a match starting from
             # harder categories
             sub_cat = c.matches(tag_set)
             if sub_cat:
@@ -28,6 +43,18 @@ class Categorizer:
         return CAT_INF
 
     def get_sub_category(self, tag_set: SubCategory):
+        """Get the sub-category for a given tag set.
+
+        Parameters
+        ----------
+        tag_set : SubCategory
+            The tag set to categorize.
+
+        Returns
+        -------
+        SubCategory
+            The matching sub-category or SUB_INF if no match found.
+        """
         matched_sub_cats = []
         for c in reversed(self.categories):  # Check to find a match starting from
             # harder categories

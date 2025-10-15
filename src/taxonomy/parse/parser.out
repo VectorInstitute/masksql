@@ -230,7 +230,7 @@ USING                : 53
 WHEN                 : 155 156 157
 WHERE                : 54
 WITH                 : 18 19 58 59
-error                : 
+error                :
 
 Nonterminals, with rules where they appear
 
@@ -13175,9 +13175,9 @@ state 303
     CROSS           reduce using rule 145 (win_expr -> fun_name LPAREN expr COMMA expr RPAREN OVER LPAREN win_def RPAREN .)
     WHERE           reduce using rule 145 (win_expr -> fun_name LPAREN expr COMMA expr RPAREN OVER LPAREN win_def RPAREN .)
 
-WARNING: 
+WARNING:
 WARNING: Conflicts:
-WARNING: 
+WARNING:
 WARNING: shift/reduce conflict for UNION in state 16 resolved as shift
 WARNING: shift/reduce conflict for EXCEPT in state 16 resolved as shift
 WARNING: shift/reduce conflict for SET_MINUS in state 16 resolved as shift

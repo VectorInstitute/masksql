@@ -1,3 +1,5 @@
+"""Module for identifying and adding masked terms to questions."""
+
 from loguru import logger
 
 from src.pipe.attack_prompts.add_masked_terms import ADD_MASKED_TERMS_PROMPT_V1
@@ -6,13 +8,19 @@ from src.pipe.llm_util import extract_object
 
 
 class AddMaskedTerms(PromptProcessor):
+    """
+    Processor for identifying and extracting masked terms from questions.
+
+    This class uses LLM prompts to identify terms in natural language questions
+    that should be masked, comparing the original and symbolic representations.
+    """
 
     def _process_output(self, row, output):
         output = extract_object(output)
         if output is None:
             return []
         masked_terms = list(output.keys())
-        q = row['question']
+        q = row["question"]
         filtered_terms = []
         for m in masked_terms:
             if m.lower() in q.lower():
@@ -22,6 +30,8 @@ class AddMaskedTerms(PromptProcessor):
         return masked_terms
 
     def _get_prompt(self, row):
-        question = row['question']
-        symbolic_question = row['symbolic']['question']
-        return ADD_MASKED_TERMS_PROMPT_V1.format(question=question, masked_question=symbolic_question)
+        question = row["question"]
+        symbolic_question = row["symbolic"]["question"]
+        return ADD_MASKED_TERMS_PROMPT_V1.format(
+            question=question, masked_question=symbolic_question
+        )

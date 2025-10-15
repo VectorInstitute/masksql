@@ -1,9 +1,12 @@
+"""Number of joins tags (currently unused)."""
+
 from src.taxonomy.cat.tag_collector import TagCollector
 from src.taxonomy.cat.tags.sql_tag import SqlTag
-from src.taxonomy.parse.node import JoinClauseNode
 
 
 class NumJoins(SqlTag):
+    """Tags for counting number of joins in a query."""
+
     Zero = 0
     One = 1
     Two = 2
@@ -11,6 +14,7 @@ class NumJoins(SqlTag):
 
     @staticmethod
     class Collector(TagCollector):
+        """Collector for join count (currently not fully implemented)."""
 
         def __init__(self):
             super().__init__()

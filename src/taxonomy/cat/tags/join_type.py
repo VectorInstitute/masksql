@@ -1,13 +1,18 @@
-from dataclasses import dataclass
-from enum import auto
+"""JOIN type and subtype tags."""
 
 from src.taxonomy.cat.tag_collector import TagCollector
 from src.taxonomy.cat.tag_collector_result import TagCollectorResult
 from src.taxonomy.cat.tags.sql_tag import SqlTag
-from src.taxonomy.parse.node import JoinClauseNode, JoinConstraintNode, BinOpExpressionNode
+from src.taxonomy.parse.node import (
+    BinOpExpressionNode,
+    JoinClauseNode,
+    JoinConstraintNode,
+)
 
 
 class JoinSub(SqlTag):
+    """Tags for JOIN subtypes like INNER, OUTER, LEFT, RIGHT."""
+
     INNER = 0
     OUTER = 1
     LEFT = 2
@@ -15,6 +20,8 @@ class JoinSub(SqlTag):
 
 
 class JoinType(SqlTag):
+    """Tags for JOIN types like natural, equi, and non-equi joins."""
+
     NaturalJoin = 0
     EquiJoin = 1
     NonEquiJoin = 2
@@ -22,8 +29,10 @@ class JoinType(SqlTag):
 
     @staticmethod
     class Collector(TagCollector):
+        """Collector for JOIN types."""
 
         def visit_join_clause(self, node: JoinClauseNode):
+            """Visit a JOIN clause node."""
             tags = super().visit_join_clause(node)
             if all(constr is None for constr in node.constraints):
                 tags += TagCollectorResult(JoinType.NaturalJoin)
@@ -41,6 +50,7 @@ class JoinType(SqlTag):
             return tags
 
         def visit_join_constraint(self, node: JoinConstraintNode):
+            """Visit a JOIN constraint node."""
             if isinstance(node.expr, BinOpExpressionNode):
                 if node.expr.op.value == "=":
                     return TagCollectorResult(JoinType.EquiJoin)

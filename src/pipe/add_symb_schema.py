@@ -1,52 +1,131 @@
+"""Module for converting database schemas to symbolic representations."""
+
 from typing import Dict, Union
 
 from src.pipe.processor.list_transformer import JsonListTransformer
-from src.pipe.schema_repo import DatabaseSchemaRepo, DatabaseSchema
+from src.pipe.schema_repo import DatabaseSchema, DatabaseSchemaRepo
 
 
 class AddSymbolicSchema(JsonListTransformer):
+    """
+    Processor for converting database schemas to symbolic representations.
+
+    Replaces table and column names with symbolic identifiers (e.g., T1, C1).
+
+    Parameters
+    ----------
+    tables_path : str
+        Path to the database tables/schemas repository.
+    """
 
     def __init__(self, tables_path):
         super().__init__()
         self.schema_repo = DatabaseSchemaRepo(tables_path)
 
     async def _process_row(self, row):
-
-        schema = DatabaseSchema.from_yaml(row['schema'])
-        symbol_table = row['symbolic']['to_symbol']
+        schema = DatabaseSchema.from_yaml(row["schema"])
+        symbol_table = row["symbolic"]["to_symbol"]
 
         symbolic_schema = self.get_symb_schema(schema, symbol_table)
 
         reverse_dict = self.get_reverse_dict(schema, symbol_table)
-        row['symbolic']['schema'] = symbolic_schema.to_yaml()
-        row['symbolic']['reverse_dict'] = reverse_dict
+        row["symbolic"]["schema"] = symbolic_schema.to_yaml()
+        row["symbolic"]["reverse_dict"] = reverse_dict
         return row
 
-    def get_col_symbol(self, table_name: str, col_name: str, symbol_table: Dict[str, str]) -> str:
+    def get_col_symbol(
+        self, table_name: str, col_name: str, symbol_table: Dict[str, str]
+    ) -> str:
+        """
+        Get symbolic representation for a column.
+
+        Parameters
+        ----------
+        table_name : str
+            Name of the table.
+        col_name : str
+            Name of the column.
+        symbol_table : Dict[str, str]
+            Mapping from names to symbols.
+
+        Returns
+        -------
+        str
+            Symbolic representation of the column.
+        """
         col_ref = f"{table_name}.{col_name}"
         return symbol_table[col_ref]
 
     def get_table_symbol(self, table_name: str, symbol_table: Dict[str, str]) -> str:
+        """
+        Get symbolic representation for a table.
+
+        Parameters
+        ----------
+        table_name : str
+            Name of the table.
+        symbol_table : Dict[str, str]
+            Mapping from names to symbols.
+
+        Returns
+        -------
+        str
+            Symbolic representation of the table.
+        """
         return symbol_table[table_name]
 
-    def get_symbolic_col_data(self, col_data: Union[str, Dict[str, str]], symbol_table: Dict[str, str]) -> str:
+    def get_symbolic_col_data(
+        self, col_data: Union[str, Dict[str, str]], symbol_table: Dict[str, str]
+    ) -> str:
+        """
+        Convert column data to symbolic representation.
+
+        Parameters
+        ----------
+        col_data : Union[str, Dict[str, str]]
+            Column data including potential foreign key references.
+        symbol_table : Dict[str, str]
+            Mapping from names to symbols.
+
+        Returns
+        -------
+        str
+            Symbolic representation of column data.
+        """
         if isinstance(col_data, dict) and "foreign_key" in col_data:
             symbolic_col_data = col_data.copy()
-            foreign_col_ref = symbolic_col_data['foreign_key']
+            foreign_col_ref = symbolic_col_data["foreign_key"]
             table_name = foreign_col_ref.split(".")[0]
             table_symbol = self.get_table_symbol(table_name, symbol_table)
             column_name = foreign_col_ref.split(".")[1]
             column_symbol = self.get_col_symbol(table_name, column_name, symbol_table)
-            symbolic_col_data['foreign_key'] = f"{table_symbol}.{column_symbol}"
+            symbolic_col_data["foreign_key"] = f"{table_symbol}.{column_symbol}"
         else:
             symbolic_col_data = col_data
         return symbolic_col_data
 
-    def get_symb_schema(self, schema: DatabaseSchema, symbol_table: Dict[str, str]) -> DatabaseSchema:
+    def get_symb_schema(
+        self, schema: DatabaseSchema, symbol_table: Dict[str, str]
+    ) -> DatabaseSchema:
+        """
+        Convert entire schema to symbolic representation.
+
+        Parameters
+        ----------
+        schema : DatabaseSchema
+            Database schema to convert.
+        symbol_table : Dict[str, str]
+            Mapping from names to symbols.
+
+        Returns
+        -------
+        DatabaseSchema
+            Schema with all names replaced by symbols.
+        """
         symbolic_schema = DatabaseSchema()
 
         for table_name, columns in list(schema.tables.items()):
-            symbolic_columns = dict()
+            symbolic_columns = {}
             for col_name, col_data in columns.items():
                 col_symbol = self.get_col_symbol(table_name, col_name, symbol_table)
                 symbolic_col_data = self.get_symbolic_col_data(col_data, symbol_table)
@@ -55,8 +134,25 @@ class AddSymbolicSchema(JsonListTransformer):
             symbolic_schema.tables[table_symbol] = symbolic_columns
         return symbolic_schema
 
-    def get_reverse_dict(self, schema: DatabaseSchema, symbol_table: Dict[str, str]) -> Dict[str, str]:
-        reverse_dict = dict()
+    def get_reverse_dict(
+        self, schema: DatabaseSchema, symbol_table: Dict[str, str]
+    ) -> Dict[str, str]:
+        """
+        Create reverse mapping from symbols to original names.
+
+        Parameters
+        ----------
+        schema : DatabaseSchema
+            Database schema.
+        symbol_table : Dict[str, str]
+            Mapping from names to symbols.
+
+        Returns
+        -------
+        Dict[str, str]
+            Reverse mapping from symbols to original names.
+        """
+        reverse_dict = {}
         for table_name, columns in list(schema.tables.items()):
             table_symbol = symbol_table[table_name]
             reverse_dict[table_symbol] = table_name

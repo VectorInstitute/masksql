@@ -1,3 +1,5 @@
+"""Memory usage monitoring utilities."""
+
 import os
 import threading
 import time
@@ -16,9 +18,30 @@ def _monitor_memory(interval: float, stop_event: threading.Event, mem_usage: lis
 
 
 async def track_memory_async(coro, *args, interval: float = 1, **kwargs):
+    """
+    Track memory usage during coroutine execution.
+
+    Parameters
+    ----------
+    coro : coroutine
+        Coroutine to execute and monitor
+    *args
+        Positional arguments for coroutine
+    interval : float, optional
+        Memory sampling interval in seconds, default 1
+    **kwargs
+        Keyword arguments for coroutine
+
+    Returns
+    -------
+    tuple
+        (result, average_memory_mb, peak_memory_mb)
+    """
     mem_usage = []
     stop_event = threading.Event()
-    monitor_thread = threading.Thread(target=_monitor_memory, args=(interval, stop_event, mem_usage))
+    monitor_thread = threading.Thread(
+        target=_monitor_memory, args=(interval, stop_event, mem_usage)
+    )
     monitor_thread.start()
 
     try:

@@ -1,3 +1,5 @@
+"""Value detection prompt template version 3."""
+
 DETECT_VALUES_PROMPT_V3 = """
 You are given a natural language question and a list of schema items
 (table names or fully qualified column names).
@@ -7,7 +9,7 @@ Database schema is given to exclude table or column names as these values.
 
 Output Format:
 - Output should be a list of strings
-- Each string should be quoted with double quotes. 
+- Each string should be quoted with double quotes.
 
 Here are some Examples:
 
@@ -35,7 +37,7 @@ Question: “Show me all reservations under the name David Johnson for hotel Hil
 Output:
 ["David Johnson", "Hilton", "12/25/2023", "8793"]
 
-Now generate the output list for the following question: 
+Now generate the output list for the following question:
 Question: {question}
 Schema: {schema_items}
 """

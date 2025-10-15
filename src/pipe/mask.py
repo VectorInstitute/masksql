@@ -1,21 +1,17 @@
-import argparse
+"""Question masking utilities."""
+
 import asyncio
 import json
-import os
 import re
-from typing import List
-
-import tqdm.asyncio as tqdm
-from openai import AsyncClient
-from pydantic import BaseModel
 
 from RESDSQL.llm_util import send_prompt
+
 
 DATA_DIR = "data"
 
 
-
 async def gen():
+    """Generate masked questions from RESDSQL test data."""
     with open("resdsql_test.json") as f:
         data = json.load(f)
 
@@ -23,9 +19,9 @@ async def gen():
     responses_file = open("out/mask_res.txt", "w")
     masked_data = []
     for i, row in enumerate(data):
-        slinks = row['schema_links']
-        sitems = row['tc_original']
-        question = row['question']
+        slinks = row["schema_links"]
+        sitems = row["tc_original"]
+        question = row["question"]
         prompt = PROMPT.format(question=question, sitems=sitems, slinks=slinks)
         res = await send_prompt(prompt)
         masked = re.findall(r"```([\s\S]*?)```", res)
@@ -33,7 +29,7 @@ async def gen():
         final_answer = final_answer.strip()
         prompts_file.write(prompt + "\n")
         responses_file.write(res + "\n")
-        row['masked_question'] = final_answer
+        row["masked_question"] = final_answer
         masked_data.append(row)
 
     prompts_file.close()
@@ -44,8 +40,9 @@ async def gen():
 
 
 async def main():
+    """Execute masking generation."""
     await gen()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     asyncio.run(main())

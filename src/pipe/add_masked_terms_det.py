@@ -1,4 +1,6 @@
-from typing import Dict, Union, List
+"""Module for deterministic masking of terms in natural language questions."""
+
+from typing import Dict, List, Union
 
 from loguru import logger
 
@@ -7,10 +9,34 @@ from src.pipe.utils import replace_str
 
 
 class AddMaskedTermsDeterministic(JsonListTransformer):
+    """
+    Deterministic processor for masking terms in natural language questions.
+
+    This class performs rule-based masking of schema and value references in questions,
+    replacing them with symbolic representations based on schema and value links.
+    """
+
     def __init__(self):
         super().__init__(force=True)
 
-    def get_symbol(self, schema_items: Union[List[str], str], symbol_table: Dict[str, str]) -> str:
+    def get_symbol(
+        self, schema_items: Union[List[str], str], symbol_table: Dict[str, str]
+    ) -> str:
+        """
+        Get symbolic representation for schema items.
+
+        Parameters
+        ----------
+        schema_items : Union[List[str], str]
+            Schema item(s) to get symbols for.
+        symbol_table : Dict[str, str]
+            Mapping from schema items to their symbolic representations.
+
+        Returns
+        -------
+        str
+            Comma-separated symbolic representations.
+        """
         if not isinstance(schema_items, list):
             schema_items = [schema_items]
         symbols = []
@@ -21,18 +47,73 @@ class AddMaskedTermsDeterministic(JsonListTransformer):
             symbols.append(symbol)
         return ",".join(symbols)
 
-    def symbolize_term(self, question: str, question_term: str, schema_items: str,
-                       symbol_table: Dict[str, str]) -> str:
+    def symbolize_term(
+        self,
+        question: str,
+        question_term: str,
+        schema_items: str,
+        symbol_table: Dict[str, str],
+    ) -> str:
+        """
+        Replace a question term with its symbolic representation.
+
+        Parameters
+        ----------
+        question : str
+            The question text to modify.
+        question_term : str
+            The term in the question to replace.
+        schema_items : str
+            Schema item(s) corresponding to the term.
+        symbol_table : Dict[str, str]
+            Mapping from schema items to symbols.
+
+        Returns
+        -------
+        str
+            Question with term replaced by symbol.
+        """
         symbol = self.get_symbol(schema_items, symbol_table)
         symbolic_question = replace_str(question, question_term, symbol)
         return symbolic_question
 
-    def symbolize_value(self, question: str, question_term: str, column_ref: str,
-                        updated_schema_links: Dict[str, str],
-                        filtered_value_links: Dict[str, str],
-                        symbol_table: Dict[str, str]) -> str:
+    def symbolize_value(
+        self,
+        question: str,
+        question_term: str,
+        column_ref: str,
+        updated_schema_links: Dict[str, str],
+        filtered_value_links: Dict[str, str],
+        symbol_table: Dict[str, str],
+    ) -> str:
+        """
+        Replace a value term with its symbolic representation.
+
+        Parameters
+        ----------
+        question : str
+            The question text to modify.
+        question_term : str
+            The value term in the question to replace.
+        column_ref : str
+            Reference to the column containing this value.
+        updated_schema_links : Dict[str, str]
+            Updated schema links mapping.
+        filtered_value_links : Dict[str, str]
+            Filtered value links mapping.
+        symbol_table : Dict[str, str]
+            Mapping from schema items to symbols.
+
+        Returns
+        -------
+        str
+            Question with value replaced by symbol and evidence added.
+        """
         value_symbol = f"[V{self.vid}]"
-        if column_ref in filtered_value_links.values() or f"COLUMN:{column_ref}" in updated_schema_links.values():
+        if (
+            column_ref in filtered_value_links.values()
+            or f"COLUMN:{column_ref}" in updated_schema_links.values()
+        ):
             column_symbol = symbol_table[column_ref]
         else:
             column_symbol = column_ref
@@ -43,7 +124,24 @@ class AddMaskedTermsDeterministic(JsonListTransformer):
         symbolic_question = f"{symbolic_question}; {evidence}"
         return symbolic_question
 
-    def add_tables_of_columns(self, schema_links: Dict[str, str], filtered_schema_links: Dict[str, str]):
+    def add_tables_of_columns(
+        self, schema_links: Dict[str, str], filtered_schema_links: Dict[str, str]
+    ):
+        """
+        Add table references for columns in filtered schema links.
+
+        Parameters
+        ----------
+        schema_links : Dict[str, str]
+            All schema links from question terms to schema items.
+        filtered_schema_links : Dict[str, str]
+            Subset of schema links to use.
+
+        Returns
+        -------
+        Dict[str, str]
+            Updated schema links with tables included.
+        """
         updated_schema_links = filtered_schema_links.copy()
         tables = set()
         for schema_items in filtered_schema_links.values():
@@ -71,48 +169,59 @@ class AddMaskedTermsDeterministic(JsonListTransformer):
 
     async def _process_row(self, row):
         self.vid = 1
-        self.value_dict = dict()
-        filtered_schema_links = row['filtered_schema_links']
-        schema_links = row['schema_links']
-        question = row['question']
-        symbol_table = row['symbolic']['to_symbol']
-        updated_schema_links = self.add_tables_of_columns(schema_links, filtered_schema_links)
+        self.value_dict = {}
+        filtered_schema_links = row["filtered_schema_links"]
+        schema_links = row["schema_links"]
+        question = row["question"]
+        symbol_table = row["symbolic"]["to_symbol"]
+        updated_schema_links = self.add_tables_of_columns(
+            schema_links, filtered_schema_links
+        )
         masked_terms = []
 
         symbolic_question = question
         masked = 0
 
-        value_links = row['value_links']
-        filtered_value_links = row['filtered_value_links']
+        value_links = row["value_links"]
+        filtered_value_links = row["filtered_value_links"]
 
         if isinstance(value_links, list) or isinstance(value_links, str):
             logger.error(f"Invalid value links: {value_links}")
-            value_links = dict()
+            value_links = {}
 
-        if isinstance(filtered_value_links, list) or isinstance(filtered_value_links, str):
+        if isinstance(filtered_value_links, list) or isinstance(
+            filtered_value_links, str
+        ):
             logger.error(f"Invalid value links: {filtered_value_links}")
-            filtered_value_links = dict()
+            filtered_value_links = {}
 
         for question_term, schema_item in value_links.items():
             try:
-                symbolic_question = self.symbolize_value(symbolic_question, question_term, schema_item,
-                                                         updated_schema_links,
-                                                         filtered_value_links, symbol_table)
+                symbolic_question = self.symbolize_value(
+                    symbolic_question,
+                    question_term,
+                    schema_item,
+                    updated_schema_links,
+                    filtered_value_links,
+                    symbol_table,
+                )
                 masked_terms.append(question_term)
                 masked += 1
             except Exception as e:
-                logger.error(f"Failed to mask {question_term}:{schema_item}, error={e} ")
+                logger.error(
+                    f"Failed to mask {question_term}:{schema_item}, error={e} "
+                )
 
         for question_term, schema_items in updated_schema_links.items():
             try:
-                symbolic_question = self.symbolize_term(symbolic_question, question_term, schema_items, symbol_table)
+                symbolic_question = self.symbolize_term(
+                    symbolic_question, question_term, schema_items, symbol_table
+                )
                 masked_terms.append(question_term)
                 masked += 1
             except Exception as e:
-                logger.error(f"Failed to mask {question_term}:{schema_items}, error={e} ")
-        row['symbolic'].update(
-            {
-                "masked_terms": masked_terms
-            }
-        )
+                logger.error(
+                    f"Failed to mask {question_term}:{schema_items}, error={e} "
+                )
+        row["symbolic"].update({"masked_terms": masked_terms})
         return row

@@ -1,3 +1,5 @@
+#!/bin/sh
+
 set -e
 
 pyenv local 3.8
