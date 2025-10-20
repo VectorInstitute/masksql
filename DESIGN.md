@@ -1162,7 +1162,7 @@ asyncio.run(main())
 
 ## Refactoring Tasks
 
-### Phase 1: Core Infrastructure (2-3 weeks)
+### Phase 1: Core modules
 
 #### 1.1 Configuration System
 **Priority: High**
@@ -1216,7 +1216,7 @@ asyncio.run(main())
 **Files to create:**
 - `src/masksql/exceptions.py`
 
-### Phase 2: Pipeline Refactoring (3-4 weeks)
+### Phase 2: Pipeline Refactoring
 
 #### 2.1 Abstract Pipeline Components
 **Priority: High**
@@ -1277,7 +1277,7 @@ asyncio.run(main())
 - `src/masksql/components/symbol_generator.py`
 - `src/masksql/components/executor.py`
 
-### Phase 3: Public API (2-3 weeks)
+### Phase 3: Public API
 
 #### 3.1 Main MaskSQL Class
 **Priority: High**
@@ -1305,7 +1305,7 @@ asyncio.run(main())
 **Files to update:**
 - `src/masksql/__init__.py`
 
-### Phase 4: LLM Integration (1-2 weeks)
+### Phase 4: LLM Integration
 
 #### 4.1 Unified LLM Client
 **Priority: High**
@@ -1345,7 +1345,7 @@ asyncio.run(main())
 **Files to refactor:**
 - All prompt files in `src/pipe/*_prompts/` → centralize
 
-### Phase 5: Database & Schema (1-2 weeks)
+### Phase 5: Database & Schema
 
 #### 5.1 Schema Management
 **Priority: High**
@@ -1381,7 +1381,7 @@ asyncio.run(main())
 **Files to refactor:**
 - `src/pipe/exec_conc_sql.py` → new executor
 
-### Phase 6: Privacy & Evaluation (2 weeks)
+### Phase 6: Privacy & Evaluation
 
 #### 6.1 Privacy Policies
 **Priority: High**
@@ -1413,7 +1413,7 @@ asyncio.run(main())
 - `src/masksql/evaluation/attack.py`
 - `src/masksql/evaluation/reporter.py`
 
-### Phase 7: Testing & Documentation (2-3 weeks)
+### Phase 7: Testing & Documentation
 
 #### 7.1 Unit Tests
 **Priority: High**
@@ -1454,13 +1454,11 @@ asyncio.run(main())
 #### 7.3 Documentation
 **Priority: High**
 
-- [ ] API reference documentation (Sphinx)
+- [ ] API reference documentation
 - [ ] User guide with examples
 - [ ] Configuration guide
 - [ ] Privacy policy guide
 - [ ] Developer guide for extending
-- [ ] Migration guide from old API
-- [ ] Performance tuning guide
 
 **Files to create:**
 - `docs/api/index.rst`
@@ -1470,7 +1468,7 @@ asyncio.run(main())
 - `docs/developer_guide/extending.md`
 - `docs/migration.md`
 
-### Phase 8: Performance & Production (2 weeks)
+### Phase 8: Performance & Production
 
 #### 8.1 Performance Optimization
 **Priority: Medium**
@@ -1536,51 +1534,6 @@ asyncio.run(main())
 - [ ] Integration with Pandas
 - [ ] Integration with LangChain
 - [ ] Integration with observability tools
-
----
-
-## Migration Strategy
-
-### For Existing Users
-
-1. **Backward Compatibility Layer** (Optional)
-   - Create compatibility wrappers for old pipeline API
-   - Provide deprecation warnings
-   - Support old config format with migration
-
-2. **Migration Steps**
-
-   **Step 1: Install New Version**
-   ```bash
-   pip install masksql>=2.0.0
-   ```
-
-   **Step 2: Update Configuration**
-   ```python
-   # Old way (config.py)
-   conf = MaskSqlConfig(args.data)
-
-   # New way (structured config)
-   from masksql import MaskSQLConfig
-   config = MaskSQLConfig.from_yaml("config.yaml")
-   ```
-
-   **Step 3: Update API Calls**
-   ```python
-   # Old way (pipeline stages)
-   from src.pipe.pipeline import Pipeline
-   pipeline = Pipeline(stages)
-   await pipeline.run(input_path)
-
-   # New way (high-level API)
-   from masksql import MaskSQL
-   masksql = MaskSQL.from_config("config.yaml")
-   result = await masksql.query(question="...", db_id="...")
-   ```
-
-3. **Migration Tools**
-   - Provide config converter: `masksql migrate-config old_config.py new_config.yaml`
-   - Provide code converter: `masksql migrate-code old_main.py new_main.py`
 
 ---
 
@@ -1660,14 +1613,3 @@ async def test_end_to_end_pipeline():
 ```
 
 ---
-
-## Summary
-
-This design document presents a comprehensive, production-ready Python API for MaskSQL that:
-
-1. **Simplifies Usage**: High-level API with sensible defaults
-2. **Maintains Flexibility**: Advanced API for customization
-3. **Improves Maintainability**: Clear separation of concerns, modular architecture
-4. **Enhances Testability**: Dependency injection, mockable components
-5. **Follows Best Practices**: Type hints, async/await, proper error handling
-6. **Supports Production**: Configuration management, monitoring, scalability
