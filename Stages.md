@@ -85,7 +85,7 @@ We record each replaced term in a list and store it in the
 `symbolic.masked_terms` property. The symbolic question is stored in the
 `symbolic.question` property.
 
-## GenerateSymbolcSql
+## GenerateSymbolicSql
 
 In this stage, we create a prompt using the `symbolic.question` and
 `symbolic.schema`, which is the YAML representation of the symbolic schema. Then
