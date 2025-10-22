@@ -134,6 +134,7 @@ ignore = [
     "A001", # Ignore variable `input` is shadowing a Python builtin (common for torch)
     "A002", # Ignore variable `input` is shadowing a Python builtin in function (common for torch)
     "D301", # r-strings for docstrings with backslashes
+    "E711", # comparison to None should be 'if cond is None:'
 ]
 
 # Ignore import violations in all `__init__.py` files.
