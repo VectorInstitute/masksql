@@ -77,24 +77,16 @@ print(result.metrics)          # Privacy & accuracy metrics
 
 ### 2. Batch Processing API
 
-For processing multiple queries:
+For processing multiple queries efficiently from a JSON file:
 
 ```python
-from masksql import MaskSQL, QueryRequest
+from masksql import MaskSQL, load_queries
 
 masksql = MaskSQL.from_config("config.yaml")
 
-# Batch queries
-queries = [
-    QueryRequest(
-        question="What is the average age of patients?",
-        db_id="hospital_db"
-    ),
-    QueryRequest(
-        question="List all doctors in New York",
-        db_id="hospital_db"
-    )
-]
+# Load queries from JSON file
+# input_file.json format: {"queries": [{"question": "...", "db_id": "..."}, ...]}
+queries = load_queries("input_file.json")
 
 results = await masksql.query_batch(queries, max_concurrency=10)
 
@@ -1027,21 +1019,20 @@ asyncio.run(main())
 ### Example 3: Batch Processing
 
 ```python
-from masksql import MaskSQL, QueryRequest
-import pandas as pd
+from masksql import MaskSQL, load_queries
 
 async def main():
     masksql = MaskSQL.from_config("config.yaml")
 
-    # Load queries from CSV
-    df = pd.read_csv("queries.csv")
-    queries = [
-        QueryRequest(
-            question=row["question"],
-            db_id=row["db_id"]
-        )
-        for _, row in df.iterrows()
-    ]
+    # Load queries from JSON file
+    # input_file.json format:
+    # {
+    #   "queries": [
+    #     {"question": "What is the average age?", "db_id": "hospital_db"},
+    #     {"question": "List all doctors", "db_id": "hospital_db"}
+    #   ]
+    # }
+    queries = load_queries("input_file.json")
 
     # Process in batch
     results = await masksql.query_batch(
@@ -1302,7 +1293,15 @@ asyncio.run(main())
 - [ ] Create `masksql.query()` function (module-level)
 - [ ] Create `masksql.query_batch()` function
 - [ ] Create `masksql.evaluate()` function
+- [ ] Create `masksql.load_queries()` function for loading batch queries from files
+  - Support JSON format: `{"queries": [{"question": "...", "db_id": "..."}, ...]}`
+  - Support YAML format (optional)
+  - Add validation for query structure
+  - Handle file I/O errors gracefully
 - [ ] Add preset configurations (defaults for common use cases)
+
+**Files to create:**
+- `src/masksql/io/loaders.py`
 
 **Files to update:**
 - `src/masksql/__init__.py`
