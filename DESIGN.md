@@ -547,7 +547,6 @@ class MaskSQL:
         question: str,
         db_id: str,
         evidence: Optional[str] = None,
-        return_intermediate: bool = False
     ) -> QueryResult:
         """
         Execute a single privacy-preserving text-to-SQL query.
@@ -560,13 +559,11 @@ class MaskSQL:
             Database identifier
         evidence : Optional[str]
             Optional evidence (BIRD-style)
-        return_intermediate : bool
-            Whether to return intermediate results
 
         Returns
         -------
         QueryResult
-            Complete query result with SQL, metrics, and optional intermediate results
+            Complete query result with SQL, metrics
 
         Examples
         --------
@@ -584,15 +581,7 @@ class MaskSQL:
         )
 
         try:
-            result = await self._pipeline.execute(request)
-
-            if not return_intermediate:
-                # Clear intermediate results to save memory
-                result.abstraction = None
-                result.generation = None
-                result.reconstruction = None
-
-            return result
+            return await self._pipeline.execute(request)
 
         except Exception as e:
             logger.error(f"Query failed: {e}")
