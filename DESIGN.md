@@ -142,32 +142,6 @@ result = await pipeline.execute(
 )
 ```
 
-### 4. Streaming API
-
-For real-time applications:
-
-```python
-from masksql import MaskSQL
-from masksql.streaming import StreamingMode
-
-masksql = MaskSQL(
-    llm_model="openai/gpt-4.1",
-    slm_model="qwen/qwen2.5-7b-instruct",
-    streaming=StreamingMode.ENABLED
-)
-
-async for event in masksql.query_stream(
-    question="How many patients?",
-    db_id="hospital_db"
-):
-    if event.type == "abstraction_complete":
-        print(f"Abstract question: {event.data.abstract_question}")
-    elif event.type == "sql_generated":
-        print(f"Abstract SQL: {event.data.abstract_sql}")
-    elif event.type == "complete":
-        print(f"Final SQL: {event.data.sql}")
-```
-
 ---
 
 ## Core Components
@@ -362,7 +336,7 @@ class QueryResult:
 ### 3. Main MaskSQL Class
 
 ```python
-from typing import Optional, List, AsyncIterator
+from typing import Optional, List
 import asyncio
 from loguru import logger
 
@@ -523,30 +497,6 @@ class MaskSQL:
 
         return results
 
-    async def query_stream(
-        self,
-        question: str,
-        db_id: str
-    ) -> AsyncIterator[PipelineEvent]:
-        """
-        Execute query with streaming intermediate results.
-
-        Parameters
-        ----------
-        question : str
-            Natural language question
-        db_id : str
-            Database identifier
-
-        Yields
-        ------
-        PipelineEvent
-            Stream of pipeline events
-        """
-        request = QueryRequest(question=question, db_id=db_id)
-        async for event in self._pipeline.execute_stream(request):
-            yield event
-
     async def evaluate(
         self,
         dataset_path: str,
@@ -581,7 +531,7 @@ class MaskSQL:
 
 ```python
 from abc import ABC, abstractmethod
-from typing import List, Optional, AsyncIterator
+from typing import List, Optional
 
 class PipelineStage(ABC):
     """Base class for pipeline stages."""
@@ -636,35 +586,6 @@ class MaskSQLPipeline:
             context = await stage.execute(request, context)
 
         return self._context_to_result(context)
-
-    async def execute_stream(
-        self,
-        request: QueryRequest
-    ) -> AsyncIterator[PipelineEvent]:
-        """Execute pipeline with streaming events."""
-        context = PipelineContext(request=request)
-
-        for stage in self.stages:
-            yield PipelineEvent(
-                type="stage_start",
-                stage=stage.name,
-                timestamp=datetime.now()
-            )
-
-            context = await stage.execute(request, context)
-
-            yield PipelineEvent(
-                type="stage_complete",
-                stage=stage.name,
-                data=context,
-                timestamp=datetime.now()
-            )
-
-        yield PipelineEvent(
-            type="complete",
-            data=self._context_to_result(context),
-            timestamp=datetime.now()
-        )
 
     def _context_to_result(self, context: PipelineContext) -> QueryResult:
         """Convert pipeline context to query result."""
@@ -1053,36 +974,7 @@ async def main():
 asyncio.run(main())
 ```
 
-### Example 4: Streaming Mode
-
-```python
-from masksql import MaskSQL
-
-async def main():
-    masksql = MaskSQL(
-        llm_model="openai/gpt-4.1",
-        slm_model="qwen/qwen2.5-7b-instruct"
-    )
-
-    async for event in masksql.query_stream(
-        question="How many patients?",
-        db_id="hospital_db"
-    ):
-        if event.type == "stage_start":
-            print(f"Starting: {event.stage}")
-        elif event.type == "stage_complete":
-            print(f"Completed: {event.stage}")
-            if event.stage == "Abstraction":
-                ctx = event.data
-                print(f"  Abstract Q: {ctx.abstraction.abstract_question}")
-        elif event.type == "complete":
-            result = event.data
-            print(f"Final SQL: {result.sql}")
-
-asyncio.run(main())
-```
-
-### Example 5: Evaluation on Dataset
+### Example 4: Evaluation on Dataset
 
 ```python
 from masksql import MaskSQL
@@ -1108,7 +1000,7 @@ async def main():
 asyncio.run(main())
 ```
 
-### Example 6: Custom Pipeline
+### Example 5: Custom Pipeline
 
 ```python
 from masksql import (
@@ -1217,7 +1109,6 @@ asyncio.run(main())
 - [ ] Create `PipelineStage` abstract base class
 - [ ] Create `PipelineContext` dataclass
 - [ ] Refactor `MaskSQLPipeline` to use new abstractions
-- [ ] Add streaming support (`execute_stream()`)
 - [ ] Implement builder pattern for pipeline construction
 - [ ] Add stage-level error handling and retry logic
 
@@ -1225,7 +1116,6 @@ asyncio.run(main())
 - `src/masksql/pipeline/stage.py`
 - `src/masksql/pipeline/context.py`
 - `src/masksql/pipeline/pipeline.py`
-- `src/masksql/pipeline/events.py`
 
 **Files to refactor:**
 - `src/pipe/pipeline.py` → new architecture
@@ -1278,7 +1168,6 @@ asyncio.run(main())
 - [ ] Implement `MaskSQL` main class
 - [ ] Implement `query()` method
 - [ ] Implement `query_batch()` method
-- [ ] Implement `query_stream()` method
 - [ ] Implement `evaluate()` method
 - [ ] Implement `from_config()` class method
 - [ ] Add comprehensive docstrings and type hints
@@ -1345,6 +1234,9 @@ asyncio.run(main())
 
 **Files to refactor:**
 - All prompt files in `src/pipe/*_prompts/` → centralize
+
+**Files to remove:**
+- Streaming-related files and references
 
 ### Phase 5: Database & Schema
 
@@ -1443,14 +1335,12 @@ asyncio.run(main())
 
 - [ ] End-to-end pipeline tests
 - [ ] Batch processing tests
-- [ ] Streaming tests
 - [ ] Error handling tests
 - [ ] Performance tests
 
 **Files to create:**
 - `tests/integration/test_e2e.py`
 - `tests/integration/test_batch.py`
-- `tests/integration/test_streaming.py`
 
 #### 7.3 Documentation
 **Priority: High**
