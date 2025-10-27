@@ -361,7 +361,6 @@ class QueryRequest:
     """Input query request."""
     question: str
     db_id: str
-    hint: Optional[str] = None  # Optional hint for complex queries
     evidence: Optional[str] = None  # BIRD-style evidence
 
 @dataclass
@@ -547,7 +546,6 @@ class MaskSQL:
         self,
         question: str,
         db_id: str,
-        hint: Optional[str] = None,
         evidence: Optional[str] = None,
         return_intermediate: bool = False
     ) -> QueryResult:
@@ -560,8 +558,6 @@ class MaskSQL:
             Natural language question
         db_id : str
             Database identifier
-        hint : Optional[str]
-            Optional hint for complex queries
         evidence : Optional[str]
             Optional evidence (BIRD-style)
         return_intermediate : bool
@@ -584,7 +580,6 @@ class MaskSQL:
         request = QueryRequest(
             question=question,
             db_id=db_id,
-            hint=hint,
             evidence=evidence
         )
 
@@ -633,7 +628,6 @@ class MaskSQL:
                 return await self.query(
                     question=request.question,
                     db_id=request.db_id,
-                    hint=request.hint,
                     evidence=request.evidence
                 )
 
