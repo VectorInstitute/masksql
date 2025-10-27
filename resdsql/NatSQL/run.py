@@ -40,7 +40,7 @@ if __name__ == "__main__":
         table_dict[t["db_id"]] = t
     sqls = json.load(open(args.natsql_file, "r"))
 
-    for i, sql in enumerate(sqls):
+    for _i, sql in enumerate(sqls):
         if "pattern_tok" in sql:
             sq = SubQuestion(
                 sql["question"],

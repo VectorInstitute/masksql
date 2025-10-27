@@ -46,7 +46,7 @@ class DBEngine:
 
     def col_data_samples(self, table_idx):
         all_cols = []
-        for col, n_col, c_type in zip(
+        for col, _n_col, _c_type in zip(
             self.column_list, self.column_name_list, self.column_types
         ):
             if col[0] != table_idx:
@@ -121,7 +121,7 @@ class DBEngine:
 
         bool_col = []
         all_cols = []
-        for col, n_col, c_type in zip(
+        for col, n_col, _c_type in zip(
             self.column_list, self.column_name_list, self.column_types
         ):
             if col[0] != table_idx:
@@ -615,7 +615,7 @@ def datebase_match(schema, tok, tok_idx, utter_tokens, table_idx, cross_table=Tr
 
     if cross_table:
         resultss = []
-        for j, table in enumerate(schema.table_names_original):
+        for j, _table in enumerate(schema.table_names_original):
             if j == table_idx:
                 continue
             result = try_one_table(
@@ -650,7 +650,7 @@ def datebase_match_tables(
     if not all_ or len(all_) == all_.count(None) or search_extra_table:
         all_2 = None
         new_table_idxs = []
-        for j, table in enumerate(schema.table_names_original):
+        for j, _table in enumerate(schema.table_names_original):
             if j not in table_idxs:
                 new_table_idxs.append(j)
         if new_table_idxs:

@@ -114,7 +114,7 @@ class AddSchemaItems(JsonListTransformer):
         schema_items = []
         for table, columns in schema.tables.items():
             schema_items.append(f"TABLE:{table}")
-            for col, col_data in columns.items():
+            for col, _col_data in columns.items():
                 schema_items.append(f"COLUMN:{table}.{col}")
             schema_items.append(f"COLUMN:{table}.[*]")
         row["schema_items"] = schema_items

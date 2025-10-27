@@ -17,7 +17,7 @@ class EvaluateTool(object):
     def register_golds(self, dataset_filepath, db_path):
         with open(dataset_filepath, encoding="utf-8") as f:
             dataset = json.load(f)
-            for idx, sample in enumerate(dataset):
+            for _idx, sample in enumerate(dataset):
                 if (
                     sample["query"]
                     == "SELECT T1.company_name FROM Third_Party_Companies AS T1 JOIN Maintenance_Contracts AS T2 ON T1.company_id  =  T2.maintenance_contract_company_id JOIN Ref_Company_Types AS T3 ON T1.company_type_code  =  T3.company_type_code ORDER BY T2.contract_end_date DESC LIMIT 1"

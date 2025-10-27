@@ -48,7 +48,7 @@ class SchemaLinkScore(DataPrinter):
 
         covered = 0
         not_found = []
-        for q_term, schema_item in gold_links.items():
+        for q_term, _schema_item in gold_links.items():
             for p_term in pred_keys:
                 if similar(q_term, p_term):
                     covered += 1

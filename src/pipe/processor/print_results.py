@@ -64,7 +64,7 @@ class PrintResults(DataPrinter):
         # pred_values = row['filtered_value_links']
         # pred_keys = list(pred_links.keys()) + list(pred_values.keys())
         masks = 0
-        for q_term, schema_item in gold_links.items():
+        for q_term, _schema_item in gold_links.items():
             for p_term in masked_terms:
                 if similar(p_term, q_term):
                     masks += 1

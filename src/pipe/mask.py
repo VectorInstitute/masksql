@@ -29,7 +29,7 @@ async def gen():
     prompts_file = open("out/mask_prompts.txt", "w")
     responses_file = open("out/mask_res.txt", "w")
     masked_data = []
-    for i, row in enumerate(data):
+    for _i, row in enumerate(data):
         slinks = row["schema_links"]
         sitems = row["tc_original"]
         question = row["question"]

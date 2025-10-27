@@ -188,7 +188,7 @@ def table_transform(table, args, schema):
                 ):
                     pass
                 else:
-                    for i2, col2 in enumerate(new_table["column_names"]):
+                    for i2, _col2 in enumerate(new_table["column_names"]):
                         if (
                             new_table["column_names"][i2][1]
                             == new_table["column_names"][insert_index][1]
@@ -404,7 +404,7 @@ def enlarge_network(net_work, table):
         return add_new_net
 
     def add_table_to_enlarge(net, idx, table_1, table_2, table, new_net_work):
-        for i, t in enumerate(table["table_names_original"]):
+        for i, _t in enumerate(table["table_names_original"]):
             if i not in net[1]:
                 for fk in table["foreign_keys"]:
                     if (
@@ -498,8 +498,8 @@ def enlarge_network(net_work, table):
                 if check_same_net(tmp_n3, new_net_work):
                     new_net_work.append(tmp_n3)
                     new_net_3.append(tmp_n3)
-    for i, net in enumerate(new_net):  # 4 tables network
-        for j, net2 in enumerate(new_net_3):
+    for _i, net in enumerate(new_net):  # 4 tables network
+        for _j, net2 in enumerate(new_net_3):
             if (net2[1][-1] == net[1][0] and net[1][1] not in net2[1]) or (
                 net2[1][-1] == net[1][1] and net[1][0] not in net2[1]
             ):
@@ -522,7 +522,7 @@ def enlarge_network(net_work, table):
             continue
         # add table to enlarge:
         table_idx = net[1][0]
-        for i, t in enumerate(table["table_names_original"]):
+        for i, _t in enumerate(table["table_names_original"]):
             if i not in net[1]:
                 for fk in table["foreign_keys"]:
                     if (
@@ -803,7 +803,7 @@ def remove_start_table(tables, schemas):
 def recover_table_name(tables):
     for i, table in enumerate(tables):
         try_to_add = []
-        for j, col, ocol in zip(
+        for _j, col, ocol in zip(
             range(len(table["column_names"])),
             table["column_names"],
             table["old_column_names"],
@@ -840,7 +840,7 @@ def unifie_words(tables):
         ["lives in", "lived in"],
         ["live in", "lived in"],
     ]
-    for i, table in enumerate(tables):
+    for _i, table in enumerate(tables):
         for j, col in enumerate(table["column_names"]):
             for w in WORDS:
                 if (
@@ -946,9 +946,9 @@ def analyse_same_column(tables, schemas, database_path):
             db_ = DBEngine(table, database_path)
         except:
             db_ = None
-        for i, col in enumerate(table["column_names"]):
+        for i, _col in enumerate(table["column_names"]):
             same_col_idx = []
-            for j, col in enumerate(table["column_names"]):
+            for j, _col in enumerate(table["column_names"]):
                 if they_are_same(i, j, table, schema, all_pair, db_):
                     same_col_idx.append(j)
                     all_pair.append([i, j])
@@ -1057,7 +1057,7 @@ def add_line_break(sql):
 
 
 def correct_primary_keys(tables, schemas, database_path):
-    for it, table, schema in zip(range(len(tables)), tables, schemas):
+    for _it, table, schema in zip(range(len(tables)), tables, schemas):
         table["original_primary_keys"] = copy.deepcopy(table["primary_keys"])
         same_col_idxs = []
         all_pair = []
@@ -1170,7 +1170,7 @@ def correct_primary_keys(tables, schemas, database_path):
 
 
 def label_disjoint_tables(tables, database_path):
-    for it, table in enumerate(tables):
+    for _it, table in enumerate(tables):
         table["unique_fk"] = []
         db_ = DBEngine(table, database_path)
         for fk in table["foreign_keys"]:
@@ -1189,7 +1189,7 @@ def label_disjoint_tables(tables, database_path):
 
 
 def bridge_table_for_many2many_relationship(tables):
-    for it, table in enumerate(tables):
+    for _it, table in enumerate(tables):
         table["bridge_table"] = []
         table["many2many"] = {}
         for net in table["network"]:
@@ -1292,11 +1292,11 @@ if __name__ == "__main__":
         if "old_column_names" in new_tables[0] and args.recover_previous_column_content:
             pass
         elif "old_column_names" in new_tables[0]:
-            for i, table in enumerate(new_tables):
+            for _i, table in enumerate(new_tables):
                 table.pop("old_column_names")
 
         if args.add_star_on_first_col:
-            for i, table in enumerate(new_tables):
+            for _i, table in enumerate(new_tables):
                 table["column_names"].insert(0, [-1, "*"])
                 table["column_names_original"].insert(0, [-1, "*"])
 

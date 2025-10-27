@@ -64,7 +64,7 @@ class Results(JsonListTransformer):
 
             mask_covering = 0
             a_masks = len(a_links)
-            for a_term, a_item in a_links.items():
+            for a_term, _a_item in a_links.items():
                 a_term = a_term.lower()
                 for term in masked_terms:
                     term = term.lower()

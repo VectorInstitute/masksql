@@ -347,7 +347,7 @@ def analyse_table_match(
         return sub_q, q_sql
 
     remove_idx = []
-    for at, ai, ast, i in zip(
+    for at, _ai, ast, i in zip(
         availble_table, availble_idx, availble_sent, range(len(availble_idx))
     ):
         if (
@@ -384,7 +384,7 @@ def analyse_table_match(
         ):  # table table:
             availble_table[i][0][1] = []
             remove_idx.append(availble_idx[i][0][1])
-    for ot, oi, j in zip(original_table, original_idx, range(len(original_idx))):
+    for _ot, oi, j in zip(original_table, original_idx, range(len(original_idx))):
         for i, idx in enumerate(oi):
             if idx in remove_idx:
                 original_table[j][i] = []
@@ -617,7 +617,7 @@ def others_analyze(
         in_db_match2 = in_db_match
     else:
         in_db_match2 = [None] * len(sentences)
-    for sentence, table_match, list_idx, db_m in zip(
+    for _sentence, table_match, list_idx, db_m in zip(
         sentences, table_matchs, list_idxs, in_db_match2
     ):
         tables = look_for_table_idx(sub_q, list_idx, 1, schema)
@@ -829,7 +829,7 @@ def select_analyze(
             or (len(sentences) > 1 and " each " in sentences[1])
             or (len(sentences) > 2 and " each " in sentences[2])
         ):
-            for i, sentence in enumerate(sentences):
+            for i, _sentence in enumerate(sentences):
                 sentences[i] = sentences[i].replace(" for the ", " for each ")
         if (
             not select
@@ -908,7 +908,7 @@ def select_analyze(
                             break
                     if beak_each:
                         len_each = 0
-                        for x, ast in enumerate(availble_sent[0]):
+                        for _x, ast in enumerate(availble_sent[0]):
                             len_each += len(ast)
                         start_idx_or = len(original_sent[k]) - len_each
                         original_sent = [original_sent[k][start_idx_or:]]

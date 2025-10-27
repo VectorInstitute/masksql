@@ -1105,7 +1105,7 @@ def one_col_match(
     col_inner_idx = []
     idx = 0
     for ac in a_col:
-        for c in ac:
+        for _c in ac:
             col_inner_idx.append(idx)
         idx += 1
 

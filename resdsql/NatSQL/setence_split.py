@@ -361,7 +361,7 @@ def final_cut(
     sum_ = sum([tl[1] for tl in token_list])
     and_should_cut = False
     if sum_ == 0 and " and " in question:
-        for tl, db, i in zip(
+        for tl, _db, i in zip(
             reversed(token_list), reversed(db_match), range(len(db_match) - 1, -1, -1)
         ):
             if tl[0].text == "than":
@@ -407,7 +407,7 @@ def final_cut(
                     token_list[j][1] = 1
                 and_should_cut = False
     if not keep_original_question:
-        for tl, db, i in zip(
+        for tl, _db, i in zip(
             reversed(token_list), reversed(db_match), range(len(db_match) - 1, -1, -1)
         ):
             if tl[0].text == "and" and (  # prevent and cut the col to two separate column
@@ -448,7 +448,7 @@ def final_cut(
 def generate_full_db_match(token_list, col_match, sql, schema):
     question_toks = [tok[0] for tok in token_list]
     re_list = []
-    for start_idx, tok in enumerate(token_list):
+    for start_idx, _tok in enumerate(token_list):
         if (
             start_idx == 0
             or (

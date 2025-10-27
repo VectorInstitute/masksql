@@ -156,7 +156,7 @@ class AddSymbolicSchema(JsonListTransformer):
         for table_name, columns in list(schema.tables.items()):
             table_symbol = symbol_table[table_name]
             reverse_dict[table_symbol] = table_name
-            for col_name, col_data in columns.items():
+            for col_name, _col_data in columns.items():
                 col_ref = f"{table_name}.{col_name}"
                 col_symbol = symbol_table[col_ref]
                 reverse_dict[f"{table_symbol}.{col_symbol}"] = col_ref

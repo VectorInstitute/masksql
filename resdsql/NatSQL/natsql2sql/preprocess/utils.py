@@ -180,7 +180,7 @@ def look_for_table_idx(sub_q, list_idx, select_type, schema):
         table_list = sub_q.table_match_index(list_idx, schema)
     if not table_list and sub_q.sub_sequence_type[list_idx] <= select_type:
         table_list = []
-        for i, t in enumerate(sub_q.sub_sequence_type):
+        for i, _t in enumerate(sub_q.sub_sequence_type):
             if i != list_idx and sub_q.sub_sequence_type[i] <= select_type:
                 table_list.extend(sub_q.table_match_index(i, schema))
         if not table_list:

@@ -126,7 +126,7 @@ def others_where_order_analyse(token_pattern, question, select_q, select):
         else:
             idx_jjr = 0
             q_tok = ""
-            for (j, p), qtok in zip(enumerate(tps), question[i].split(" ")):
+            for (_j, p), qtok in zip(enumerate(tps), question[i].split(" ")):
                 if p in ["SM_SJJS", "SM_JJS", "GR_SJJS", "GR_JJS"]:
                     q_tok = qtok
                     if q_tok in ALL_JJS:
@@ -1140,7 +1140,7 @@ def question_modify(token_pattern, question, list_idx, sq, schema):
                         or cc == "name"
                         or cc == "title"
                     ):
-                        for dbc in range(num_pdb):
+                        for _dbc in range(num_pdb):
                             sq.db_match[list_idx[i]][pdb_idx].append(
                                 [schema.tbl_col_idx_back[tb][k], [pdb_idx, pdb_idx]]
                             )
@@ -1311,7 +1311,7 @@ def sgrsm_add_col_match(token_pattern, question, list_idx, sq, schema):
                                 sq.col_match[list_idx[i]][j][2].append(1)
                                 sq.col_match[list_idx[i]][j][3].append(col)
                         else:
-                            for col in col_id:
+                            for _col in col_id:
                                 sq.col_match[list_idx[i]][j][0].append(col_id)
                                 sq.col_match[list_idx[i]][j][1].append(1)
                                 sq.col_match[list_idx[i]][j][2].append(1)
@@ -1471,7 +1471,7 @@ def select_col_and_col_of(token_pattern, question, list_idx, sq, schema, select_
                     and len(full_match[1][0]) > 1
                     and max(full_match[1][1]) == 2
                 ):
-                    for f in range(len(full_match[1][0]) - 1, -1, -1):
+                    for _f in range(len(full_match[1][0]) - 1, -1, -1):
                         if full_match[1][1][i] != 2 and not sub_tok_match(
                             schema.table_tokens_lemma_str[
                                 schema.column_tokens_table_idx[full_match[1][0][i]]
@@ -1959,7 +1959,7 @@ def for_each_col(select, token_pattern, question, list_idx, sq, schema):
 
 def add_same_col_for_select(sq, schema):
     all_tables = get_all_table_from_sq(sq, schema)
-    for i, cols, type_, q_tokens, t_m in zip(
+    for _i, cols, type_, _q_tokens, t_m in zip(
         range(len(sq.col_match)),
         sq.col_match,
         sq.sub_sequence_type,
@@ -1969,7 +1969,7 @@ def add_same_col_for_select(sq, schema):
         if type_ == 1:
             for z, col in enumerate(cols):
                 if col:
-                    for d1, d2, d3, d4 in zip(col[0], col[1], col[2], col[3]):
+                    for d1, d2, d3, _d4 in zip(col[0], col[1], col[2], col[3]):
                         already_add = False
                         for ci in schema.same_col_idxs[d1]:
                             if (
@@ -2049,7 +2049,7 @@ def for_each_analyse(token_pattern, question, list_idx, sq, schema):
 
     if add_to_each:
         not_add = False
-        for i, tps in enumerate(token_pattern):
+        for i, _tps in enumerate(token_pattern):
             for col in sq.col_match[list_idx[i]]:
                 if col:
                     for c in col[0]:
@@ -2134,7 +2134,7 @@ if __name__ == "__main__":
         if ONE_ID and i not in ONE_ID:
             continue
         sql["question_or"] = sql["question"]
-        for loop in range(3):
+        for _loop in range(3):
             print(i)
             if sql["db_id"] not in all_schema:
                 all_schema[sql["db_id"]] = Schema_Token(

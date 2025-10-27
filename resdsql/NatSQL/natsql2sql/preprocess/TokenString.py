@@ -115,7 +115,7 @@ class TokenString:
         len_str_tokens = len(str_tokens)
         target_tokens = None
 
-        for i, tok in enumerate(self.tokens):
+        for i, _tok in enumerate(self.tokens):
             if i + len_str_tokens > len(self.tokens):
                 break
             if self.match_all(i, str_tokens, self.tokens, type_):
@@ -133,7 +133,7 @@ class TokenString:
         str_tokens = str_.strip().split(" ")
         len_str_tokens = len(str_tokens)
         target_tokens = None
-        for i, tok in enumerate(self.tokens):
+        for i, _tok in enumerate(self.tokens):
             if i < strat_index:
                 continue
             if i + len_str_tokens > len(self.tokens):

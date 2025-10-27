@@ -47,7 +47,7 @@ class RankSchemaItems(PromptProcessor):
 
         for table_name, columns in schema.tables.items():
             schema_items.append(f"TABLE:{table_name}")
-            for col_name, col_data in columns.items():
+            for col_name, _col_data in columns.items():
                 schema_items.append(f"COLUMN:{table_name}.{col_name}")
         return schema_items
 
