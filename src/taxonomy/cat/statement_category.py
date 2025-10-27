@@ -49,10 +49,10 @@ class StatementCategory:
         list or None
             List of matching sub-categories or None if no matches.
         """
-        matchs = []
+        matches = []
         for fs in self.sub_cats:
             if feature_set >= fs:
-                matchs.append(fs)
-        if len(matchs) > 0:
-            return matchs
+                matches.append(fs)
+        if len(matches) > 0:
+            return matches
         return None
