@@ -15,15 +15,17 @@ This document proposes a comprehensive Python API design for MaskSQL, a privacy-
 ## Current Architecture Overview
 
 ### Pipeline Framework
-The current implementation uses a stage-based pipeline architecture:
+The current implementation uses a step-based pipeline architecture:
 
 ```python
-Pipeline(stages: List[JsonListProcessor])
+Pipeline(steps: List[JsonListProcessor])
   ├─ JsonListProcessor (base class)
-  │   ├─ JsonListTransformer (file I/O)
-  │   └─ PromptProcessor (LLM interactions)
-  └─ Executes stages sequentially on JSON data
+  │   └─ JsonListTransformer (file I/O)
+  │       └─ PromptProcessor (LLM interactions)
+  └─ Executes steps sequentially on JSON data
 ```
+
+Each **stage** (Abstraction, SQL Generation, Reconstruction) is composed of multiple **steps** (JsonListProcessor instances).
 
 ### Three-Stage MaskSQL Process
 
