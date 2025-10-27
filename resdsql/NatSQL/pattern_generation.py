@@ -129,7 +129,7 @@ def others_where_order_analyse(token_pattern, question, select_q, select):
             for (j, p), qtok in zip(enumerate(tps), question[i].split(" ")):
                 if p in ["SM_SJJS", "SM_JJS", "GR_SJJS", "GR_JJS"]:
                     q_tok = qtok
-                    if q_tok in ALL_JJS.keys():
+                    if q_tok in ALL_JJS:
                         q_tok = ALL_JJS[q_tok]
             if "GR_JJS" in tps:
                 idx_jjr = tps.index("GR_JJS")
@@ -174,7 +174,7 @@ def others_where_order_analyse(token_pattern, question, select_q, select):
                     or "TABLE" in real_tp_str
                     or len(select) > 1
                     or question[i].split(" ")[0] in ["that", "who", "which", "when"]
-                    or q_tok in S_ADJ_WORD_DIRECTION.keys()
+                    or q_tok in S_ADJ_WORD_DIRECTION
                 )
             ):
                 return_result[i][0] = 1
@@ -196,7 +196,7 @@ def others_where_order_analyse(token_pattern, question, select_q, select):
                     or "TABLE" in real_tp_str
                     or len(select) > 1
                     or question[i].split(" ")[0] in ["that", "who", "which", "when"]
-                    or q_tok in S_ADJ_WORD_DIRECTION.keys()
+                    or q_tok in S_ADJ_WORD_DIRECTION
                 )
             ):
                 return_result[i][0] = 1
@@ -1868,7 +1868,7 @@ def add_fk_to_table(sq, schema, sq_idx1, sq_idx2):
         for tb in all_tables:
             if tb not in sq.table_match[sq_idx1][sq_idx2]:
                 for col in schema.tbl_col_idx_back[tb]:
-                    if col in schema.foreignKeyDict.keys():
+                    if col in schema.foreignKeyDict:
                         for c2 in schema.foreignKeyDict[col]:
                             if (
                                 schema.column_tokens_table_idx[c2]
@@ -1900,17 +1900,16 @@ def for_each_col(select, token_pattern, question, list_idx, sq, schema):
                 (select[0][0] > 0 and select[1][0] == 0)
                 or (select[1][0] > 0 and select[0][0] == 0)
             )
-        ):
-            if "COL" not in tps and "TABLE" in tps:
-                tbm = sq.col_match[list_idx[i]][tps.index("TABLE")]
-                if not tbm:
-                    tbm = [[], [], [], []]
-                cols = select[0][1] if select[0][0] == 0 else select[1][1]
-                tbm[0].extend(cols)
-                tbm[1].extend([1] * len(cols))
-                tbm[2].extend([1] * len(cols))
-                tbm[3].extend(cols)
-                sq.col_match[list_idx[i]][tps.index("TABLE")] = tbm
+        ) and "COL" not in tps and "TABLE" in tps:
+            tbm = sq.col_match[list_idx[i]][tps.index("TABLE")]
+            if not tbm:
+                tbm = [[], [], [], []]
+            cols = select[0][1] if select[0][0] == 0 else select[1][1]
+            tbm[0].extend(cols)
+            tbm[1].extend([1] * len(cols))
+            tbm[2].extend([1] * len(cols))
+            tbm[3].extend(cols)
+            sq.col_match[list_idx[i]][tps.index("TABLE")] = tbm
 
     if (len(select) == 2 and (select[0][0] or select[1][0])) or len(select) == 1:
         correct_select = []
@@ -1983,7 +1982,7 @@ def add_same_col_for_select(sq, schema):
                                 col[2].append(d3)
                                 col[3].append(ci)
                                 already_add = True
-                        if d1 in schema.foreignKeyDict.keys():
+                        if d1 in schema.foreignKeyDict:
                             for ci in schema.foreignKeyDict[d1]:
                                 if (
                                     schema.column_tokens_table_idx[ci] in all_tables

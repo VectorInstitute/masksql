@@ -321,19 +321,18 @@ def question_repair_select_part(sql, token_list, schema):
                             if (
                                 s[-1][0] not in replace_old
                                 and editdistance.eval(s[-1][0], tw) < 2
-                            ):
-                                if not datebase_match_tables(
-                                    schema,
-                                    q_sql.question_tokens[i[-1][0]],
-                                    i[-1][0],
-                                    q_sql.question_tokens,
-                                    [i for i in range(len(schema.table_tokens))],
-                                    return_all_match=True,
-                                ):  # db match in here can be run fast.
-                                    print(s[-1][0] + "--->" + tw)
-                                    replace_old.append(s[-1][0])
-                                    replace_new.append(tw)
-                                    break
+                            ) and not datebase_match_tables(
+                                schema,
+                                q_sql.question_tokens[i[-1][0]],
+                                i[-1][0],
+                                q_sql.question_tokens,
+                                [i for i in range(len(schema.table_tokens))],
+                                return_all_match=True,
+                            ):  # db match in here can be run fast.
+                                print(s[-1][0] + "--->" + tw)
+                                replace_old.append(s[-1][0])
+                                replace_new.append(tw)
+                                break
         return replace_old, replace_new
 
     tokens = [i[0] for i in token_list]
@@ -403,31 +402,33 @@ def final_cut(
                 if not see_between:
                     for j in range(i, len(db_match)):
                         token_list[j][1] = 1
-            if tl[0].text in ["with", "for"]:
-                if and_should_cut:
-                    for j in range(i, len(db_match)):
-                        token_list[j][1] = 1
-                    and_should_cut = False
+            if tl[0].text in ["with", "for"] and and_should_cut:
+                for j in range(i, len(db_match)):
+                    token_list[j][1] = 1
+                and_should_cut = False
     if not keep_original_question:
         for tl, db, i in zip(
             reversed(token_list), reversed(db_match), range(len(db_match) - 1, -1, -1)
         ):
-            if tl[0].text == "and":  # prevent and cut the col to two separate column
-                if (
+            if tl[0].text == "and" and (  # prevent and cut the col to two separate column
+                (
                     i + 2 < len(db_match)
                     and i
                     and col_match[i - 1]
                     and col_match[i + 1]
                     and col_match[i - 1][0] == col_match[i + 1][0]
                     and len(col_match[i - 1][0]) == 1
-                    or i + 2 < len(db_match)
+                )
+                or (
+                    i + 2 < len(db_match)
                     and i
                     and table_match[i - 1]
                     and table_match[i + 1]
                     and table_match[i - 1][0] == table_match[i + 1][0]
                     and len(table_match[i - 1][0]) == 1
-                ):
-                    token_list[i][0] = SToken(text="'s")
+                )
+            ):
+                token_list[i][0] = SToken(text="'s")
     if len(token_list) == len(db_match):
         for (i, tl), dbm in zip(enumerate(token_list), db_match):
             if (
@@ -662,7 +663,7 @@ def preprocess_sql(
         )
 
         sql["db_match"] = []
-        for key in previous_db_match.keys():
+        for key in previous_db_match:
             sql["db_match"].extend(previous_db_match[key])
 
         if new_insert_idxs:
@@ -754,18 +755,18 @@ def preprocess_sql(
             sql["question_tag"] = [tok.tag_ for tok in sentences]
             sql["question_entt"] = [tok.ent_type_ for tok in sentences]
 
-        if "query_toks" in sql.keys():
+        if "query_toks" in sql:
             sql.pop("query_toks")
-        if "question_toks" in sql.keys():
+        if "question_toks" in sql:
             sql.pop("question_toks")
-        if "or_question" in sql.keys():
+        if "or_question" in sql:
             sql.pop("or_question")
 
         sql["full_db_match"] = generate_full_db_match(
             token_list, col_match, sql, all_schema[sql["db_id"]]
         )
 
-        if "question_toks" not in sql.keys():
+        if "question_toks" not in sql:
             sql["question_toks"] = sql["question"].split(" ")
 
         print(i)

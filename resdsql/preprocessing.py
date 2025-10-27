@@ -237,7 +237,7 @@ def normalization(sql):
         tables_aliases = Parser(s).tables_aliases
         new_tables_aliases = {}
         for i in range(1, 11):
-            if "t{}".format(i) in tables_aliases.keys():
+            if "t{}".format(i) in tables_aliases:
                 new_tables_aliases["t{}".format(i)] = tables_aliases["t{}".format(i)]
 
         tables_aliases = new_tables_aliases

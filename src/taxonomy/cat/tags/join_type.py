@@ -51,7 +51,6 @@ class JoinType(SqlTag):
 
         def visit_join_constraint(self, node: JoinConstraintNode):
             """Visit a JOIN constraint node."""
-            if isinstance(node.expr, BinOpExpressionNode):
-                if node.expr.op.value == "=":
-                    return TagCollectorResult(JoinType.EquiJoin)
+            if isinstance(node.expr, BinOpExpressionNode) and node.expr.op.value == "=":
+                return TagCollectorResult(JoinType.EquiJoin)
             return TagCollectorResult(JoinType.NonEquiJoin)

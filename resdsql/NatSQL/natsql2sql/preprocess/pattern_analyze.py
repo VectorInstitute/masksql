@@ -464,15 +464,14 @@ def reconize_select_type(
                 range(len(original_table)), original_table, availble_idx
             ):
                 for c in col:
-                    if c != []:
-                        if len(c) >= 1:
-                            if table_idx == [-1]:
-                                table_idx = c
-                                table_in_col_idx = i
-                            elif table_in_col_idx == i and of_for_structure_in_col(
-                                a_col, q_toks
-                            ):
-                                table_idx = c
+                    if c != [] and len(c) >= 1:
+                        if table_idx == [-1]:
+                            table_idx = c
+                            table_in_col_idx = i
+                        elif table_in_col_idx == i and of_for_structure_in_col(
+                            a_col, q_toks
+                        ):
+                            table_idx = c
             return True, table_idx
         return False, [-1]
 

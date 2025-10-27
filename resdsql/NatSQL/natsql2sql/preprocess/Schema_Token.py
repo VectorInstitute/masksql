@@ -66,11 +66,11 @@ class Schema_Token:
         self.foreignKey = list(set([j for i in table_dict["foreign_keys"] for j in i]))
         self.foreignKeyDict = {}
         for fk in table_dict["foreign_keys"]:
-            if fk[0] not in self.foreignKeyDict.keys():
+            if fk[0] not in self.foreignKeyDict:
                 self.foreignKeyDict[fk[0]] = [fk[1]]
             else:
                 self.foreignKeyDict[fk[0]].append(fk[1])
-            if fk[1] not in self.foreignKeyDict.keys():
+            if fk[1] not in self.foreignKeyDict:
                 self.foreignKeyDict[fk[1]] = [fk[0]]
             else:
                 self.foreignKeyDict[fk[1]].append(fk[0])
@@ -225,7 +225,7 @@ class Schema_Token:
 
         for word in words:
             word = word.lower()
-            if word in self._concept_word.keys():
+            if word in self._concept_word:
                 re_words = self._concept_word[word]
                 for w in re_words:
                     if w[0] not in words and w[1] > mini_weight:
@@ -465,9 +465,8 @@ class Schema_Token:
         re_ = []
         # word is part of the column string but do not split the word
         for i, col_lemma in enumerate(self.column_tokens_lemma_str_tokens):
-            if table_idx < 0 or self.column_tokens_table_idx[i] == table_idx:
-                if word in col_lemma and "*" not in col_lemma:
-                    re_.append(i)
+            if (table_idx < 0 or self.column_tokens_table_idx[i] == table_idx) and word in col_lemma and "*" not in col_lemma:
+                re_.append(i)
 
         if len(re_) == 1:
             return 0, re_[0]
@@ -498,11 +497,10 @@ class Schema_Token:
                 if re_count.count(max(re_count)) == 1:
                     return 0, re_count.index(max(re_count))
                 for i, o in enumerate(re_count):
-                    if o == len(word):
-                        if o == len(
-                            self.column_tokens_text_str[i].split(" | ")[0].split(" ")
-                        ):
-                            return 0, i
+                    if o == len(word) and o == len(
+                        self.column_tokens_text_str[i].split(" | ")[0].split(" ")
+                    ):
+                        return 0, i
 
         return 0, -2
 
@@ -562,9 +560,8 @@ class Schema_Token:
         re_ = [-2]
         # word is part of the column string but do not split the word
         for i, col_lemma in enumerate(self.column_tokens_lemma_str_tokens):
-            if table_idx < 0 or self.column_tokens_table_idx[i] == table_idx:
-                if word in col_lemma and "*" not in col_lemma:
-                    re_.append(i)
+            if (table_idx < 0 or self.column_tokens_table_idx[i] == table_idx) and word in col_lemma and "*" not in col_lemma:
+                re_.append(i)
         return 0, re_
 
     def table_match(self, table_str):

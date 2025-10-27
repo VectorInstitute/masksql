@@ -37,6 +37,7 @@ def sqlite_timelimit(conn: Connection, ms):
     def handler():
         if time.perf_counter() >= deadline:
             return 1
+        return 0
 
     conn.set_progress_handler(handler, n)
     try:
@@ -104,10 +105,7 @@ class SqliteFacade:
         sample_rows = self.exec_query_sync(db_id, f"SELECT * FROM {table} LIMIT 3")
         if sample_rows:
             rows_str = "\n".join(
-                map(
-                    lambda r: "\t".join(list(map(lambda cv: str(cv)[:50], r))),
-                    sample_rows,
-                )
+                "\t".join([str(cv)[:50] for cv in r]) for r in sample_rows
             )
         else:
             rows_str = "\n"

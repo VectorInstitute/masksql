@@ -104,7 +104,7 @@ def pattern_token_to_new_style(
     if (
         not guess
         and word not in ["SGRSM", "SJJS"]
-        and tok.lemma_ in S_ADJ_WORD_DIRECTION.keys()
+        and tok.lemma_ in S_ADJ_WORD_DIRECTION
     ):
         word = "SGRSM"
         if tok.tag_ in ["JJS", "RBS"]:
@@ -119,7 +119,7 @@ def pattern_token_to_new_style(
         if not find_sgrsm:
             key = (
                 tok.lemma_
-                if tok.lemma_ in S_ADJ_WORD_DIRECTION.keys()
+                if tok.lemma_ in S_ADJ_WORD_DIRECTION
                 else lstem.stem(tok.text)
             )
             _, _, sgrsm_word = get_AWD_column(
@@ -153,7 +153,7 @@ def pattern_token_to_new_style(
                                 final = "SM_"
                             else:
                                 final = "GR_"
-            elif col_match and key in S_ADJ_WORD_DIRECTION.keys():
+            elif col_match and key in S_ADJ_WORD_DIRECTION:
                 there_is_date = False
                 desc_asc = 0
                 for w in S_ADJ_WORD_DIRECTION[key]:
@@ -176,7 +176,7 @@ def pattern_token_to_new_style(
         word = final + word
 
     if word in ["GRSM", "JJS"]:
-        if tok.lemma_ in ABSOLUTELY_GREATER_DICT.keys():
+        if tok.lemma_ in ABSOLUTELY_GREATER_DICT:
             return "GR_" + word
         return "SM_" + word
     if word in ["GR", "SM"]:
@@ -208,8 +208,8 @@ def word_match(
             or str_is_num(tok.text)
             or (idx > 0 and tok.lemma_ in ["and", "or"])
             or tok.lemma_ in AGG_WORDS
-            or tok.lemma_ in ABSOLUTELY_GREATER_DICT.keys()
-            or tok.lemma_ in S_ADJ_WORD_DIRECTION.keys()
+            or tok.lemma_ in ABSOLUTELY_GREATER_DICT
+            or tok.lemma_ in S_ADJ_WORD_DIRECTION
             or entt in SPECIAL_DB_WORD
             or get_punctuation_word(all_tokens, idx)
             or tok.lemma_ in NOT_STAR_WORD
@@ -274,8 +274,8 @@ def word_match(
             ):
                 return False
             if (
-                tok.lemma_ in S_ADJ_WORD_DIRECTION.keys()
-                or lstem.stem(tok.text) in S_ADJ_WORD_DIRECTION.keys()
+                tok.lemma_ in S_ADJ_WORD_DIRECTION
+                or lstem.stem(tok.text) in S_ADJ_WORD_DIRECTION
             ):
                 return True
         elif word in ["GRSM", "JJS", "GR", "SM"]:
@@ -286,19 +286,19 @@ def word_match(
                 return False
             if word == "GR":
                 if (
-                    tok.lemma_ in ABSOLUTELY_GREATER_DICT.keys()
-                    or text_stem in ABSOLUTELY_GREATER_DICT.keys()
+                    tok.lemma_ in ABSOLUTELY_GREATER_DICT
+                    or text_stem in ABSOLUTELY_GREATER_DICT
                 ):
                     return True
             elif word == "SM":
                 if (
-                    tok.lemma_ in ABSOLUTELY_SMALLER_DICT.keys()
-                    or text_stem in ABSOLUTELY_SMALLER_DICT.keys()
+                    tok.lemma_ in ABSOLUTELY_SMALLER_DICT
+                    or text_stem in ABSOLUTELY_SMALLER_DICT
                 ):
                     return True
             elif (
-                tok.lemma_ in ABSOLUTELY_GRSM_DICT.keys()
-                or text_stem in ABSOLUTELY_GRSM_DICT.keys()
+                tok.lemma_ in ABSOLUTELY_GRSM_DICT
+                or text_stem in ABSOLUTELY_GRSM_DICT
             ):
                 return True
         elif word == "NUM":
@@ -339,8 +339,8 @@ def word_match(
                 or str_is_num(tok.text)
                 or (idx > 0 and tok.lemma_ in ["and", "or"])
                 or tok.lemma_ in AGG_WORDS
-                or tok.lemma_ in ABSOLUTELY_GREATER_DICT.keys()
-                or tok.lemma_ in S_ADJ_WORD_DIRECTION.keys()
+                or tok.lemma_ in ABSOLUTELY_GREATER_DICT
+                or tok.lemma_ in S_ADJ_WORD_DIRECTION
                 or entt in SPECIAL_DB_WORD
                 or get_punctuation_word(all_tokens, idx)
                 or tok.lemma_ in NOT_STAR_WORD
@@ -719,7 +719,7 @@ def pattern_reconize(
                             or len(sentence_ts.tokens[start_idx].text) <= 3
                             or sentence_ts.tokens[start_idx].lower_ in SELECT_FIRST_WORD
                             or sentence_ts.tokens[start_idx].text
-                            in ABSOLUTELY_GRSM_DICT.keys()
+                            in ABSOLUTELY_GRSM_DICT
                         )
                         and (
                             sentence_ts.tokens[start_idx].text.islower()
@@ -864,9 +864,9 @@ def find_table_idx(col_id, col_table, idx_start, schema):
 def get_AWD_column(
     word, table_idxs, schema, restrict=False, all_tokens=None, re_all_word=False
 ):
-    if word not in S_ADJ_WORD_DIRECTION.keys():
+    if word not in S_ADJ_WORD_DIRECTION:
         word = schema.lemmanize(word)
-        if word not in S_ADJ_WORD_DIRECTION.keys():
+        if word not in S_ADJ_WORD_DIRECTION:
             return -1, -2, None
 
     all_words = []
@@ -879,12 +879,11 @@ def get_AWD_column(
                 for tok in all_tokens:
                     if tok[1] > 0 and (
                         tok[0].text == sgrsm_word[0] or tok[0].lemma_ == sgrsm_word[0]
+                    ) and (
+                        tok[0].text in schema.column_tokens_lemma_str
+                        or tok[0].lemma_ in schema.column_tokens_lemma_str
                     ):
-                        if (
-                            tok[0].text in schema.column_tokens_lemma_str
-                            or tok[0].lemma_ in schema.column_tokens_lemma_str
-                        ):
-                            return 0, [-1], sgrsm_word[0]
+                        return 0, [-1], sgrsm_word[0]
         else:
             all_words = [tok.text for tok in all_tokens]
             all_words.extend([tok.lemma_ for tok in all_tokens])
@@ -960,7 +959,7 @@ def get_AWD_column(
 
 
 def get_col_from_related_word(word, table_idxs, schema, restrict=False):
-    if word in RELATED_WORD.keys():
+    if word in RELATED_WORD:
         col_id_list = []
         r_word_list = set()
         for r_word in RELATED_WORD[word]:  # do not cross table:
@@ -1307,8 +1306,8 @@ def pattern_word_guess(
     text_stem = lstem.stem(tok.text)
 
     if (
-        tok.lemma_ in S_ADJ_WORD_DIRECTION.keys()
-        or text_stem in S_ADJ_WORD_DIRECTION.keys()
+        tok.lemma_ in S_ADJ_WORD_DIRECTION
+        or text_stem in S_ADJ_WORD_DIRECTION
     ) and not (
         (
             (
@@ -1331,7 +1330,7 @@ def pattern_word_guess(
                     and str_is_num(all_tokens[idx - 1].text)
                 )
             )
-            and tok.text in S_ADJ_WORD_DIRECTION.keys()
+            and tok.text in S_ADJ_WORD_DIRECTION
         ):
             tmp = pattern_token_to_new_style(
                 "SJJS", tok, all_tokens, schema, table_idxs, col_match=all_col_match
@@ -1379,7 +1378,7 @@ def pattern_word_guess(
         and tok.tag_ not in ["JJS", "JJR", "RBR", "RBS"]
     ):
         if tok.lemma_ in ALL_JJS:
-            if ALL_JJS[tok.lemma_] in ABSOLUTELY_GREATER_DICT.keys():
+            if ALL_JJS[tok.lemma_] in ABSOLUTELY_GREATER_DICT:
                 final += ",GR_JJS"
             else:
                 final += ",SM_JJS"
@@ -1388,15 +1387,15 @@ def pattern_word_guess(
             and idx < len(all_tokens) - 1
             and (
                 all_tokens[idx + 1].text in ABSOLUTELY_GRSM_DICT
-                or all_tokens[idx + 1].text in S_ADJ_WORD_DIRECTION.keys()
+                or all_tokens[idx + 1].text in S_ADJ_WORD_DIRECTION
             )
         ):
             pass
         else:
             final += ","
             if (
-                tok.lemma_ in ABSOLUTELY_GREATER_DICT.keys()
-                or text_stem in ABSOLUTELY_GREATER_DICT.keys()
+                tok.lemma_ in ABSOLUTELY_GREATER_DICT
+                or text_stem in ABSOLUTELY_GREATER_DICT
             ):
                 if idx > 0 and all_tokens[idx - 1].text == "least":
                     final += "SM_"

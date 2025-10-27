@@ -155,6 +155,7 @@ class DatabaseSchemaSqlyzr:
                 f"Ambiguous column name: {col_name}, matched tables: {matched_tables}"
             )
             return matched_tables[0]
+        return "NA"
 
     def __str__(self):
         """Return string representation of the database schema."""

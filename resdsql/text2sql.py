@@ -401,6 +401,7 @@ def _test(opt):
         print("exec score: {}".format(spider_metric_result["exec"]))
 
         return spider_metric_result["exact_match"], spider_metric_result["exec"]
+    return None
 
 
 if __name__ == "__main__":

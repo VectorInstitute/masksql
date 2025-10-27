@@ -519,13 +519,12 @@ class SubQuestion:
                         and i == list_idx
                         and i > 0
                         and self.sub_sequence_type[0] <= select_type
+                    ) and not self.question_tokens[i][
+                        0
+                    ].text.islower() and self.table_match[0].count([]) + 1 == len(
+                        self.table_match[0]
                     ):
-                        if not self.question_tokens[i][
-                            0
-                        ].text.islower() and self.table_match[0].count([]) + 1 == len(
-                            self.table_match[0]
-                        ):
-                            return self.table_match_index(0, schema)
+                        return self.table_match_index(0, schema)
         return self.table_match_index(list_idx, schema)
 
     def tokenize(self, qsql: QuestionSQL):
