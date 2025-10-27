@@ -132,8 +132,7 @@ class SqliteFacade:
             List of column names
         """
         res = self.exec_query_sync(db_id, f'PRAGMA table_info("{table_name}")')
-        col_names = [_[1] for _ in res]
-        return col_names
+        return [_[1] for _ in res]
 
     def get_foreign_key(self, db_id, table_name):
         """
@@ -201,8 +200,7 @@ class SqliteFacade:
         result = self.exec_query_sync(
             db_id, "SELECT name FROM sqlite_master WHERE type='table'"
         )
-        table_names = [_[0] for _ in result]
-        return table_names
+        return [_[0] for _ in result]
 
     def exec_query_sync(self, db_id: str, sql: str, timeout: int = DB_TIMEOUT):
         """

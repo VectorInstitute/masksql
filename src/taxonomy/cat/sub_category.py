@@ -16,10 +16,7 @@ class SubCategory:
 
     def __ge__(self, other: "SubCategory"):
         """Check if this sub-category is at least as complex as another."""
-        for tag in other.tags:
-            if not self.has_greater(tag):
-                return False
-        return True
+        return all(self.has_greater(tag) for tag in other.tags)
 
     def __lt__(self, other):
         """Check if this sub-category is less complex than another."""
@@ -38,10 +35,7 @@ class SubCategory:
         bool
             True if this sub-category contains a greater or equal tag.
         """
-        for t in self.tags:
-            if t >= tag:
-                return True
-        return False
+        return any(t >= tag for t in self.tags)
 
     def __str__(self):
         """Return string representation of the sub-category."""

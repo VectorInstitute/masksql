@@ -132,8 +132,7 @@ async def apply_async(fun, items, desc=""):
             return await fun(item)
 
     tasks = [asyncio.create_task(sem_task(item)) for item in items]
-    results = await tqdm.tqdm.gather(*tasks, total=len(items), desc=desc)
-    return results
+    return await tqdm.tqdm.gather(*tasks, total=len(items), desc=desc)
 
 
 async def get_schema_link(entry: ResdSQLOutput) -> str:

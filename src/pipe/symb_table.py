@@ -94,7 +94,7 @@ class AddValueSymbolTable(JsonListTransformer):
         value_links = row["value_links"]
         symbol_table = row["symbolic"]["to_symbol"]
         to_value = {}
-        for value in value_links.keys():
+        for value in value_links:
             symbol = f"[V{vid}]"
             symbol_table[value] = symbol
             to_value[symbol] = value

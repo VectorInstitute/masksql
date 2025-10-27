@@ -20,14 +20,12 @@ class FocalLoss(nn.Module):
         prob = F.softmax(input_tensor, dim=-1)
         log_prob = torch.log(prob + 1e-8)
 
-        loss = F.nll_loss(
+        return F.nll_loss(
             ((1 - prob) ** self.gamma) * log_prob,
             target_tensor,
             weight=self.weight,
             reduction=self.reduction,
         )
-
-        return loss
 
 
 class ClassifierLoss:

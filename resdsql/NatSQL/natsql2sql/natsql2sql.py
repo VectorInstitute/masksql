@@ -1224,7 +1224,6 @@ def maybe_order_by(
                     else " ASC LIMIT 1 "
                 )
             )
-            return order_by_sql
     return ""
 
 
@@ -1290,10 +1289,7 @@ def primary_keys(table_json, table_id, pk_only=False):
 
 
 def contain_bridge_table(table_list, bridge_tables):
-    for b in bridge_tables:
-        if b in table_list:
-            return True
-    return False
+    return any(b in table_list for b in bridge_tables)
 
 
 def infer_at_col(column, table_list, table_json):

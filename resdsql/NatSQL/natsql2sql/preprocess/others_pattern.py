@@ -440,20 +440,14 @@ def pattern_match(
         if pw in ["TABLE", "$TABLE"]:
             if table_match[i] == table_match[i - 1]:
                 return False
-            for t in table_match[i]:
-                if t in table_match[i - 1]:
-                    return False
-            return True
+            return all(t not in table_match[i - 1] for t in table_match[i])
         if pw in ["COL", "PCOL", "TCOL", "BCOL", "$COL", "$PCOL", "$TCOL", "$BCOL"]:
             if (
                 col_match[i] == col_match[i - 1]
                 or col_match[i][0] == col_match[i - 1][0]
             ):
                 return False
-            for c in col_match[i][0]:
-                if c in col_match[i - 1][0]:
-                    return False
-            return True
+            return all(c not in col_match[i - 1][0] for c in col_match[i][0])
         return False
 
     """
@@ -1047,8 +1041,7 @@ def words_to_column_match(
                 if cola in aci:
                     word += colw
                     word += " "
-        word = word.strip()
-        return word
+        return word.strip()
 
     start = 0
     select_word_all = reorder_col_availabe_word(

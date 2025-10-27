@@ -23,8 +23,7 @@ def tokenize(text):
         List of token strings without stop words or punctuation
     """
     doc = nlp(text)
-    words = [token.text for token in doc if not token.is_stop and not token.is_punct]
-    return words
+    return [token.text for token in doc if not token.is_stop and not token.is_punct]
 
 
 class PrivacyScore(DataPrinter):

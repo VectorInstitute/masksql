@@ -67,8 +67,7 @@ def construct_hyper_param():
 
     parser.add_argument("--db_path", default="./database", type=str)
 
-    args = parser.parse_args()
-    return args
+    return parser.parse_args()
 
 
 def reversed_link_back_col(col_id, table_json):
@@ -1055,8 +1054,7 @@ def add_line_break(sql):
     # add "\n" after the first "("
     sql = sql[: sql.find("(") + 1] + "\n" + sql[sql.find("(") + 1 :]
     # add "\n" before the last ")"
-    sql = sql[: sql.rfind(")")] + "\n" + sql[sql.rfind(")") :]
-    return sql
+    return sql[: sql.rfind(")")] + "\n" + sql[sql.rfind(")") :]
 
 
 def correct_primary_keys(tables, schemas, database_path):

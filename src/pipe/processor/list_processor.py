@@ -81,8 +81,7 @@ class JsonListProcessor(ABC):
 
     def _get_input_data(self, input_file):
         with open(input_file) as f:
-            in_data = json.load(f)
-            return in_data
+            return json.load(f)
 
     async def run(self, input_file):
         """

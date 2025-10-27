@@ -14,10 +14,7 @@ def is_no_table_match(table_match):
     """
     Return True, if we can not find table from the question.
     """
-    for tm in table_match:
-        if tm:
-            return False
-    return True
+    return all(not tm for tm in table_match)
 
 
 def table_match_num(table_match):
@@ -92,10 +89,7 @@ def use_column_find_table(
 
 
 def check_col_correct(column_all):
-    for c in column_all:
-        if len(c[1]) != 1:
-            return False
-    return True
+    return all(len(c[1]) == 1 for c in column_all)
 
 
 def type_1(

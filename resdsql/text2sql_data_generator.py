@@ -64,9 +64,7 @@ def parse_option():
     )
     parser.add_argument("--target_type", type=str, default="sql", help="sql or natsql.")
 
-    opt = parser.parse_args()
-
-    return opt
+    return parser.parse_args()
 
 
 def lista_contains_listb(lista, listb):

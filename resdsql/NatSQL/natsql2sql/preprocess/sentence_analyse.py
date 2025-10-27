@@ -533,8 +533,7 @@ def sentence_cut(sentence, table_match, offset, sent_idx, sent_num):
             token_list.append([child, type_])
 
     token_list = sorted(token_list, key=lambda x: x[0].i)
-    token_list = merge_punctuation(token_list)
-    return token_list
+    return merge_punctuation(token_list)
 
 
 def reshap_token(token_list):
@@ -852,8 +851,7 @@ def correct_special_pattern(token_list, question, offset_list):
     token_list = only_how_many(token_list)
     token_list = punctuation_for(token_list, question)
     token_list = correct_if_final_one_is_different(token_list)
-    token_list = reset_sort_type(token_list, offset_list)
-    return token_list
+    return reset_sort_type(token_list, offset_list)
 
 
 def final_correct_special_pattern(token_list):
@@ -1075,8 +1073,7 @@ def final_correct_special_pattern(token_list):
         return token_list
 
     token_list = and_for_next_condition(token_list)
-    token_list = repair_disjoin_phase(token_list)
-    return token_list
+    return repair_disjoin_phase(token_list)
 
 
 def sentence_dump(sentence, sent_data):
@@ -2456,10 +2453,7 @@ def select_split(token_list, col_match_list, db_match):
         ):
             col_m_l = col_match_list[i]
             col_m_r = col_match_list[i + 1]
-            for cm in col_m_l[0]:
-                if cm in col_m_r:
-                    return False
-            return True
+            return all(cm not in col_m_r for cm in col_m_l[0])
         if (
             i >= 3
             and token_list[i - 3][0].lemma_ == "how"
@@ -2470,10 +2464,7 @@ def select_split(token_list, col_match_list, db_match):
         ):
             col_m_l = col_match_list[i]
             col_m_r = col_match_list[i + 1]
-            for cm in col_m_l[0]:
-                if cm in col_m_r[0]:
-                    return False
-            return True
+            return all(cm not in col_m_r[0] for cm in col_m_l[0])
 
     def split(idx):
         max_ = -1
@@ -2728,8 +2719,7 @@ def special_word_modify(question, schema):
                     question_toks.insert(start_idx + 2, SToken(text="last"))
                     question_toks.insert(start_idx + 2, SToken(text=","))
 
-    question = " ".join([tok.text for tok in question_toks])
-    return question
+    return " ".join([tok.text for tok in question_toks])
 
 
 def anaylse_punctuate(token_list, question, schema, all_word, keep_original_question):

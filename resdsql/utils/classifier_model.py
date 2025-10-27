@@ -99,11 +99,9 @@ class MyClassifier(nn.Module):
             table_name_embedding_attn_list, dim=0
         )
         # row-wise L2 norm
-        table_name_embeddings_in_one_db = torch.nn.functional.normalize(
+        return torch.nn.functional.normalize(
             table_name_embeddings_in_one_db, p=2.0, dim=1
         )
-
-        return table_name_embeddings_in_one_db
 
     def table_column_cls(
         self,

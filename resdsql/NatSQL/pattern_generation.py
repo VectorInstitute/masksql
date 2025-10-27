@@ -38,8 +38,7 @@ def construct_hyper_param():
         help="table json file",
     )
     parser.add_argument("--keep_or", action="store_true", default=False)
-    args = parser.parse_args()
-    return args
+    return parser.parse_args()
 
 
 def before_or_after(tps, idx, target):
@@ -52,10 +51,7 @@ def before_or_after(tps, idx, target):
 
 
 def not_in_all_q(question, str_):
-    for q in question:
-        if str_ in q:
-            return False
-    return True
+    return all(str_ not in q for q in question)
 
 
 def jjs_not_order(real_tp_str, tp_str2):
@@ -1380,10 +1376,7 @@ def add_name_col(
 
 def select_col_and_col_of(token_pattern, question, list_idx, sq, schema, select_num):
     def sub_tok_match(str1, str2):
-        for s in str1.split(" "):
-            if s in str2:
-                return True
-        return False
+        return any(s in str2 for s in str1.split(" "))
 
     def col_not_in_tables(cols, tables, schema):
         if cols:

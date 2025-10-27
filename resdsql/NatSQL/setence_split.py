@@ -279,9 +279,7 @@ def special_replace(str_):
     str_ = str_.replace(" one or more ", " at least one ")
     str_ = str_.replace(" some at least one ", " at least one ")
     str_ = str_.replace(" than at least one ", " than a ")
-    str_ = str_.replace(" in at least one ", " in a ")
-
-    return str_
+    return str_.replace(" in at least one ", " in a ")
 
 
 def dump_language_feature(sentences):
@@ -802,8 +800,7 @@ def construct_hyper_param():
     parser.add_argument(
         "--use_pattern_generate_col", action="store_true", default=False
     )
-    args = parser.parse_args()
-    return args
+    return parser.parse_args()
 
 
 if __name__ == "__main__":

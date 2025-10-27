@@ -27,8 +27,7 @@ class SlmSQL(PromptProcessor):
         str
             The extracted SQL query.
         """
-        slm_sql = extract_sql(output)
-        return slm_sql
+        return extract_sql(output)
 
     def _get_prompt(self, row):
         """Generate the prompt for SQL generation.

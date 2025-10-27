@@ -79,5 +79,4 @@ class LinkSchema(PipelineStage):
         schema = row["schema"]
         question = row["question"]
         sql = row["estimate_sql"]
-        prompt = PROMPT.format(question=question, schema=schema, sql=sql)
-        return prompt
+        return PROMPT.format(question=question, schema=schema, sql=sql)
