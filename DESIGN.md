@@ -182,7 +182,7 @@ print(result.custom_generated)  # True
 - Steps can be inserted at any point in the pipeline (pre-processing, during abstraction, during SQL generation, post-processing)
 - Each step processes a dictionary item and returns the modified item
 - Steps can add new fields to the result dictionary
-- The pipeline automatically integrates custom steps with built-in stages
+- The pipeline automatically integrates custom steps with built-in steps
 
 ---
 
@@ -667,8 +667,8 @@ class MaskSQL:
 from abc import ABC, abstractmethod
 from typing import List, Optional
 
-class PipelineStage(ABC):
-    """Base class for pipeline stages."""
+class PipelineStep(ABC):
+    """Base class for pipeline steps."""
 
     @abstractmethod
     async def execute(
@@ -676,18 +676,18 @@ class PipelineStage(ABC):
         request: QueryRequest,
         context: PipelineContext
     ) -> PipelineContext:
-        """Execute the stage."""
+        """Execute the step."""
         pass
 
     @property
     @abstractmethod
     def name(self) -> str:
-        """Stage name."""
+        """Step name."""
         pass
 
 @dataclass
 class PipelineContext:
-    """Context passed between pipeline stages."""
+    """Context passed between pipeline steps."""
     request: QueryRequest
     schema: Optional[DatabaseSchema] = None
     abstraction: Optional[AbstractionResult] = None
@@ -704,20 +704,20 @@ class MaskSQLPipeline:
 
     def __init__(self, config: MaskSQLConfig):
         self.config = config
-        self.stages: List[PipelineStage] = []
+        self.steps: List[PipelineStep] = []
 
-    def add_stage(self, stage: PipelineStage) -> "MaskSQLPipeline":
-        """Add a stage to the pipeline (builder pattern)."""
-        self.stages.append(stage)
+    def add_step(self, step: PipelineStep) -> "MaskSQLPipeline":
+        """Add a step to the pipeline (builder pattern)."""
+        self.steps.append(step)
         return self
 
     async def execute(self, request: QueryRequest) -> QueryResult:
         """Execute the complete pipeline."""
         context = PipelineContext(request=request)
 
-        for stage in self.stages:
-            logger.debug(f"Executing stage: {stage.name}")
-            context = await stage.execute(request, context)
+        for step in self.steps:
+            logger.debug(f"Executing step: {step.name}")
+            context = await step.execute(request, context)
 
         return self._context_to_result(context)
 
@@ -726,11 +726,11 @@ class MaskSQLPipeline:
         pass
 ```
 
-### 5. Built-in Pipeline Stages
+### 5. Built-in Pipeline Steps
 
 ```python
-class AbstractionStage(PipelineStage):
-    """Abstraction stage implementation."""
+class AbstractionStep(PipelineStep):
+    """Abstraction step implementation."""
 
     def __init__(self, config: MaskSQLConfig):
         self.config = config
@@ -811,8 +811,8 @@ class AbstractionStage(PipelineStage):
         """Create abstract schema."""
         pass
 
-class SQLGenerationStage(PipelineStage):
-    """SQL generation stage implementation."""
+class SQLGenerationStep(PipelineStep):
+    """SQL generation step implementation."""
 
     def __init__(
         self,
@@ -855,8 +855,8 @@ class SQLGenerationStage(PipelineStage):
     def name(self) -> str:
         return "SQLGeneration"
 
-class ReconstructionStage(PipelineStage):
-    """Reconstruction stage implementation."""
+class ReconstructionStep(PipelineStep):
+    """Reconstruction step implementation."""
 
     def __init__(
         self,
@@ -1333,40 +1333,40 @@ asyncio.run(main())
 #### 2.1 Abstract Pipeline Components
 **Priority: High**
 
-- [ ] Create `PipelineStage` abstract base class
+- [ ] Create `PipelineStep` abstract base class
 - [ ] Create `PipelineContext` dataclass
 - [ ] Refactor `MaskSQLPipeline` to use new abstractions
 - [ ] Implement builder pattern for pipeline construction
-- [ ] Add stage-level error handling and retry logic
+- [ ] Add step-level error handling and retry logic
 
 **Files to create:**
-- `src/masksql/pipeline/stage.py`
+- `src/masksql/pipeline/step.py`
 - `src/masksql/pipeline/context.py`
 - `src/masksql/pipeline/pipeline.py`
 
 **Files to refactor:**
 - `src/pipe/pipeline.py` → new architecture
-- `src/pipe/processor/list_processor.py` → adapt to `PipelineStage`
+- `src/pipe/processor/list_processor.py` → adapt to `PipelineStep`
 
-#### 2.2 Implement Core Stages
+#### 2.2 Implement Core Steps
 **Priority: High**
 
-- [ ] Refactor `AbstractionStage`:
+- [ ] Refactor `AbstractionStep`:
   - Extract schema filtering logic
   - Extract value detection logic
   - Extract linking logic
   - Extract symbol generation logic
-- [ ] Refactor `SQLGenerationStage`:
+- [ ] Refactor `SQLGenerationStep`:
   - Simplify prompt generation
   - Add self-correction logic
   - Improve error handling
-- [ ] Refactor `ReconstructionStage`:
+- [ ] Refactor `ReconstructionStep`:
   - Improve symbol restoration
   - Add SQL repair logic
   - Improve execution handling
 
 **Files to refactor:**
-- All files in `src/pipe/` → new stage architecture
+- All files in `src/pipe/` → new step architecture
 
 #### 2.3 Component Extraction
 **Priority: Medium**
@@ -1540,7 +1540,7 @@ asyncio.run(main())
 
 - [ ] Unit tests for configuration system
 - [ ] Unit tests for data models
-- [ ] Unit tests for pipeline stages
+- [ ] Unit tests for pipeline steps
 - [ ] Unit tests for components
 - [ ] Unit tests for LLM client
 - [ ] Unit tests for privacy policies
