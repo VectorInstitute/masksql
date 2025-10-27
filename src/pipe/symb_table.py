@@ -63,7 +63,7 @@ class AddSymbolTable(JsonListTransformer):
             tid += 1
             symbol_table[table_symbol] = table_name
             rev_table[table_name] = table_symbol
-            for col_name in columns.keys():
+            for col_name in columns:
                 col_ref = f"{table_name}.{col_name}"
                 col_symbol = f"{self.col_symbol(cid)}"
                 cid += 1
@@ -94,7 +94,7 @@ class AddValueSymbolTable(JsonListTransformer):
         value_links = row["value_links"]
         symbol_table = row["symbolic"]["to_symbol"]
         to_value = {}
-        for value in value_links.keys():
+        for value in value_links:
             symbol = f"[V{vid}]"
             symbol_table[value] = symbol
             to_value[symbol] = value

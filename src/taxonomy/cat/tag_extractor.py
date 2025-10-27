@@ -1,6 +1,6 @@
 """Tag extraction from SQL AST."""
 
-from src.taxonomy.cat.tag_collector import *
+from src.taxonomy.cat.tag_collector_result import TagCollectorResult
 from src.taxonomy.cat.tags.complex_keys import ComplexKeywords
 from src.taxonomy.cat.tags.expr_type import ExprType
 from src.taxonomy.cat.tags.extra import ExtraKeywords

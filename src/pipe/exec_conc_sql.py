@@ -20,8 +20,7 @@ class ExecuteConcreteSql(JsonListTransformer):
     """
 
     async def _process_row(self, row):
-        result = await self.get_exec_acc(row)
-        return result
+        return await self.get_exec_acc(row)
 
     def __init__(self, database_dir):
         super().__init__(False)

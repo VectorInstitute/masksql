@@ -297,9 +297,8 @@ def update_exact_match_tok(
     tok_indexes, table_idx, tok_len, exact_match, for_col_match_table_idx
 ):
     for tok_index in tok_indexes:
-        if exact_match[tok_index]:
-            if exact_match[tok_index][1][0] > tok_len:
-                continue
+        if exact_match[tok_index] and exact_match[tok_index][1][0] > tok_len:
+            continue
 
         for i in range(tok_len):
             if exact_match[
@@ -332,15 +331,14 @@ def clean_table(full_match, question_tokens, schema, for_table_match=True, table
                 tc = row[0][i]
                 t = row[3][i]
                 for k, row2 in enumerate(full_match):
-                    if row2 and 0 in row2[2]:
-                        if (
-                            t in row2[3]
-                            and tc not in row2[0]
-                            and row2[0][row2[3].index(t)] not in already
-                            and abs(j - k) <= 3
-                        ):
-                            match_times[i] += 1
-                            already.append(row2[0][row2[3].index(t)])
+                    if row2 and 0 in row2[2] and (
+                        t in row2[3]
+                        and tc not in row2[0]
+                        and row2[0][row2[3].index(t)] not in already
+                        and abs(j - k) <= 3
+                    ):
+                        match_times[i] += 1
+                        already.append(row2[0][row2[3].index(t)])
             row[1] = match_times
 
     for j, row in enumerate(full_match):
@@ -447,13 +445,12 @@ def update_partly_match_tok(
 ):
     new_table_idx = round(table_idx + tok_in_table_idx / 1000, 3)
     for tok_index in tok_indexes:
-        if exact_match[tok_index]:
-            if (
-                exact_match[tok_index][1][0] > real_len
-                or (exact_match[tok_index][2][0] and False)
-                or table_idx in exact_match[tok_index][0]
-            ):
-                continue
+        if exact_match[tok_index] and (
+            exact_match[tok_index][1][0] > real_len
+            or (exact_match[tok_index][2][0] and False)
+            or table_idx in exact_match[tok_index][0]
+        ):
+            continue
         for i in range(tok_len):
             if exact_match[i + tok_index]:
                 exact_match[i + tok_index][0].append(
@@ -994,12 +991,11 @@ def clean_p_table_match(full_match, question_tokens, schema):
                     and row[1][i]
                     / len(schema.column_tokens_lemma_str_tokens[row[0][i]])
                     <= 0.5
-                ):
-                    if question_tokens.tokens[j].lemma_ in MUST_MORE_THAN_HALF:
-                        del row[0][i]
-                        del row[1][i]
-                        del row[2][i]
-                        del row[3][i]
+                ) and question_tokens.tokens[j].lemma_ in MUST_MORE_THAN_HALF:
+                    del row[0][i]
+                    del row[1][i]
+                    del row[2][i]
+                    del row[3][i]
             if not row[0]:
                 full_match[j] = []
     return full_match

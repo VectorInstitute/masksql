@@ -1,19 +1,24 @@
 # MaskSQL
 
-# Table of Contents
+MaskSQL is a privacy-preserving framework for LLM-based text-to-SQL that uses schema masking and progressive unmasking to protect sensitive database information while maintaining high query accuracy.
 
-- [Installation](#installation-and-setup-instruction)
-- [Run MaskSQL](#run-masksql)
-- [MaskSql Framework](Framework.md)
-- [MaskSQL Pipeline Stages](Stages.md)
+## Table of Contents
+
+- [Installation](#installation-and-setup-instructions)
+- [Running MaskSQL](#running-masksql)
+- [Documentation](#documentation)
+- [Citation](#citation)
 
 ## Installation and Setup Instructions
 
-### System Requirements
+### Prerequisites
 
-The development environment (tested on python 3.11) can be set up using
-[uv](https://github.com/astral-sh/uv?tab=readme-ov-file#installation). Hence, make sure it is
-installed and then run:
+- Python 3.11
+- [uv](https://github.com/astral-sh/uv?tab=readme-ov-file#installation) package manager
+
+### Setup
+
+Install dependencies and activate the virtual environment:
 
 ```sh
 uv sync --dev
@@ -22,61 +27,77 @@ source .venv/bin/activate
 
 ### Download Dataset
 
-Download [this zip file](https://www.dropbox.com/scl/fi/vtraf79vfi1x105veaflk/data.zip?rlkey=7yq6d46aer6h45pdihrc9rht1&st=zdac3rqx&dl=0")
-and extract it to the `data` directory:
+Download and extract the dataset:
 
 ```sh
 wget -O data.zip "https://www.dropbox.com/scl/fi/vtraf79vfi1x105veaflk/data.zip?rlkey=7yq6d46aer6h45pdihrc9rht1&st=zdac3rqx&dl=0"
 unzip data.zip
 ```
 
-Your data directory should look like this:
+Expected directory structure:
 
-```sh
+```
 data/
 ├── databases/
 ├── 1_input.json
-.
-.
-.
+└── ...
 ```
 
-### Set Environment Variables
+### Configure Environment
+
+Create a `.env` file from the template:
 
 ```sh
 cp .env.example .env
 ```
 
-The only required variable to set is `OPENAI_API_KEY`.
-By default, we are using [OpenRouter](https://openrouter.ai/), so you need to set the api key
-for OpenRouter.
+**Required:**
+- `OPENAI_API_KEY`: Your [OpenRouter](https://openrouter.ai/) API key
 
-You may also change the `LIMIT` variable to modify the number of entries to be read from the dataset.
-`START` specifies the start index for reading from the dataset.
+**Optional:**
+- `LIMIT`: Number of dataset entries to process (e.g., `LIMIT=10`)
+- `START`: Starting index in the dataset (default: 0)
+- `SLM_MODEL`: Small language model ID (e.g., `openai/gpt-4.1`)
+- `LLM_MODEL`: Large language model ID
 
-For instance, set `LIMIT=10` to run the pipeline for a dataset of size 10.
+## Running MaskSQL
 
-`SLM_MODEL` and `LLM_MODEL` specify the ID of small/large language models to be used in the pipeline.
-These IDs should be set based on the LM provider being used.
-For instance, since we are using OpenRouter, model identifiers should be specified accordingly, e.g.,
-`openai/gpt-4.1` for GPT-4.1.
+### 1. Run RESDSQL (Schema Filtering)
 
-### Run RESDSQL
-To run MaskSQL, first we need to filter the schema items
-using RESDSQL.
-Follow these [instructions](./Resd.md) to run the RESDSQL
-and generated the file needed for the MaskSQL pipeline.
-Then, you need to run the MaskSQL with the `--resd` option.
+MaskSQL requires RESDSQL for initial schema filtering. Follow the [RESDSQL setup instructions](./Resd.md) to generate the required files.
 
-### Run MaskSQL
+### 2. Run the Pipeline
 
-Then you can run MaskSQL pipeline as follows:
+Execute the MaskSQL pipeline:
+
 ```sh
 python3 main.py --resd
 ```
 
-MaskSQL saves the intermediate results to files for later user.
-So, in order to run the pipeline from scratch you need to clean the data directory:
+### 3. Clean Intermediate Results (Optional)
+
+MaskSQL saves intermediate results for reuse. To run from scratch:
+
 ```sh
 ./clean.sh data
 ```
+
+## Documentation
+
+- [MaskSQL Framework](FRAMEWORK.md) - Overview of the framework architecture
+- [Pipeline Stages](STAGES.md) - Detailed explanation of each pipeline stage
+
+## Citation
+
+If you use MaskSQL in your research, please cite our paper:
+
+```bibtex
+@article{abedini2025masksql,
+  title={MaskSQL: Safeguarding Privacy for LLM-Based Text-to-SQL via Abstraction},
+  author={Abedini, Sepideh and Mohapatra, Shubhankar and Emerson, DB and Shafieinejad, Masoumeh and Cresswell, Jesse C and He, Xi},
+  journal={arXiv preprint arXiv:2509.23459},
+  year={2025}
+}
+```
+
+**Paper:** [https://arxiv.org/abs/2509.23459](https://arxiv.org/abs/2509.23459)

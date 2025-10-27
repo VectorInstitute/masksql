@@ -338,7 +338,6 @@ class DBEngine:
             values2 = cursor.fetchall()
         except:
             self.db.text_factory = lambda x: str(x, "latin1")
-            all_cols.append((col, -1))
             return False
         if len(values) == 0 or len(values2) == 0:
             return True

@@ -42,8 +42,7 @@ def extract_sql(output):
     else:
         logger.error(f"Failed to extract sql from output: {output}")
     sql = sql.strip()
-    sql = sql.replace("\n", " ")
-    return sql
+    return sql.replace("\n", " ")
 
 
 class GenSql(PromptProcessor):

@@ -1,5 +1,7 @@
+import copy
 from functools import lru_cache
 
+from .match import STOP_WORDS
 
 AGG_WORDS = ["average", "maximum", "minimum", "number"]
 
@@ -118,6 +120,7 @@ class TokenString:
                 break
             if self.match_all(i, str_tokens, self.tokens, type_):
                 return self.construct_from_token(self.tokens[i : len_str_tokens + i])
+        return None
 
     def index(self, str_, strat_index=0, type_=1):
         """

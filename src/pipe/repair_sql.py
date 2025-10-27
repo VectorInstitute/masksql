@@ -24,10 +24,9 @@ class RepairSQL(PromptProcessor):
         err = row["pre_eval"]["err"]
         pred_res = row["pre_eval"]["pred_res"]
         exec_res = f"Execution Result: {pred_res}, Execution Error: {err}"
-        prompt = REPAIR_SQL_PROMPT_V3.format(
+        return REPAIR_SQL_PROMPT_V3.format(
             question=question, schema=schema, sql=sql, exec_res=exec_res
         )
-        return prompt
 
     async def _process_row(self, row):
         if row["pre_eval"]["acc"] == 1:

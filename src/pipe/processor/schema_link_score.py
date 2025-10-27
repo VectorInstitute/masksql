@@ -73,3 +73,4 @@ class SchemaLinkScore(DataPrinter):
         print("Not Found:")
         print(not_found)
         print("-" * 100)
+        return None

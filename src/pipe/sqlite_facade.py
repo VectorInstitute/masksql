@@ -37,6 +37,7 @@ def sqlite_timelimit(conn: Connection, ms):
     def handler():
         if time.perf_counter() >= deadline:
             return 1
+        return 0
 
     conn.set_progress_handler(handler, n)
     try:
@@ -104,10 +105,7 @@ class SqliteFacade:
         sample_rows = self.exec_query_sync(db_id, f"SELECT * FROM {table} LIMIT 3")
         if sample_rows:
             rows_str = "\n".join(
-                map(
-                    lambda r: "\t".join(list(map(lambda cv: str(cv)[:50], r))),
-                    sample_rows,
-                )
+                "\t".join([str(cv)[:50] for cv in r]) for r in sample_rows
             )
         else:
             rows_str = "\n"
@@ -132,8 +130,7 @@ class SqliteFacade:
             List of column names
         """
         res = self.exec_query_sync(db_id, f'PRAGMA table_info("{table_name}")')
-        col_names = [_[1] for _ in res]
-        return col_names
+        return [_[1] for _ in res]
 
     def get_foreign_key(self, db_id, table_name):
         """
@@ -201,8 +198,7 @@ class SqliteFacade:
         result = self.exec_query_sync(
             db_id, "SELECT name FROM sqlite_master WHERE type='table'"
         )
-        table_names = [_[0] for _ in result]
-        return table_names
+        return [_[0] for _ in result]
 
     def exec_query_sync(self, db_id: str, sql: str, timeout: int = DB_TIMEOUT):
         """

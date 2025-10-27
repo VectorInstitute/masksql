@@ -77,9 +77,7 @@ def parse_option():
     )
     parser.add_argument("--target_type", type=str, default="sql", help="sql or natsql.")
 
-    opt = parser.parse_args()
-
-    return opt
+    return parser.parse_args()
 
 
 def get_db_contents(
@@ -195,9 +193,7 @@ def get_db_schemas(all_db_infos):
 def normalization(sql):
     def white_space_fix(s):
         parsed_s = Parser(s)
-        s = " ".join([token.value for token in parsed_s.tokens])
-
-        return s
+        return " ".join([token.value for token in parsed_s.tokens])
 
     # convert everything except text between single quotation marks to lower case
     def lower(s):
@@ -241,7 +237,7 @@ def normalization(sql):
         tables_aliases = Parser(s).tables_aliases
         new_tables_aliases = {}
         for i in range(1, 11):
-            if "t{}".format(i) in tables_aliases.keys():
+            if "t{}".format(i) in tables_aliases:
                 new_tables_aliases["t{}".format(i)] = tables_aliases["t{}".format(i)]
 
         tables_aliases = new_tables_aliases
@@ -335,10 +331,7 @@ def isFloat(string):
     s = string.split(".")
     if len(s) > 2:
         return False
-    for s_i in s:
-        if not s_i.isdigit():
-            return False
-    return True
+    return all(s_i.isdigit() for s_i in s)
 
 
 def main(opt):

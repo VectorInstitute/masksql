@@ -14,10 +14,7 @@ def is_no_table_match(table_match):
     """
     Return True, if we can not find table from the question.
     """
-    for tm in table_match:
-        if tm:
-            return False
-    return True
+    return all(not tm for tm in table_match)
 
 
 def table_match_num(table_match):
@@ -85,17 +82,17 @@ def use_column_find_table(
         return list(all_tables)[0]
     return -1
 
-    for i in range(len(colums)):
-        if i > idx_start and colums[i][1] and len(colums[i][1]) == 1:
-            return colums[i][1]
+
+def next_col(columns, idx_start):
+    """Find the next column after idx_start that has a single element."""
+    for i in range(idx_start + 1, len(columns)):
+        if columns[i][1] and len(columns[i][1]) == 1:
+            return columns[i][1]
     return []
 
 
 def check_col_correct(column_all):
-    for c in column_all:
-        if len(c[1]) != 1:
-            return False
-    return True
+    return all(len(c[1]) == 1 for c in column_all)
 
 
 def type_1(
@@ -470,15 +467,14 @@ def reconize_select_type(
                 range(len(original_table)), original_table, availble_idx
             ):
                 for c in col:
-                    if c != []:
-                        if len(c) >= 1:
-                            if table_idx == [-1]:
-                                table_idx = c
-                                table_in_col_idx = i
-                            elif table_in_col_idx == i and of_for_structure_in_col(
-                                a_col, q_toks
-                            ):
-                                table_idx = c
+                    if c != [] and len(c) >= 1:
+                        if table_idx == [-1]:
+                            table_idx = c
+                            table_in_col_idx = i
+                        elif table_in_col_idx == i and of_for_structure_in_col(
+                            a_col, q_toks
+                        ):
+                            table_idx = c
             return True, table_idx
         return False, [-1]
 

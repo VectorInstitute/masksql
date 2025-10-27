@@ -34,5 +34,4 @@ async def apply_async(fun, items, desc=""):
             return await fun(item)
 
     tasks = [asyncio.create_task(sem_task(item)) for item in items]
-    results = await tqdm.gather(*tasks, total=len(items), desc=desc)
-    return results
+    return await tqdm.gather(*tasks, total=len(items), desc=desc)

@@ -132,8 +132,7 @@ def eval_literal(text: str):
         Evaluated Python object or None if evaluation fails
     """
     try:
-        obj = ast.literal_eval(text)
-        return obj
+        return ast.literal_eval(text)
     except Exception as e:
         logger.warning(f"Failed eval literal: {text}, error={e}")
         return None

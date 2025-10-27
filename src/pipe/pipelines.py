@@ -1,5 +1,43 @@
 """Pipeline configuration definitions."""
 
+import os
+
+from src.pipe.add_schema import AddFilteredSchema, AddSchema
+from src.pipe.add_symb_schema import AddSymbolicSchema
+from src.pipe.copy_transformer import AddGoldValues, CopyTransformer
+from src.pipe.det_mask import AddSymbolicQuestion
+from src.pipe.detect_entities import DetectValues
+from src.pipe.exec_acc import CalcExecAcc
+from src.pipe.exec_conc_sql import ExecuteConcreteSql
+from src.pipe.gen_masked_sql import GenerateSymbolicSql
+from src.pipe.gen_sql import GenSql
+from src.pipe.link_schema import LinkSchema
+from src.pipe.processor.gen_sql_eval import GenSqlEval
+from src.pipe.processor.limit_list import LimitJson
+from src.pipe.processor.print_results import PrintResults
+from src.pipe.processor.schema_link_eval import SchemaLinkEval
+from src.pipe.processor.value_link_eval import ValueLinkEval
+from src.pipe.rank_schema import RankSchemaResd
+from src.pipe.repair_sql import RepairSQL
+from src.pipe.repair_symb_sql import RepairSymbolicSQL
+from src.pipe.symb_table import AddSymbolTable
+from src.pipe.unmask import AddConcreteSql
+from src.pipe.value_links import LinkValues
+
+
+# Model configurations
+LLM_MODEL = os.getenv("LLM_MODEL")
+PRIVATE_MODEL = os.getenv("PRIVATE_MODEL")
+SLM_MODEL = os.getenv("SLM_MODEL")
+
+# Path configurations - these should be set appropriately for your environment
+database_path = os.getenv("DATABASE_PATH", "../parser/data/bird/database")
+tables_path = os.getenv("TABLES_PATH", "out/tables.json")
+
+# Aliases for backwards compatibility
+ExecAccCalc = CalcExecAcc
+WrongExecAccOutput = ExecuteConcreteSql
+
 unmask_pipe_llm = [
     LimitJson("limit"),
     RankSchemaResd(tables_path),

@@ -469,11 +469,11 @@ lstem = MyStemmer()
 
 def sgrsm_key(tok_grsm):
     key = None
-    if tok_grsm.text in S_ADJ_WORD_DIRECTION.keys():
+    if tok_grsm.text in S_ADJ_WORD_DIRECTION:
         key = tok_grsm.text
-    elif tok_grsm.lemma_ in S_ADJ_WORD_DIRECTION.keys():
+    elif tok_grsm.lemma_ in S_ADJ_WORD_DIRECTION:
         key = tok_grsm.lemma_
-    elif lstem.stem(tok_grsm.text) in S_ADJ_WORD_DIRECTION.keys():
+    elif lstem.stem(tok_grsm.text) in S_ADJ_WORD_DIRECTION:
         key = lstem.stem(tok_grsm.text)
     return key
 

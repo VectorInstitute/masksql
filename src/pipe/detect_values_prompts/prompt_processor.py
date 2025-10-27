@@ -109,5 +109,4 @@ class PromptProcessor(JsonListTransformer):
         self.response_file = f"logs/{self.name}.response.txt"
         open(self.prompt_file, "w").close()
         open(self.response_file, "w").close()
-        output_file = await super().run(input_file)
-        return output_file
+        return await super().run(input_file)

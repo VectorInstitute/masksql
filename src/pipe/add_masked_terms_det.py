@@ -74,8 +74,7 @@ class AddMaskedTermsDeterministic(JsonListTransformer):
             Question with term replaced by symbol.
         """
         symbol = self.get_symbol(schema_items, symbol_table)
-        symbolic_question = replace_str(question, question_term, symbol)
-        return symbolic_question
+        return replace_str(question, question_term, symbol)
 
     def symbolize_value(
         self,
@@ -121,8 +120,7 @@ class AddMaskedTermsDeterministic(JsonListTransformer):
         evidence = f"{value_symbol} is a value of the column {column_symbol}"
         self.value_dict[value_symbol] = question_term
         symbolic_question = replace_str(question, question_term, value_symbol)
-        symbolic_question = f"{symbolic_question}; {evidence}"
-        return symbolic_question
+        return f"{symbolic_question}; {evidence}"
 
     def add_tables_of_columns(
         self, schema_links: Dict[str, str], filtered_schema_links: Dict[str, str]

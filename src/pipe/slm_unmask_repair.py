@@ -11,8 +11,7 @@ class SlmUnmaskAndRepair(PromptProcessor):
     """Unmask questions and repair SQL using small language model."""
 
     def _process_output(self, row, output):
-        sql = extract_sql(output)
-        return sql
+        return extract_sql(output)
 
     def _get_prompt(self, row):
         question = row["question"]

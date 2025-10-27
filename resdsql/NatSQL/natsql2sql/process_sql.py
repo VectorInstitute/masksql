@@ -665,8 +665,7 @@ def parse_sql(toks, start_idx, tables_with_alias, schema, mapped_entities_fn=Non
 
 def load_data(fpath):
     with open(fpath) as f:
-        data = json.load(f)
-    return data
+        return json.load(f)
 
 
 def get_sql(schema, query):

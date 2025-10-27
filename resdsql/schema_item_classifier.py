@@ -109,9 +109,7 @@ def parse_option():
         "--mode", type=str, default="train", help="trian, eval or test."
     )
 
-    opt = parser.parse_args()
-
-    return opt
+    return parser.parse_args()
 
 
 def prepare_batch_inputs_and_labels(batch, tokenizer):

@@ -64,9 +64,7 @@ def parse_option():
     )
     parser.add_argument("--target_type", type=str, default="sql", help="sql or natsql.")
 
-    opt = parser.parse_args()
-
-    return opt
+    return parser.parse_args()
 
 
 def lista_contains_listb(lista, listb):
@@ -299,7 +297,7 @@ def generate_eval_ranked_dataset(opt):
         ranked_data["db_id"] = data["db_id"]
         ranked_data["db_schema"] = []
 
-        table_pred_probs = list(map(lambda x: round(x, 4), data["table_pred_probs"]))
+        table_pred_probs = [round(x, 4) for x in data["table_pred_probs"]]
         # find ids of tables that have top-k probability
         topk_table_ids = np.argsort(-np.array(table_pred_probs), kind="stable")[
             : opt.topk_table_num
@@ -322,9 +320,7 @@ def generate_eval_ranked_dataset(opt):
                 ]
                 if len(used_column_ids) == 0:
                     continue
-                column_pred_probs = list(
-                    map(lambda x: round(x, 2), data["column_pred_probs"][idx])
-                )
+                column_pred_probs = [round(x, 2) for x in data["column_pred_probs"][idx]]
                 topk_column_ids = np.argsort(
                     -np.array(column_pred_probs), kind="stable"
                 )[: opt.topk_column_num].tolist()
@@ -338,9 +334,7 @@ def generate_eval_ranked_dataset(opt):
             new_table_info["table_name_original"] = data["db_schema"][table_id][
                 "table_name_original"
             ]
-            column_pred_probs = list(
-                map(lambda x: round(x, 2), data["column_pred_probs"][table_id])
-            )
+            column_pred_probs = [round(x, 2) for x in data["column_pred_probs"][table_id]]
             topk_column_ids = np.argsort(-np.array(column_pred_probs), kind="stable")[
                 : opt.topk_column_num
             ].tolist()

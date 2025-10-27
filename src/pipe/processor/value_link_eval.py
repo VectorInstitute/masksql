@@ -35,8 +35,7 @@ class ValueLinkEval(JsonListProcessor):
         total = 0
         for gk, gv in gold.items():
             total += 1
-            if gk in pred:
-                if pred[gk] == gv:
-                    score += 1
+            if gk in pred and pred[gk] == gv:
+                score += 1
 
         self.scores.append({"score": score, "total": total})

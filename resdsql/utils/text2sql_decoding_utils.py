@@ -157,8 +157,7 @@ def get_cursor_from_path(sqlite_path):
         print(sqlite_path)
         raise e
     connection.text_factory = lambda b: b.decode(errors="ignore")
-    cursor = connection.cursor()
-    return cursor
+    return connection.cursor()
 
 
 # execute predicted sql with a time limitation

@@ -24,7 +24,7 @@ class LinkValues(PromptProcessor):
         question = row["question"]
         values = row["values"]
         # slm_sql = row['slm_sql']
-        columns = list(map(lambda x: x.split(":")[1], schema_items))
+        columns = [x.split(":")[1] for x in schema_items]
         return VALUE_LINKING_PROMPT_V1.format(
             question=question, values=values, columns=columns
         )

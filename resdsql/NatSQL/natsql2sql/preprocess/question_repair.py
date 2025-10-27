@@ -108,59 +108,58 @@ def question_repair(nlp, q, all_word, full_target, top_target, end_target):
             and tok.lower_ not in all_word
             and not tok.text.isdigit()
             and tok.text.islower()
-        ):
-            if tok.lemma_ not in full_target and tok.lower_ not in full_target:
-                switch_fix_text = switch_tok_match(tok.text, full_target)
-                switch_fix_lemma = switch_tok_match(tok.lemma_, full_target)
-                for w in full_target:
-                    if (
-                        len(w) > 3
-                        and (
-                            editdistance.eval(tok.text, w) == 1 or w == switch_fix_text
-                        )
-                        or len(w) > 3
-                        and (
-                            editdistance.eval(tok.lemma_, w) == 1
-                            or w == switch_fix_lemma
-                        )
-                    ):
-                        if cover_by_punt(tokens, i):
-                            continue
-                        tokens[i] = Token(text=w, lemma=w, tag=tok.tag_)
-                        print(tok.text + " -> " + tokens[i].text)
-                        break
-                    if (
-                        tok.text == w + "id"
-                        or tok.text == w + "ids"
-                        or tok.lemma_ == w + "id"
-                        or tok.lemma_ == w + "ids"
-                    ):
-                        if cover_by_punt(tokens, i):
-                            continue
-                        tokens[i] = Token(text=w + " id", lemma=w + " id", tag=tok.tag_)
-                        print(tok.text + " -> " + tokens[i].text)
-                        break
-                    if (
-                        len(w) > 8
-                        and editdistance.eval(tok.lemma_, w) == 2
-                        and len(w) - len(tok.lemma_) == 2
-                    ):
-                        if cover_by_punt(tokens, i):
-                            continue
-                        for tok_i in range(2, len(tok.lemma_) - 1, 1):
-                            if (
-                                editdistance.eval(
-                                    tok.lemma_[:tok_i]
-                                    + tok.lemma_[tok_i]
-                                    + tok.lemma_[tok_i:],
-                                    w,
-                                )
-                                == 1
-                            ):
-                                tokens[i] = Token(text=w, lemma=w, tag=tok.tag_)
-                                print(tok.text + " -> " + tokens[i].text)
-                                break
-                        break
+        ) and tok.lemma_ not in full_target and tok.lower_ not in full_target:
+            switch_fix_text = switch_tok_match(tok.text, full_target)
+            switch_fix_lemma = switch_tok_match(tok.lemma_, full_target)
+            for w in full_target:
+                if (
+                    len(w) > 3
+                    and (
+                        editdistance.eval(tok.text, w) == 1 or w == switch_fix_text
+                    )
+                    or len(w) > 3
+                    and (
+                        editdistance.eval(tok.lemma_, w) == 1
+                        or w == switch_fix_lemma
+                    )
+                ):
+                    if cover_by_punt(tokens, i):
+                        continue
+                    tokens[i] = Token(text=w, lemma=w, tag=tok.tag_)
+                    print(tok.text + " -> " + tokens[i].text)
+                    break
+                if (
+                    tok.text == w + "id"
+                    or tok.text == w + "ids"
+                    or tok.lemma_ == w + "id"
+                    or tok.lemma_ == w + "ids"
+                ):
+                    if cover_by_punt(tokens, i):
+                        continue
+                    tokens[i] = Token(text=w + " id", lemma=w + " id", tag=tok.tag_)
+                    print(tok.text + " -> " + tokens[i].text)
+                    break
+                if (
+                    len(w) > 8
+                    and editdistance.eval(tok.lemma_, w) == 2
+                    and len(w) - len(tok.lemma_) == 2
+                ):
+                    if cover_by_punt(tokens, i):
+                        continue
+                    for tok_i in range(2, len(tok.lemma_) - 1, 1):
+                        if (
+                            editdistance.eval(
+                                tok.lemma_[:tok_i]
+                                + tok.lemma_[tok_i]
+                                + tok.lemma_[tok_i:],
+                                w,
+                            )
+                            == 1
+                        ):
+                            tokens[i] = Token(text=w, lemma=w, tag=tok.tag_)
+                            print(tok.text + " -> " + tokens[i].text)
+                            break
+                    break
 
         if (
             i + 2 < len(tokens)
@@ -225,7 +224,7 @@ def question_repair(nlp, q, all_word, full_target, top_target, end_target):
                     del tokens[i + 1]
             elif (
                 tokens[i - 1].text in ["in"]
-                and tokens[i + 1].lemma_ in ABSOLUTELY_GRSM_DICT.keys()
+                and tokens[i + 1].lemma_ in ABSOLUTELY_GRSM_DICT
                 and str_is_num(tokens[i + 2].text)
             ):
                 find_sgrsm = is_there_sgrsm_and_gr_or_sm(tokens, tokens[i + 1], i + 1)
