@@ -70,7 +70,7 @@ Then, you need to run the MaskSQL with the `--resd` option.
 
 ### Run MaskSQL
 
-Then you can run MaskSQL pipline as follows:
+Then you can run MaskSQL pipeline as follows:
 ```sh
 python3 main.py --resd
 ```

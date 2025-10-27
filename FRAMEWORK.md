@@ -82,6 +82,6 @@ is then set to the field `prop_name`.
 
 ### Usage stats
 The `PromptProcessor` keeps track of the `total_latency` and `total_toks` used.
-So, in the begining of the pipeline, we set `total_latency` and `total_toks`
+So, in the beginning of the pipeline, we set `total_latency` and `total_toks`
 fields to zero.
 Each `PromptProcessor` then adds the time and tokens spent to these total values.
