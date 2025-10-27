@@ -95,10 +95,10 @@ def confidence_interval(column: pd.Series) -> str:
     """
     if not pd.api.types.is_numeric_dtype(column):
         return "NA"
-    CONFIDENCE = 0.95
-    Z = 1.65
-    SE = column.std() / math.sqrt(column.size)
-    err_margin = Z * SE
+    confidence = 0.95
+    z = 1.65
+    se = column.std() / math.sqrt(column.size)
+    err_margin = z * se
     mean = column.mean()
     interval_start = mean - err_margin
     interval_end = mean + err_margin

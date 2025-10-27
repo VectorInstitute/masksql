@@ -2113,10 +2113,13 @@ def remove_other_cols(sq, schema, sq_i, sq_j):
 if __name__ == "__main__":
     print("start ")
     args = construct_hyper_param()
-    sql_json = json.load(open(os.path.join(args.in_file), "r"))
-    table_json = json.load(open(args.table_file, "r"))
+    with open(os.path.join(args.in_file), "r") as f:
+        sql_json = json.load(f)
+    with open(args.table_file, "r") as f:
+        table_json = json.load(f)
     _tokenizer = get_spacy_tokenizer()
-    _concept_word = pickle.load(open(os.path.join("data/conceptnet.pkl"), "rb"))
+    with open(os.path.join("data/conceptnet.pkl"), "rb") as f:
+        _concept_word = pickle.load(f)
     lstm = MyStemmer()
 
     ONE_ID = []
@@ -2367,4 +2370,5 @@ if __name__ == "__main__":
         assert sql["question"].count(" ") + 1 == len(sql["table_match"])
         sql["question_toks"] = sql["question"].split(" ")
     if not ONE_ID:
-        json.dump(sql_json, open(args.out_file, "w"), indent=2)
+        with open(args.out_file, "w") as f:
+            json.dump(sql_json, f, indent=2)

@@ -20,9 +20,9 @@ def print_color(text, color="green"):
         "green": "\033[92m",
         "blue": "\033[94m",
     }
-    RESET = "\033[0m"
+    reset = "\033[0m"
     color_code = colors.get(color.lower(), "")
-    print(f"{color_code}{text}{RESET}")
+    print(f"{color_code}{text}{reset}")
 
 
 class PrintResults(DataPrinter):

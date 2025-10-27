@@ -834,7 +834,7 @@ def recover_table_name(tables):
 
 
 def unifie_words(tables):
-    WORDS = [
+    words = [
         ["enrolment", "enrollment"],
         ["enroll", "enrol"],
         ["lives in", "lived in"],
@@ -842,7 +842,7 @@ def unifie_words(tables):
     ]
     for _i, table in enumerate(tables):
         for j, col in enumerate(table["column_names"]):
-            for w in WORDS:
+            for w in words:
                 if (
                     w[0] == col[1]
                     or col[1].startswith(w[0] + " ")
@@ -852,7 +852,7 @@ def unifie_words(tables):
                     table["column_names"][j][1] = col[1].replace(w[0], w[1])
 
         for j, tb in enumerate(table["table_names"]):
-            for w in WORDS:
+            for w in words:
                 if (
                     w[0] == tb
                     or tb.startswith(w[0] + " ")
@@ -1226,8 +1226,10 @@ if __name__ == "__main__":
     database_path = args.db_path
 
     # 2. Prepare data
-    tables = json.load(open(args.in_file, "r"))
-    all_words = pickle.load(open(os.path.join("./NatSQL/data/20k.pkl"), "rb"))
+    with open(args.in_file, "r") as f:
+        tables = json.load(f)
+    with open(os.path.join("./NatSQL/data/20k.pkl"), "rb") as f:
+        all_words = pickle.load(f)
     new_tables = []
 
     lstem = MyStemmer()
@@ -1300,7 +1302,8 @@ if __name__ == "__main__":
                 table["column_names"].insert(0, [-1, "*"])
                 table["column_names_original"].insert(0, [-1, "*"])
 
-        json.dump(new_tables, open(args.out_file, "w"), indent=2)
+        with open(args.out_file, "w") as f:
+            json.dump(new_tables, f, indent=2)
     else:
         for table in tables:
             if args.keepOriginal:
@@ -1322,4 +1325,5 @@ if __name__ == "__main__":
                         )
                     else:
                         table["table_column_names_original"].append(item)
-        json.dump(tables, open(args.out_file, "w"), indent=2)
+        with open(args.out_file, "w") as f:
+            json.dump(tables, f, indent=2)

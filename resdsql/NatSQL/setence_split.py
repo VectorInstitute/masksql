@@ -488,8 +488,10 @@ def preprocess_sql(
     2. calc table match
     3. sentence cut
     """
-    sqls = json.load(open(sql_path, "r"))
-    table_json = json.load(open(table_path, "r"))
+    with open(sql_path, "r") as f:
+        sqls = json.load(f)
+    with open(table_path, "r") as f:
+        table_json = json.load(f)
     table_dict = {}
     full_word = {}
     all_schema = {}
@@ -806,7 +808,8 @@ def construct_hyper_param():
 
 if __name__ == "__main__":
     args = construct_hyper_param()
-    all_word = pickle.load(open("data/20k-original.pkl", "rb"))
+    with open("data/20k-original.pkl", "rb") as f:
+        all_word = pickle.load(f)
     sqls = preprocess_sql(
         sql_path=args.in_file,
         table_path=args.table_file,
@@ -815,5 +818,6 @@ if __name__ == "__main__":
         use_pattern_generate_col=args.use_pattern_generate_col,
     )
     if not ONE_ID:
-        json.dump(sqls, open(args.out_file, "w"), indent=2)
+        with open(args.out_file, "w") as f:
+            json.dump(sqls, f, indent=2)
         pass

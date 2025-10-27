@@ -294,7 +294,8 @@ def _test(opt):
     os.environ["CUDA_VISIBLE_DEVICES"] = opt.device
 
     if opt.target_type == "natsql":
-        tables = json.load(open(opt.tables_for_natsql, "r"))
+        with open(opt.tables_for_natsql, "r") as f:
+            tables = json.load(f)
         table_dict = {}
         for t in tables:
             table_dict[t["db_id"]] = t

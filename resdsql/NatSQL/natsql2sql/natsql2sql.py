@@ -203,10 +203,10 @@ def condition_str(column):
 
 
 def get_where_column(sql_dict, table_list, start_index, sql_type, table_json, args):
-    AND_OR_TYPE = 1
-    SUB_SQL_TYPE = 2
-    SUB_SUB_SQL_TYPE = 3
-    TOP_SQL_TYPE = AND_OR_TYPE
+    and_or_type = 1
+    sub_sql_type = 2
+    sub_sub_sql_type = 3
+    top_sql_type = and_or_type
 
     break_idx = -1
     next_type = None
@@ -227,7 +227,7 @@ def get_where_column(sql_dict, table_list, start_index, sql_type, table_json, ar
             isinstance(column, str) and column.lower() in SPECIAL_COND_OPS
         ):  # 'except', 'intersect', 'union', 'sub'
             if column == "sub":
-                last_column_type = SUB_SQL_TYPE
+                last_column_type = sub_sql_type
                 break_idx, next_type = (
                     (idx + 1, SQL_SUBSUB)
                     if (idx > start_index and not next_type)
@@ -246,7 +246,7 @@ def get_where_column(sql_dict, table_list, start_index, sql_type, table_json, ar
                 )
                 break
         elif isinstance(column, str) and column.lower() in AND_OR_OPS:  # 'and', 'or'
-            last_column_type = AND_OR_TYPE
+            last_column_type = and_or_type
             if sql_str.endswith("and "):
                 sql_str = sql_str[:-4]
             elif sql_str.endswith("or "):
@@ -3793,10 +3793,10 @@ def search_all_join_on(
     all_from.append(from_table_netss)
 
     if sql_dict["groupBy"]:  # V1.1:
-        groupby_list = [col_unit_back(gBy) for gBy in sql_dict["groupBy"]]
+        groupby_list = [col_unit_back(g_by) for g_by in sql_dict["groupBy"]]
         groupby_top = " group by " + ", ".join(groupby_list)
-        for gBy in sql_dict["groupBy"]:
-            table_list.append(gBy[1].split(".")[0])
+        for g_by in sql_dict["groupBy"]:
+            table_list.append(g_by[1].split(".")[0])
         table_list = list(set(table_list))
         if break_idx == SQL_TOP:
             add_top_group = False
