@@ -124,9 +124,7 @@ def parse_option():
         help="save file of the predicted sqls.",
     )
 
-    opt = parser.parse_args()
-
-    return opt
+    return parser.parse_args()
 
 
 def _train(opt):
@@ -403,6 +401,7 @@ def _test(opt):
         print("exec score: {}".format(spider_metric_result["exec"]))
 
         return spider_metric_result["exact_match"], spider_metric_result["exec"]
+    return None
 
 
 if __name__ == "__main__":

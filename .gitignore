@@ -8,7 +8,6 @@ tensorboard_log
 third_party
 predictions
 database
-.vnev
 .python-version
 out
 .env

@@ -564,20 +564,19 @@ def get_table_network(
                     table_json["column_names"],
                     table_json["column_names_original"],
                 ):
-                    if c_n2[0] == table_idx_list[1]:
-                        if table_json["column_types_checked"][j] == table_json[
-                            "column_types_checked"
-                        ][i] and (
-                            (
-                                c_n[1] == c_n2[1]
-                                and c_n[1] not in ["id", "name", "ids", "*"]
-                            )
-                            or (
-                                c_on[1] == c_on2[1]
-                                and c_on[1] not in ["id", "name", "ids", "*"]
-                            )
-                        ):
-                            return [[[i, j]], table_idx_list]
+                    if c_n2[0] == table_idx_list[1] and table_json["column_types_checked"][j] == table_json[
+                        "column_types_checked"
+                    ][i] and (
+                        (
+                            c_n[1] == c_n2[1]
+                            and c_n[1] not in ["id", "name", "ids", "*"]
+                        )
+                        or (
+                            c_on[1] == c_on2[1]
+                            and c_on[1] not in ["id", "name", "ids", "*"]
+                        )
+                    ):
+                        return [[[i, j]], table_idx_list]
 
         # try to directly use the foreign key to join
         r_ = None
@@ -785,14 +784,13 @@ def get_table_network(
                             in table_json["column_names"][c_id][1].lower()
                         ):
                             return False
-            if sql_dict["orderBy"]:
-                if sql_dict["orderBy"][1][0][1][1] in table_json["tc_fast"]:
-                    c_id = table_json["tc_fast"].index(sql_dict["orderBy"][1][0][1][1])
-                    if (
-                        t_word + " " in table_json["column_names"][c_id][1].lower()
-                        or " " + t_word in table_json["column_names"][c_id][1].lower()
-                    ):
-                        return False
+            if sql_dict["orderBy"] and sql_dict["orderBy"][1][0][1][1] in table_json["tc_fast"]:
+                c_id = table_json["tc_fast"].index(sql_dict["orderBy"][1][0][1][1])
+                if (
+                    t_word + " " in table_json["column_names"][c_id][1].lower()
+                    or " " + t_word in table_json["column_names"][c_id][1].lower()
+                ):
+                    return False
             return True
 
         def use_the_net_col_appear_in_question(table_net, idx1, idx2, sq, table_json):
@@ -826,9 +824,8 @@ def get_table_network(
                 return idx2
             if count1 < count2:
                 return idx1
-            if "source" in cols1 or "source" in cols2:
-                if "source" in cols2 and "from" in " " + sq.question_or + " ":
-                    return idx1
+            if ("source" in cols1 or "source" in cols2) and "source" in cols2 and "from" in " " + sq.question_or + " ":
+                return idx1
             return idx2
 
         if sq and len(from_table_net) > 1:
@@ -1224,7 +1221,6 @@ def maybe_order_by(
                     else " ASC LIMIT 1 "
                 )
             )
-            return order_by_sql
     return ""
 
 
@@ -1290,10 +1286,7 @@ def primary_keys(table_json, table_id, pk_only=False):
 
 
 def contain_bridge_table(table_list, bridge_tables):
-    for b in bridge_tables:
-        if b in table_list:
-            return True
-    return False
+    return any(b in table_list for b in bridge_tables)
 
 
 def infer_at_col(column, table_list, table_json):
@@ -1400,13 +1393,12 @@ def infer_at_col(column, table_list, table_json):
                         range(len(table_json["column_names_original"])),
                         table_json["column_names"],
                     ):
-                        if col[0] == lt and (col[1].count(" ") == 0):
-                            if (
-                                col[1] in col_r_names
-                                and table_json["table_names"][lt] in col_r_names
-                                and col[1] != table_json["table_names"][lt]
-                            ):
-                                return i, r_col_idx
+                        if col[0] == lt and (col[1].count(" ") == 0) and (
+                            col[1] in col_r_names
+                            and table_json["table_names"][lt] in col_r_names
+                            and col[1] != table_json["table_names"][lt]
+                        ):
+                            return i, r_col_idx
             return r_col_idx, r_col_idx
         result = []
         for j, rcol_o, rcol in zip(
@@ -1520,12 +1512,10 @@ def intersect_where_order(wheres, top_select_table_list):
         (len(wheres) == 3 and wheres[1] == "and")
         and wheres[0][1] == wheres[2][1]
         and wheres[0][1] == 7
+        and wheres[0][2][1][1].split(".")[0] not in top_select_table_list
+        and wheres[2][2][1][1].split(".")[0] in top_select_table_list
     ):
-        if (
-            wheres[0][2][1][1].split(".")[0] not in top_select_table_list
-            and wheres[2][2][1][1].split(".")[0] in top_select_table_list
-        ):
-            (wheres[0], wheres[2]) = (wheres[2], wheres[0])
+        (wheres[0], wheres[2]) = (wheres[2], wheres[0])
     if (
         (len(wheres) == 3 and wheres[1] == "or")
         and wheres[0][1] == wheres[2][1]
@@ -1809,14 +1799,14 @@ def except_inference(wheres, sq):
             )
             and wheres[2][1] == 7
             and not (wheres[0][2][1][1] == wheres[2][2][1][1] and wheres[0][1] == 7)
-        ):
-            if (
+            and (
                 (wheres[0][2][1][1] == wheres[2][2][1][1] and wheres[0][1] == 2)
                 or (wheres[0][1] == 7)
                 or wheres[0][2][1][0]
-            ):
-                wheres[1] = "except_"
-                wheres[2][1] = 2
+            )
+        ):
+            wheres[1] = "except_"
+            wheres[2][1] = 2
         if (len(wheres) == 5 and wheres[1] == "and" and wheres[3] == "and") and wheres[
             4
         ][1] == 7:
@@ -2179,14 +2169,13 @@ def infer_IUE_select_col(
     for fk in table_json["foreign_keys"]:
         if old_c_idx in fk:
             other_fk_tmp = fk[0] if old_c_idx == fk[1] else fk[1]
-            if table_json["column_names_original"][other_fk_tmp][0] == new_t_idx:
-                if (
-                    other_fk == -1
-                    or table_json["column_names_original"][old_c_idx][1]
-                    == table_json["column_names_original"][other_fk_tmp][1]
-                    or other_fk_tmp in table_json["original_primary_keys"]
-                ):
-                    other_fk = other_fk_tmp
+            if table_json["column_names_original"][other_fk_tmp][0] == new_t_idx and (
+                other_fk == -1
+                or table_json["column_names_original"][old_c_idx][1]
+                == table_json["column_names_original"][other_fk_tmp][1]
+                or other_fk_tmp in table_json["original_primary_keys"]
+            ):
+                other_fk = other_fk_tmp
     if other_fk > 0:
         return (
             sub_sql + table_json["table_column_names_original"][other_fk][1]
@@ -2468,16 +2457,15 @@ def search_bcol(sq, table, where, sql_dict, where_i):
             if " " + str(v).lower() + " " in " " + sq.question_or.lower() + " ":
                 where[3] = "'" + v + "'" if type(v) == str else v
                 break
-    if where[3] == '"terminal"':
-        if len(table["data_samples"][where_col_idx]) > 0:
-            for v in table["data_samples"][where_col_idx]:
-                if (
-                    type(v) == str
-                    and v.lower()
-                    in ["y", "yes", "true", "t", "1", "good", "g", "success", "s"]
-                ) or (type(v) == int and v == 1):
-                    where[3] = "'" + v + "'" if type(v) == str else v
-                    break
+    if where[3] == '"terminal"' and len(table["data_samples"][where_col_idx]) > 0:
+        for v in table["data_samples"][where_col_idx]:
+            if (
+                type(v) == str
+                and v.lower()
+                in ["y", "yes", "true", "t", "1", "good", "g", "success", "s"]
+            ) or (type(v) == int and v == 1):
+                where[3] = "'" + v + "'" if type(v) == str else v
+                break
     if where[3] == '"terminal"' and table["data_samples"][where_col_idx]:
         where[3] = (
             "'" + table["data_samples"][where_col_idx][0] + "'"
@@ -3173,27 +3161,25 @@ def fill_values(sql_dict, sq, table_json):
                 and table_json["data_samples"][
                     table_json["tc_fast"].index(where[2][1][1])
                 ]
+                and where[3].startswith("'")
+                and where[3].endswith("'")
+                and not str_is_num(where[3][1:-1])
+                and table_json["data_samples"][
+                    table_json["tc_fast"].index(where[2][1][1])
+                ]
             ):
-                if (
-                    where[3].startswith("'")
-                    and where[3].endswith("'")
-                    and not str_is_num(where[3][1:-1])
-                    and table_json["data_samples"][
-                        table_json["tc_fast"].index(where[2][1][1])
-                    ]
-                ):
-                    success, used_value, sql_dict = analyse_num(
-                        sq,
-                        used_value,
-                        sql_dict,
-                        i,
-                        where,
-                        ["BOOL_NUM", "NUM"],
-                        table_json,
-                    )
-                    if not success:
-                        where[3] = '"terminal"'
-                        search_bcol(sq, table_json, where, sql_dict, i)
+                success, used_value, sql_dict = analyse_num(
+                    sq,
+                    used_value,
+                    sql_dict,
+                    i,
+                    where,
+                    ["BOOL_NUM", "NUM"],
+                    table_json,
+                )
+                if not success:
+                    where[3] = '"terminal"'
+                    search_bcol(sq, table_json, where, sql_dict, i)
 
     for i, where in enumerate(sql_dict["where"]):
         if type(where) != list or where[2][1][1] not in table_json["tc_fast"]:

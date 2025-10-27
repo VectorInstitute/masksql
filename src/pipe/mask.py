@@ -9,6 +9,17 @@ from RESDSQL.llm_util import send_prompt
 
 DATA_DIR = "data"
 
+PROMPT = """
+You are a database expert. Given a natural language question and database schema information,
+mask all sensitive table and column names with symbolic names like [T1], [C1], [V1], etc.
+
+Question: {question}
+Schema Items: {sitems}
+Schema Links: {slinks}
+
+Return the masked question in a code block.
+"""
+
 
 async def gen():
     """Generate masked questions from RESDSQL test data."""

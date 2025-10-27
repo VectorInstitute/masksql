@@ -19,18 +19,16 @@ def of_for_structure_in_col(col_availble_idx, q_toks):
     if off_1 == 1 and off_2 == 1:
         if q_toks[col_availble_idx[1][0] - 1].text == "of":
             return True
-    if off_1 == 2 and off_2 == 1:
-        if (
-            q_toks[col_availble_idx[1][0] - 1].text == "the"
-            and q_toks[col_availble_idx[1][0] - 2].text == "of"
-        ):
-            return True
-    if off_1 == 2 and off_2 == 2:
-        if (
-            q_toks[col_availble_idx[1][0] - 1].text == "the"
-            and q_toks[col_availble_idx[1][0] - 2].text == "of"
-        ):
-            return True
+    if off_1 == 2 and off_2 == 1 and (
+        q_toks[col_availble_idx[1][0] - 1].text == "the"
+        and q_toks[col_availble_idx[1][0] - 2].text == "of"
+    ):
+        return True
+    if off_1 == 2 and off_2 == 2 and (
+        q_toks[col_availble_idx[1][0] - 1].text == "the"
+        and q_toks[col_availble_idx[1][0] - 2].text == "of"
+    ):
+        return True
     if off_1 == 1 and off_2 == 2:
         if q_toks[col_availble_idx[1][0] - 1].text == "of":
             return True
@@ -298,11 +296,10 @@ def col_match_main(tables, ts, schema, table_match, select_type=False, all_table
                         if (
                             (input_match and k != 0 and input_match[i])
                             or table_match[i]
-                        ) and d3 == 0:
-                            if not special_case_for_pass(
-                                d1, schema, ts, i, select_type=select_type
-                            ):
-                                continue
+                        ) and d3 == 0 and not special_case_for_pass(
+                            d1, schema, ts, i, select_type=select_type
+                        ):
+                            continue
                         if match[i] and d1 not in match[i][0]:
                             match[i][0].append(d1)
                             match[i][1].append(d2)

@@ -21,8 +21,7 @@ def normalize(name: str) -> str:
         Normalized identifier in [name] format
     """
     name = name.lower()
-    name = f"[{name}]"
-    return name
+    return f"[{name}]"
 
 
 class DatabaseSchema:

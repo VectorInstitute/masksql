@@ -250,7 +250,7 @@ def get_all_cats(cats: List[StatementCategory]):
     list
         List of category names.
     """
-    return list(map(lambda c: c.name, cats))
+    return [c.name for c in cats]
 
 
 def find_sub(cat_name: str) -> Optional[SubCategory]:

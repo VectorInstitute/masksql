@@ -67,8 +67,7 @@ def construct_hyper_param():
 
     parser.add_argument("--db_path", default="./database", type=str)
 
-    args = parser.parse_args()
-    return args
+    return parser.parse_args()
 
 
 def reversed_link_back_col(col_id, table_json):
@@ -638,43 +637,42 @@ def create_mini_network(network, table):
                 table_all.append(to_all_table)
 
     for new in network:
-        if len(new[0]) == 2 and len(new[1]) == 3:
-            if new[0][0][1] in new[0][1] or new[0][0][0] in new[0][1]:
-                new_net = None
-                if (
-                    new[0][0][1] in new[0][1]
-                    and table["column_names"][new[0][0][1]][0] == new[1][1]
-                ):
-                    if new[0][0][1] == new[0][1][0]:
-                        new_net = [
-                            [[new[0][0][0], new[0][1][1]]],
-                            [new[1][0], new[1][2]],
-                        ]
-                    else:
-                        new_net = [
-                            [[new[0][0][0], new[0][1][0]]],
-                            [new[1][0], new[1][2]],
-                        ]
-                elif (
-                    new[0][0][0] in new[0][1]
-                    and table["column_names"][new[0][0][0]][0] == new[1][1]
-                ):
-                    if new[0][0][0] == new[0][1][0]:
-                        new_net = [
-                            [[new[0][0][1], new[0][1][1]]],
-                            [new[1][0], new[1][2]],
-                        ]
-                    else:
-                        new_net = [
-                            [[new[0][0][1], new[0][1][0]]],
-                            [new[1][0], new[1][2]],
-                        ]
-                if new_net:
-                    to_all_table = copy.deepcopy(new_net[1])
-                    to_all_table.sort()
-                    if to_all_table not in table_all:
-                        table_all.append(to_all_table)
-                        tmp_net.append(new_net)
+        if len(new[0]) == 2 and len(new[1]) == 3 and (new[0][0][1] in new[0][1] or new[0][0][0] in new[0][1]):
+            new_net = None
+            if (
+                new[0][0][1] in new[0][1]
+                and table["column_names"][new[0][0][1]][0] == new[1][1]
+            ):
+                if new[0][0][1] == new[0][1][0]:
+                    new_net = [
+                        [[new[0][0][0], new[0][1][1]]],
+                        [new[1][0], new[1][2]],
+                    ]
+                else:
+                    new_net = [
+                        [[new[0][0][0], new[0][1][0]]],
+                        [new[1][0], new[1][2]],
+                    ]
+            elif (
+                new[0][0][0] in new[0][1]
+                and table["column_names"][new[0][0][0]][0] == new[1][1]
+            ):
+                if new[0][0][0] == new[0][1][0]:
+                    new_net = [
+                        [[new[0][0][1], new[0][1][1]]],
+                        [new[1][0], new[1][2]],
+                    ]
+                else:
+                    new_net = [
+                        [[new[0][0][1], new[0][1][0]]],
+                        [new[1][0], new[1][2]],
+                    ]
+            if new_net:
+                to_all_table = copy.deepcopy(new_net[1])
+                to_all_table.sort()
+                if to_all_table not in table_all:
+                    table_all.append(to_all_table)
+                    tmp_net.append(new_net)
     network.extend(tmp_net)
     return network
 
@@ -1055,8 +1053,7 @@ def add_line_break(sql):
     # add "\n" after the first "("
     sql = sql[: sql.find("(") + 1] + "\n" + sql[sql.find("(") + 1 :]
     # add "\n" before the last ")"
-    sql = sql[: sql.rfind(")")] + "\n" + sql[sql.rfind(")") :]
-    return sql
+    return sql[: sql.rfind(")")] + "\n" + sql[sql.rfind(")") :]
 
 
 def correct_primary_keys(tables, schemas, database_path):
@@ -1165,10 +1162,9 @@ def correct_primary_keys(tables, schemas, database_path):
                                             del table["primary_keys"][
                                                 table["primary_keys"].index(p_id)
                                             ]
-                if not find_pk:
-                    if db_info[1].lower() in schema.table_names_original:
-                        tid = schema.table_names_original.index(db_info[1].lower())
-                        for col in schema.primaryKey:
+                if not find_pk and db_info[1].lower() in schema.table_names_original:
+                    tid = schema.table_names_original.index(db_info[1].lower())
+                    for col in schema.primaryKey:
                             if schema.column_tokens_table_idx[col] == tid:
                                 print("EEEEE")
 
@@ -1247,7 +1243,7 @@ if __name__ == "__main__":
             for c in t["column_names_order"]:
                 c[0] = c[0] * 1000 + i
                 i += 1
-    elif "column_names_order" in tables[0].keys():
+    elif "column_names_order" in tables[0]:
         for t in tables:
             t.pop("column_names_order")
 

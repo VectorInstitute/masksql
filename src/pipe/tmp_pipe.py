@@ -1,6 +1,7 @@
 """Temporary pipeline processing utilities."""
 
 import asyncio
+import contextlib
 import os
 import sys
 
@@ -77,10 +78,8 @@ slm_mask = [
 
 async def main():
     """Run the temporary pipeline for testing."""
-    try:
+    with contextlib.suppress(Exception):
         logger.remove(0)
-    except Exception:
-        pass
     logger.add(
         sys.stderr,
         level=LOG_LEVEL,
@@ -92,7 +91,7 @@ async def main():
     pipeline = Pipeline(mask_pipe)
     # pipeline = Pipeline(slm_mask)
 
-    out_path = await pipeline.run(input_path)
+    await pipeline.run(input_path)
     print("LLM MODEL:", LLM_MODEL)
     print("SLM MODEL:", SLM_MODEL)
     # print("LINK MODEL:", LINK_MODEL)

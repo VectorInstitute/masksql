@@ -194,3 +194,4 @@ class Text2SQLDataset(Dataset):
                 self.db_ids[index],
                 self.all_tc_original[index],
             )
+        return None

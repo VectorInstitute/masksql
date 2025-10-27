@@ -533,8 +533,7 @@ def sentence_cut(sentence, table_match, offset, sent_idx, sent_num):
             token_list.append([child, type_])
 
     token_list = sorted(token_list, key=lambda x: x[0].i)
-    token_list = merge_punctuation(token_list)
-    return token_list
+    return merge_punctuation(token_list)
 
 
 def reshap_token(token_list):
@@ -578,14 +577,12 @@ def re_reconize_0_type(token_list):
     there_is_second, second_idx = there_are_seperate_select(token_list)
     if there_is_second:
         for i in range(second_idx, len(token_list), 1):
-            if token_list[i][0].text not in [",", "and", "also"]:
-                if token_list[i][0].lower_ in SELECT_FIRST_WORD:
-                    if token_list[i][0].lower_ == "how":
-                        if i + 1 >= len(token_list) or token_list[i + 1][
-                            0
-                        ].lower_ not in ["much", "many", "old"]:
-                            return False
-                    return True
+            if token_list[i][0].text not in [",", "and", "also"] and token_list[i][0].lower_ in SELECT_FIRST_WORD:
+                if token_list[i][0].lower_ == "how" and (i + 1 >= len(token_list) or token_list[i + 1][
+                    0
+                ].lower_ not in ["much", "many", "old"]):
+                    return False
+                return True
     return False
 
 
@@ -700,64 +697,60 @@ def correct_121_pattern(token_list, sentence_split):
         2, 4, 1
     ):  # (1) 1,1,2,2,1,1 -> 1,1,2,2,2,2 #(2) 3,3,4,4,3,3 -> 3,3,4,4,4,4 #(3) 0,0,1,1,0,0 -> 0,0,1,1,1,1
         for i, l in enumerate(len_count):
-            if l[0] == cor:  # check type
-                if i >= 1 and i < len(len_count) - 1:  # not the first and last one
-                    if (
-                        l[1] <= 2
-                        and len_count[i - 1][0] == cor - 1
-                        and len_count[i + 1][0] == cor - 1
-                    ) or (
-                        l[1] <= 3
-                        and len_count[i - 1][0] == cor - 1
-                        and len_count[i + 1][1] <= 2
-                        and len_count[i + 1][0] == cor - 1
-                    ):
-                        k = len_count[i + 1][2]
-                        while True:
-                            if k >= len(token_list) or token_list[k][1] != cor - 1:
-                                break
-                            token_list[k][1] = cor
-                            k += 1
-                        return token_list
+            if l[0] == cor and i >= 1 and i < len(len_count) - 1 and (  # check type  # not the first and last one
+                (
+                    l[1] <= 2
+                    and len_count[i - 1][0] == cor - 1
+                    and len_count[i + 1][0] == cor - 1
+                ) or (
+                    l[1] <= 3
+                    and len_count[i - 1][0] == cor - 1
+                    and len_count[i + 1][1] <= 2
+                    and len_count[i + 1][0] == cor - 1
+                )
+            ):
+                k = len_count[i + 1][2]
+                while True:
+                    if k >= len(token_list) or token_list[k][1] != cor - 1:
+                        break
+                    token_list[k][1] = cor
+                    k += 1
+                return token_list
 
     for new_v in [2, 1]:
         for i, l in enumerate(len_count):
             # 2222,1,2222 or 2222,11,2222 -> 2222222222222
             # 1111,0,1111 or 1111,00,1111 -> 1111111111111
-            if l[0] == new_v - 1:
-                if i >= 1 and i < len(len_count) - 1:
-                    if (
-                        l[1] <= 2
-                        and len_count[i - 1][0] == new_v
-                        and len_count[i + 1][0] == new_v
-                    ):
-                        for i in range(l[2], len_count[i + 1][2], 1):
-                            token_list[i][1] = new_v
-                        return token_list
+            if l[0] == new_v - 1 and i >= 1 and i < len(len_count) - 1 and (
+                l[1] <= 2
+                and len_count[i - 1][0] == new_v
+                and len_count[i + 1][0] == new_v
+            ):
+                for i in range(l[2], len_count[i + 1][2], 1):
+                    token_list[i][1] = new_v
+                return token_list
 
             # 0,1,2... --> 0,2,2...
             # 2,1,3... --> 2,3,3,
-            if l[1] == 1 and l[0] == 1 and i >= 1 and i < len(len_count) - 1:
-                if len_count[i - 1][0] != len_count[i + 1][0]:
-                    for j in range(l[2], len_count[i + 1][2], 1):
-                        token_list[j][1] = (
-                            len_count[i + 1][0]
-                            if len_count[i + 1][0] > 0
-                            else len_count[i - 1][0]
-                        )
+            if l[1] == 1 and l[0] == 1 and i >= 1 and i < len(len_count) - 1 and len_count[i - 1][0] != len_count[i + 1][0]:
+                for j in range(l[2], len_count[i + 1][2], 1):
+                    token_list[j][1] = (
+                        len_count[i + 1][0]
+                        if len_count[i + 1][0] > 0
+                        else len_count[i - 1][0]
+                    )
                     return token_list
 
             # 0,1,1,2... --> 0,2,2,2,...
             # 0,1,1,3... --> 0,3,3,3,...
-            if l[1] == 2 and l[0] == 1 and i >= 1 and i < len(len_count) - 1:
-                if (
-                    token_list[l[2]][0].lemma_ in ["that", "who", "order", "sort", "be"]
-                    and len_count[i - 1][0] == 0
-                    and len_count[i + 1][0] >= 2
-                ):
-                    for j in range(l[2], len_count[i + 1][2], 1):
-                        token_list[j][1] = len_count[i + 1][0]
-                    return token_list
+            if l[1] == 2 and l[0] == 1 and i >= 1 and i < len(len_count) - 1 and (
+                token_list[l[2]][0].lemma_ in ["that", "who", "order", "sort", "be"]
+                and len_count[i - 1][0] == 0
+                and len_count[i + 1][0] >= 2
+            ):
+                for j in range(l[2], len_count[i + 1][2], 1):
+                    token_list[j][1] = len_count[i + 1][0]
+                return token_list
 
             # 0,0,0,1,1,0. --> 0,0,0,1,1,1,1
             if (
@@ -852,8 +845,7 @@ def correct_special_pattern(token_list, question, offset_list):
     token_list = only_how_many(token_list)
     token_list = punctuation_for(token_list, question)
     token_list = correct_if_final_one_is_different(token_list)
-    token_list = reset_sort_type(token_list, offset_list)
-    return token_list
+    return reset_sort_type(token_list, offset_list)
 
 
 def final_correct_special_pattern(token_list):
@@ -1075,8 +1067,7 @@ def final_correct_special_pattern(token_list):
         return token_list
 
     token_list = and_for_next_condition(token_list)
-    token_list = repair_disjoin_phase(token_list)
-    return token_list
+    return repair_disjoin_phase(token_list)
 
 
 def sentence_dump(sentence, sent_data):
@@ -1455,34 +1446,34 @@ def sentence_cut_analyze(
                             )
                         )
                     )
-                ):
-                    if (
+                    and (
                         sub_q.question_tokens[list_idx + 1][0].lemma_
                         in ABSOLUTELY_GRSM_DICT
                         or sub_q.question_tokens[list_idx + 1][0].tag_ == "IN"
                         or there_is_table_in_the_end(
                             previous_col_match[list_idx - 1], table_matchs[list_idx - 1]
                         )
-                    ):
-                        target_idx = (
-                            list_idx - 1
-                            if list_idx > 0
-                            and sub_q.sub_sequence_type[list_idx - 1] == 0
-                            and sub_q.question_tokens[list_idx][0].text == "in"
-                            and there_is_table_in_the_end(
-                                previous_col_match[list_idx], table_matchs[list_idx]
-                            )
-                            and col_in_tables(
-                                previous_col_match[list_idx - 1], tables, schema
-                            )
-                            else list_idx + 1
+                    )
+                ):
+                    target_idx = (
+                        list_idx - 1
+                        if list_idx > 0
+                        and sub_q.sub_sequence_type[list_idx - 1] == 0
+                        and sub_q.question_tokens[list_idx][0].text == "in"
+                        and there_is_table_in_the_end(
+                            previous_col_match[list_idx], table_matchs[list_idx]
                         )
-                        for i in sub_q.original_idx[list_idx]:
-                            token_list[i][1] = sub_q.sub_sequence_type[target_idx]
-                        sub_q.sub_sequence_type[list_idx] = sub_q.sub_sequence_type[
-                            target_idx
-                        ]
-                        continue
+                        and col_in_tables(
+                            previous_col_match[list_idx - 1], tables, schema
+                        )
+                        else list_idx + 1
+                    )
+                    for i in sub_q.original_idx[list_idx]:
+                        token_list[i][1] = sub_q.sub_sequence_type[target_idx]
+                    sub_q.sub_sequence_type[list_idx] = sub_q.sub_sequence_type[
+                        target_idx
+                    ]
+                    continue
                 if sub_q.question_tokens[list_idx - 1][-1].text not in [".", "?"] and (
                     (
                         sub_q.question_tokens[list_idx - 1][-1].text
@@ -1937,24 +1928,24 @@ def add_col_analyze(
                         cols[1][j] == 1
                         and cols[2][j] == 0
                         and schema.column_types[c] == "time"
+                        and schema.column_tokens_lemma_str[c].count(" ") > 0
                     ):
-                        if schema.column_tokens_lemma_str[c].count(" ") > 0:
-                            for tok in schema.column_tokens_lemma_str[c].split(" "):
-                                if (
-                                    tok != sub_q.question_tokens[list_idx][i].lemma_
-                                    and tok != sub_q.question_tokens[list_idx][i].text
-                                ):
-                                    return add_col(
-                                        sub_q,
-                                        list_idx,
-                                        offset,
-                                        schema,
-                                        None,
-                                        token_list,
-                                        pattern_guess,
-                                        add_word_directly=tok,
-                                        insert_idx=i,
-                                    )
+                        for tok in schema.column_tokens_lemma_str[c].split(" "):
+                            if (
+                                tok != sub_q.question_tokens[list_idx][i].lemma_
+                                and tok != sub_q.question_tokens[list_idx][i].text
+                            ):
+                                return add_col(
+                                    sub_q,
+                                    list_idx,
+                                    offset,
+                                    schema,
+                                    None,
+                                    token_list,
+                                    pattern_guess,
+                                    add_word_directly=tok,
+                                    insert_idx=i,
+                                )
         return None, None, None
 
     others = []
@@ -1985,7 +1976,7 @@ def add_col_analyze(
             PATTERNS_TOKS,
             PATTERN_FUN,
         )
-        if list_idx in full_db_match.keys() and len(full_db_match[list_idx]) == len(
+        if list_idx in full_db_match and len(full_db_match[list_idx]) == len(
             db_match
         ):
             db_match = full_db_match[list_idx]
@@ -2058,7 +2049,7 @@ def add_col_analyze(
                                                 break
                                     if do_not_need_add:
                                         break
-                            if last_word[1:-1] in S_ADJ_WORD_DIRECTION.keys():
+                            if last_word[1:-1] in S_ADJ_WORD_DIRECTION:
                                 n_words = [
                                     w_tok[0]
                                     for w_tok in S_ADJ_WORD_DIRECTION[last_word[1:-1]]
@@ -2100,9 +2091,9 @@ def add_col_analyze(
                     for i, pt in enumerate(p_toks):
                         if "SGRSM" in pt or "SJJS" in pt:
                             last_word = pt.split(",")[-1]
-                            if last_word[1:-1] not in S_ADJ_WORD_DIRECTION.keys():
+                            if last_word[1:-1] not in S_ADJ_WORD_DIRECTION:
                                 last_word = "(" + lstem.stem(last_word[1:-1]) + ")"
-                            if last_word[1:-1] in S_ADJ_WORD_DIRECTION.keys():
+                            if last_word[1:-1] in S_ADJ_WORD_DIRECTION:
                                 agg_id, col_id, sgrsm_word = get_AWD_column(
                                     last_word[1:-1],
                                     table_idxs,
@@ -2433,14 +2424,13 @@ def easy_cut(token_list, table_match, col_match):
 
 
 def two_setence_analyse(sents, token_list):
-    if len(sents) == 2:
-        if sents[0].lemma_.startswith("who be "):
-            for i, tok in enumerate(token_list):
-                if tok[1] != 0:
-                    return token_list
-                token_list[i][1] = 1
-                if tok[0].lower_ in [".", "?"]:
-                    break
+    if len(sents) == 2 and sents[0].lemma_.startswith("who be "):
+        for i, tok in enumerate(token_list):
+            if tok[1] != 0:
+                return token_list
+            token_list[i][1] = 1
+            if tok[0].lower_ in [".", "?"]:
+                break
     return token_list
 
 
@@ -2456,10 +2446,7 @@ def select_split(token_list, col_match_list, db_match):
         ):
             col_m_l = col_match_list[i]
             col_m_r = col_match_list[i + 1]
-            for cm in col_m_l[0]:
-                if cm in col_m_r:
-                    return False
-            return True
+            return all(cm not in col_m_r for cm in col_m_l[0])
         if (
             i >= 3
             and token_list[i - 3][0].lemma_ == "how"
@@ -2470,10 +2457,8 @@ def select_split(token_list, col_match_list, db_match):
         ):
             col_m_l = col_match_list[i]
             col_m_r = col_match_list[i + 1]
-            for cm in col_m_l[0]:
-                if cm in col_m_r[0]:
-                    return False
-            return True
+            return all(cm not in col_m_r[0] for cm in col_m_l[0])
+        return None
 
     def split(idx):
         max_ = -1
@@ -2515,6 +2500,7 @@ def select_split(token_list, col_match_list, db_match):
         ):
             token_list = split(i)
             return token_list
+    return None
 
 
 def reset_uncontinue_type(token_list, sentence_num):
@@ -2728,8 +2714,7 @@ def special_word_modify(question, schema):
                     question_toks.insert(start_idx + 2, SToken(text="last"))
                     question_toks.insert(start_idx + 2, SToken(text=","))
 
-    question = " ".join([tok.text for tok in question_toks])
-    return question
+    return " ".join([tok.text for tok in question_toks])
 
 
 def anaylse_punctuate(token_list, question, schema, all_word, keep_original_question):
@@ -3115,12 +3100,11 @@ def db_correction(token_list, col_match, sql, schema):
             if re.fullmatch(
                 r".*(with|contain|contains|containing|contained|include|including|includes|included|includ|includs|have|had|has|having|like|likes)\s([A-Z]){1,10}(\s|\.|\?){0,1}.*",
                 sql["question"],
+            ) and not re.fullmatch(
+                r".*(with|contain|contains|containing|contained|include|including|includes|included|includ|includs|have|had|has|having|like|likes)\s([A-Z]){1,10}([a-z]){0,10}\s([A-Z]){1,10}([a-z]){0,10}\s(\.|\?){0,1}.*",
+                sql["question"],
             ):
-                if not re.fullmatch(
-                    r".*(with|contain|contains|containing|contained|include|including|includes|included|includ|includs|have|had|has|having|like|likes)\s([A-Z]){1,10}([a-z]){0,10}\s([A-Z]){1,10}([a-z]){0,10}\s(\.|\?){0,1}.*",
-                    sql["question"],
-                ):
-                    continue
+                continue
 
             all_str = db_.get_all_db_string()
 
@@ -3236,11 +3220,11 @@ def db_correction(token_list, col_match, sql, schema):
                         break
 
         if not sql["db_match"][start_idx] and (
-            tok.lower_ in COUNTRYS_DICT.keys()
+            tok.lower_ in COUNTRYS_DICT
             or (
                 (start_idx + 1) < len(question_toks)
                 and tok.lower_ + " " + question_toks[start_idx + 1].lower_
-                in COUNTRYS_DICT.keys()
+                in COUNTRYS_DICT
             )
         ):
             table_idxs = get_all_table(
@@ -3275,7 +3259,7 @@ def db_correction(token_list, col_match, sql, schema):
             )
             if start_idx > 2 and match and match[0][0][1][1] >= start_idx:
                 continue
-            if tok.lower_ in COUNTRYS_DICT.keys():
+            if tok.lower_ in COUNTRYS_DICT:
                 key = tok.lower_
             else:
                 key = tok.lower_ + " " + question_toks[start_idx + 1].lower_
@@ -3871,9 +3855,8 @@ def combine_none_subquestion(token_list, sql, schema, sentence_num, col_match):
                                     break
                 if not match and (
                     "UDB" in sq.pattern_tok[j + 1] or "PDB" in sq.pattern_tok[j + 1]
-                ):
-                    if sq.col_match[j][-1]:
-                        match = True
+                ) and sq.col_match[j][-1]:
+                    match = True
                 if match:
                     sq.sub_sequence_type[j] = sq.sub_sequence_type[j + 1]
                     for idx in sq.original_idx[j]:

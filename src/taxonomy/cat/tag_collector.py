@@ -1,7 +1,7 @@
 """Tag collection visitor for SQL AST."""
 
 from src.taxonomy.cat.tag_collector_result import TagCollectorResult
-from src.taxonomy.parse.node import *
+from src.taxonomy.parse.node import FromClauseNode
 from src.taxonomy.parse.visitor.collector_visitor import CollectorVisitor
 
 

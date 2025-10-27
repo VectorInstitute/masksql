@@ -38,9 +38,8 @@ class TimeLogger:
         TimeLogger
             Timer instance
         """
-        timer = TimeLogger(idx)
         # logger.info(f"started", idx=f"{idx}", start=True)
-        return timer
+        return TimeLogger(idx)
 
     def lap(self):
         """Record lap time for operation."""

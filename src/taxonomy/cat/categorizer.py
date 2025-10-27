@@ -55,7 +55,6 @@ class Categorizer:
         SubCategory
             The matching sub-category or SUB_INF if no match found.
         """
-        matched_sub_cats = []
         for c in reversed(self.categories):  # Check to find a match starting from
             # harder categories
             sub_cats = c.matches(tag_set)

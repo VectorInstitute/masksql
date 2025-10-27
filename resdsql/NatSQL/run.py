@@ -21,8 +21,7 @@ def construct_hyper_param():
         "--remove_groupby_from_natsql", action="store_true", default=False
     )
     parser.add_argument("--test_executable_natsql", action="store_true", default=False)
-    args = parser.parse_args()
-    return args
+    return parser.parse_args()
 
 
 if __name__ == "__main__":

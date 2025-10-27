@@ -79,5 +79,4 @@ class EstimateSQL(PipelineStage):
         """
         schema = row["schema"]
         question = row["question"]
-        prompt = PROMPT.format(question=question, schema=schema)
-        return prompt
+        return PROMPT.format(question=question, schema=schema)

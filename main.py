@@ -42,7 +42,7 @@ def create_pipeline_stages(conf: MaskSqlConfig):
         rank_schema = [
             RankSchemaItems("schema_items", conf.tables_path, model=conf.slm)
         ]
-    mask_pipe = [
+    return [
         LimitJson(),
         *rank_schema,
         # ResdItemCount(),
@@ -66,7 +66,6 @@ def create_pipeline_stages(conf: MaskSqlConfig):
         # PrintProps(['question', 'symbolic.question', 'attack'])
         Results(),
     ]
-    return mask_pipe
 
 
 async def main():

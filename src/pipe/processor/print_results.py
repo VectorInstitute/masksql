@@ -94,6 +94,7 @@ class PrintResults(DataPrinter):
         return row
         print(f"\nEntry #{self.total}" + "-" * 100)
         print(f"EXEC ACC: {exec_acc}")
+        return None
         # return
         # print(f"MASKED: {row['symbolic']['masked']}")
         # if "symbolic" in row:
