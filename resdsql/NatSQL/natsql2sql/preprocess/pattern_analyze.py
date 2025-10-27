@@ -82,9 +82,12 @@ def use_column_find_table(
         return list(all_tables)[0]
     return -1
 
-    for i in range(len(colums)):
-        if i > idx_start and colums[i][1] and len(colums[i][1]) == 1:
-            return colums[i][1]
+
+def next_col(columns, idx_start):
+    """Find the next column after idx_start that has a single element."""
+    for i in range(idx_start + 1, len(columns)):
+        if columns[i][1] and len(columns[i][1]) == 1:
+            return columns[i][1]
     return []
 
 

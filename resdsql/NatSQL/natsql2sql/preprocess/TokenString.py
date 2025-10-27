@@ -1,5 +1,7 @@
+import copy
 from functools import lru_cache
 
+from .match import STOP_WORDS
 
 AGG_WORDS = ["average", "maximum", "minimum", "number"]
 
