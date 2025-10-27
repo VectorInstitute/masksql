@@ -179,20 +179,30 @@ class PrivacyPolicy(Enum):
     FULL = "full"           # Mask all schema elements and values
     CATEGORY = "category"   # Mask only specific categories
     MINIMAL = "minimal"     # Mask only PII
-    CUSTOM = "custom"       # User-defined policy
+    CUSTOM = "custom"       # User-defined policy (implement PrivacyPolicyBase)
 
-@dataclass
-class CustomPrivacyPolicy:
-    """Custom privacy policy configuration."""
-    mask_tables: bool = True
-    mask_columns: bool = True
-    mask_values: bool = True
-    categories: Optional[List[str]] = None  # ["person", "location", etc.]
+class PrivacyPolicyBase(ABC):
+    """Abstract base class for custom privacy policies."""
 
-    # Fine-grained control
-    table_whitelist: Optional[List[str]] = None
-    column_whitelist: Optional[List[str]] = None
-    value_patterns: Optional[List[str]] = None  # Regex patterns
+    @abstractmethod
+    def should_mask_table(self, table_name: str, schema: dict) -> bool:
+        """Determine if a table should be masked."""
+        pass
+
+    @abstractmethod
+    def should_mask_column(self, table_name: str, column_name: str, schema: dict) -> bool:
+        """Determine if a column should be masked."""
+        pass
+
+    @abstractmethod
+    def should_mask_value(self, value: str, column_name: str, table_name: str) -> bool:
+        """Determine if a value should be masked."""
+        pass
+
+    @abstractmethod
+    def get_masked_categories(self) -> List[str]:
+        """Return list of semantic categories to mask."""
+        pass
 
 @dataclass
 class SchemaFilterConfig:
@@ -254,7 +264,12 @@ class MaskSQLConfig:
     """Main configuration for MaskSQL."""
     database_path: str
     privacy_policy: PrivacyPolicy = PrivacyPolicy.FULL
-    custom_policy: Optional[CustomPrivacyPolicy] = None
+
+    # For CUSTOM policy: provide implementation of PrivacyPolicyBase
+    custom_policy_class: Optional[Type[PrivacyPolicyBase]] = None
+
+    # For CATEGORY policy: specify which categories to mask
+    masked_categories: Optional[List[str]] = None  # e.g., ["person", "location"]
 
     models: ModelConfig = ModelConfig()
     schema_filter: SchemaFilterConfig = SchemaFilterConfig()
@@ -869,39 +884,21 @@ policy = PrivacyPolicy.MINIMAL
 # Masks: Only PII (names, SSN, emails, etc.)
 ```
 
-### Custom Policy Example
+### Category Policy Example
 
-Configure custom privacy policies in your YAML configuration file:
+For masking specific semantic categories:
 
 ```yaml
 # config.yaml
 database_path: "./databases"
-privacy_policy: "custom"
+privacy_policy: "category"
 
-# Custom privacy policy configuration
-custom_policy:
-  mask_tables: true
-  mask_columns: true
-  mask_values: true
-
-  # Specify semantic categories to mask
-  categories:
-    - person_name
-    - location
-    - medical_condition
-    - financial_info
-
-  # Whitelist specific elements (won't be masked)
-  table_whitelist:
-    - public_stats
-  column_whitelist:
-    - id
-    - created_at
-
-  # Regex patterns for value masking
-  value_patterns:
-    - '\d{3}-\d{2}-\d{4}'  # SSN
-    - '\b[A-Z][a-z]+ [A-Z][a-z]+\b'  # Names
+# Specify which categories to mask
+masked_categories:
+  - person_name
+  - location
+  - medical_condition
+  - financial_info
 
 models:
   text_to_sql:
@@ -911,15 +908,48 @@ models:
   slm_model: "qwen/qwen2.5-7b-instruct"
 ```
 
+### Custom Policy Example
+
+For maximum flexibility, implement your own masking logic:
+
 ```python
-from masksql import MaskSQL
+from masksql import MaskSQL, PrivacyPolicyBase
 
-# Use custom policy from config
-masksql = MaskSQL.from_config("config.yaml")
+class MyCustomPolicy(PrivacyPolicyBase):
+    """Custom policy for healthcare data."""
 
+    def __init__(self):
+        self.table_whitelist = {"public_stats", "metadata"}
+        self.column_whitelist = {"id", "created_at"}
+
+    def should_mask_table(self, table_name: str, schema: dict) -> bool:
+        """Don't mask whitelisted tables."""
+        return table_name not in self.table_whitelist
+
+    def should_mask_column(self, table_name: str, column_name: str, schema: dict) -> bool:
+        """Don't mask whitelisted columns."""
+        return column_name not in self.column_whitelist
+
+    def should_mask_value(self, value: str, column_name: str, table_name: str) -> bool:
+        """Mask all values in sensitive tables."""
+        sensitive_tables = {"patient", "diagnosis", "treatment"}
+        return table_name in sensitive_tables
+
+    def get_masked_categories(self) -> List[str]:
+        """Categories to detect and mask."""
+        return ["person", "location", "medical_condition"]
+
+# Use custom policy
+config = MaskSQLConfig(
+    database_path="./databases",
+    privacy_policy=PrivacyPolicy.CUSTOM,
+    custom_policy_class=MyCustomPolicy
+)
+
+masksql = MaskSQL(config=config)
 result = await masksql.query(
-    question="What is the average salary?",
-    db_id="company_db"
+    question="What is the average treatment cost?",
+    db_id="hospital_db"
 )
 ```
 
@@ -995,11 +1025,11 @@ pipeline:
   max_retries: 3
   cache_enabled: true
 
-custom_policy:
-  categories:
-    - person_name
-    - location
-    - occupation
+# For category policy: specify which categories to mask
+masked_categories:
+  - person_name
+  - location
+  - occupation
 ```
 
 **Custom Model Configuration (e.g., HealthSpark):**
