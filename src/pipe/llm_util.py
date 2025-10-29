@@ -63,7 +63,7 @@ async def send_prompt(prompt, model=os.getenv("OPENAI_MODEL")) -> Tuple[str, str
         base_url=os.getenv("OPENAI_BASE_URL"),
         organization=os.getenv("OPENAI_GROUP_ID"),
         project=os.getenv("OPENAI_PROJ_ID"),
-        timeout=int(os.getenv("OPENAI_TIMEOUT", 60)),
+        timeout=int(os.getenv("OPENAI_TIMEOUT", "60")),
     )
     logger.debug("#" * 150)
     logger.debug(f"Prompt:\n{prompt}")

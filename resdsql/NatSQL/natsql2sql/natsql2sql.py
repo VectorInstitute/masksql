@@ -41,6 +41,13 @@ SQL_SUBSUB = 3  # sub-sub sql, based on 'sub'
 
 
 def natsql_version():
+    """Get the NatSQL version.
+
+    Returns
+    -------
+    str
+        Version string of NatSQL.
+    """
     return "1.6.1"
 
 
@@ -85,6 +92,20 @@ globe_join_on_label_count = 0
 
 
 def reversed_link_back_col(col_id, table_json):
+    """Find the reversed link back column ID.
+
+    Parameters
+    ----------
+    col_id : int
+        Column ID to start searching from.
+    table_json : dict
+        Table metadata containing link_back information.
+
+    Returns
+    -------
+    int
+        The linked column ID, or 0 if not found.
+    """
     for lb in range(col_id, len(table_json["link_back"])):
         if table_json["link_back"][lb][1] == col_id:
             return table_json["link_back"][lb][0]

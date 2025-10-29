@@ -43,8 +43,8 @@ class AddSymbolicQuestion(JsonListTransformer):
         symbols = []
         for schema_item in schema_items:
             schema_item_parts = schema_item.split(":")
-            schema_item = schema_item_parts[1]
-            symbol = symbol_table.get(schema_item)
+            schema_item_name = schema_item_parts[1]
+            symbol = symbol_table.get(schema_item_name)
             symbols.append(symbol)
         return ",".join(symbols)
 
@@ -147,20 +147,22 @@ class AddSymbolicQuestion(JsonListTransformer):
             if schema_items is None:
                 logger.error(f"Invalid schema item: {schema_items}")
                 continue
-            if not isinstance(schema_items, list):
-                schema_items = [schema_items]
-            for schema_item in schema_items:
+            items = (
+                [schema_items] if not isinstance(schema_items, list) else schema_items
+            )
+            for schema_item in items:
                 if schema_item.startswith("COLUMN"):
                     col_ref = schema_item.split(":")[1]
                     table_name = col_ref.split(".")[0]
                     tables.add(table_name)
 
         for question_term, schema_items in schema_links.items():
-            if not isinstance(schema_items, list):
-                schema_items = [schema_items]
-            for schema_item in schema_items:
+            items = (
+                [schema_items] if not isinstance(schema_items, list) else schema_items
+            )
+            for schema_item in items:
                 if schema_item.startswith("TABLE"):
-                    assert len(schema_items) == 1
+                    assert len(items) == 1
                     table_name = schema_item.split(":")[1]
                     if table_name in tables:
                         updated_schema_links[question_term] = schema_item

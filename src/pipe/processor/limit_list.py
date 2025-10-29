@@ -6,8 +6,8 @@ import os
 from src.pipe.processor.list_transformer import JsonListTransformer
 
 
-START = int(os.environ.get("START", 0))
-LIMIT = int(os.environ.get("LIMIT", 10))
+START = int(os.environ.get("START", "0"))
+LIMIT = int(os.environ.get("LIMIT", "10"))
 
 
 class LimitJson(JsonListTransformer):

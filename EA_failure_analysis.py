@@ -2,6 +2,20 @@ from src.util.json_utils import read_json, write_json
 
 
 def finder(path1, path2):
+    """Find differences between two JSON files and write results.
+
+    Parameters
+    ----------
+    path1 : str
+        Path to the first JSON file (full dataset).
+    path2 : str
+        Path to the second JSON file (category dataset).
+
+    Returns
+    -------
+    list
+        Items present in path1 but not in path2.
+    """
     full = read_json(path1)
     category = read_json(path2)
     diff = []
@@ -17,6 +31,13 @@ def finder(path1, path2):
 
 
 def analyser(arr):
+    """Analyze failure cases and extract SQL details.
+
+    Parameters
+    ----------
+    arr : list
+        List of question IDs to analyze.
+    """
     path = "data/full/19_RepairSQL.json"
     file = read_json(path)
     res = []
@@ -36,6 +57,7 @@ def analyser(arr):
 
 
 def main():
+    """Run the EA failure analysis workflow."""
     path1 = "data/full/EA_failures.json"
     path2 = "data/category/EA_failures.json"
 

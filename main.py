@@ -36,6 +36,18 @@ from src.util.log_utils import configure_logging
 
 
 def create_pipeline_stages(conf: MaskSqlConfig):
+    """Create the pipeline stages for MaskSQL processing.
+
+    Parameters
+    ----------
+    conf : MaskSqlConfig
+        Configuration object containing pipeline settings.
+
+    Returns
+    -------
+    list
+        List of pipeline stage objects to execute.
+    """
     if conf.resd:
         rank_schema = [AddResd(conf.resd_path), RankSchemaResd(conf.tables_path)]
     else:
@@ -69,6 +81,7 @@ def create_pipeline_stages(conf: MaskSqlConfig):
 
 
 async def main():
+    """Run the MaskSQL main pipeline."""
     # Printing entire DB schema items
     # with open("data/tables.json") as tables:
     #     tables = json.load(tables)

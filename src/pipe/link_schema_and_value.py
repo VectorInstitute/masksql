@@ -28,9 +28,12 @@ class LinkSchemaAndValue(PromptProcessor):
                 )
                 continue
             orig_schema_item = schema_item
-            if "VALUE:" in schema_item:
-                schema_item = schema_item.replace("VALUE:", "COLUMN:")
-            if schema_item.lower() not in [i.lower() for i in schema_items]:
+            normalized_item = (
+                schema_item.replace("VALUE:", "COLUMN:")
+                if "VALUE:" in schema_item
+                else schema_item
+            )
+            if normalized_item.lower() not in [i.lower() for i in schema_items]:
                 logger.error(
                     f"Invalid schema link {question_term} -> {orig_schema_item}, schema item not exists"
                 )

@@ -17,8 +17,8 @@ class AddValueLinksFromSchemaLinks(JsonListTransformer):
         updated_schema_links = {}
         for q_term, item in schema_links.items():
             if "VALUE:" in item:
-                item = item.replace("VALUE:", "")
-                value_links[q_term] = item
+                value = item.replace("VALUE:", "")
+                value_links[q_term] = value
             else:
                 updated_schema_links[q_term] = item
         row["schema_links"] = updated_schema_links

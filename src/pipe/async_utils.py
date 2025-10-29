@@ -6,7 +6,7 @@ import os
 from tqdm.asyncio import tqdm
 
 
-ASYNC_BATCH = int(os.environ.get("ASYNC_BATCH", 1))
+ASYNC_BATCH = int(os.environ.get("ASYNC_BATCH", "1"))
 
 
 async def apply_async(fun, items, desc=""):
