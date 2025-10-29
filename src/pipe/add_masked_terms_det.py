@@ -183,13 +183,11 @@ class AddMaskedTermsDeterministic(JsonListTransformer):
         value_links = row["value_links"]
         filtered_value_links = row["filtered_value_links"]
 
-        if isinstance(value_links, list) or isinstance(value_links, str):
+        if isinstance(value_links, (list, str)):
             logger.error(f"Invalid value links: {value_links}")
             value_links = {}
 
-        if isinstance(filtered_value_links, list) or isinstance(
-            filtered_value_links, str
-        ):
+        if isinstance(filtered_value_links, (list, str)):
             logger.error(f"Invalid value links: {filtered_value_links}")
             filtered_value_links = {}
 

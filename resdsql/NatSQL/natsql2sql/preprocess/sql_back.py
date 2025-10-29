@@ -328,7 +328,7 @@ def condition_back_based_idx(conds, tables_json):
         re_conds += " ( "
         re_conds += sql_back(conds[3], tables_json)
         re_conds += " ) "
-    elif isinstance(conds[3], tuple) or isinstance(conds[3], list):
+    elif isinstance(conds[3], (tuple, list)):
         re_conds += num_col_unit_back(conds[3], tables_json)
     else:
         re_conds += str(conds[3])

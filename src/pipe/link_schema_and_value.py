@@ -17,7 +17,7 @@ class LinkSchemaAndValue(PromptProcessor):
         question = row["question"]
         schema_items = row["schema_items"]
         refined_links = {}
-        if isinstance(schema_links, list) or isinstance(schema_links, str):
+        if isinstance(schema_links, (list, str)):
             logger.error(f"Invalid schema links: {schema_links}")
             refined_links = {}
 
