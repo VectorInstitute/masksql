@@ -87,8 +87,6 @@ def table_transform(table, args, schema):
     new_table["link_back"] = []
     new_table["table_column_names_original"] = []
 
-    table_name_list = [item[1] for item in table["column_names"]]
-
     # The order of column_names may be different from column_names_original
     for item in table["column_names"]:
         insert_index += 1
@@ -426,7 +424,6 @@ def enlarge_network(net_work, table):
                                 new_net[1].insert(idx, i)
                                 new_net[0][idx - 1] = fk
                                 new_net[0].insert(idx, fk2)
-                                add_new_net = True
                                 if check_same_net(new_net, new_net_work):
                                     new_net_work.append(new_net)
         return new_net_work
@@ -1059,8 +1056,6 @@ def add_line_break(sql):
 def correct_primary_keys(tables, schemas, database_path):
     for _it, table, schema in zip(range(len(tables)), tables, schemas):
         table["original_primary_keys"] = copy.deepcopy(table["primary_keys"])
-        same_col_idxs = []
-        all_pair = []
         try:
             db_ = DBEngine(table, database_path)
             db_infos = db_.get_db_structure_info()

@@ -587,8 +587,6 @@ def datebase_match(schema, tok, tok_idx, utter_tokens, table_idx, cross_table=Tr
         return None
 
     _db = DBEngine.new_db(schema)
-    match_col = []
-    occupy_u_tokens = []
     if (
         str_is_num(tok.text)
         and not str_is_special_num(tok.text)

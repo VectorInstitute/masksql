@@ -443,7 +443,6 @@ def update_partly_match_tok(
     real_len,
     previous_match_idx,
 ):
-    new_table_idx = round(table_idx + tok_in_table_idx / 1000, 3)
     for tok_index in tok_indexes:
         if exact_match[tok_index] and (
             exact_match[tok_index][1][0] > real_len
@@ -769,7 +768,6 @@ def modified_exact_match_table_name(question_tokens, table_name_list, full_match
             for t_tok in new_list:
                 if " " in t_tok:
                     too = t_tok.split(" ")
-                    list_ = []
                     for j, t in enumerate(too):
                         if t not in STOP_WORDS and j < len(too) - 1:
                             t = lstem.stem(t)
@@ -781,7 +779,6 @@ def modified_exact_match_table_name(question_tokens, table_name_list, full_match
                                     "RBR",
                                     "RBS",
                                 ]:
-                                    count = 1
                                     tok_indexes.append(z)
                                     offset = 1
                                     while True:

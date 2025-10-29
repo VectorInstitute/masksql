@@ -43,9 +43,7 @@ class PrivacyScore(DataPrinter):
     async def _process_row(self, row):
         schema_links = row["filtered_schema_links"]
         value_links = row["filtered_value_links"]
-        question = row["question"]
         guess = row["attack"]
-        gold_links = row["gold_links"]
         masked_terms = list(value_links.keys()) + list((schema_links.keys()))
         leaked = 0
         for term in masked_terms:

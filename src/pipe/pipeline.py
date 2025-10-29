@@ -46,7 +46,7 @@ class Pipeline:
         """
         timer = Timer.start()
         _, avg_mem, peak_mem = await track_memory_async(self.__run_internal, input_file)
-        total_time = timer.lap()
+        timer.lap()
         # logger.info(f"TOTAL PRED TIME: {total_time}")
         # logger.info(f"AVG MEM: {avg_mem}")
         # logger.info(f"PEAK MEM: {peak_mem}")

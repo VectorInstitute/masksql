@@ -83,10 +83,6 @@ def jjs_not_order(real_tp_str, tp_str2):
 
 
 def others_where_order_analyse(token_pattern, question, select_q, select):
-    where = 0
-    order = 0
-    limit = 0
-    desc = 0
     return_result = [[0, 0, 0, 0] for i in token_pattern]  # order limit desc(1)/asc
     for i, tps in enumerate(token_pattern):
         tp_str = " ".join(tps)
@@ -640,7 +636,6 @@ def question_modify(token_pattern, question, list_idx, sq, schema):
         real_tp_str = " ".join([t for t in tps if t not in ["#", "?"]])
         real_tp_list = [(t, j) for j, t in enumerate(tps) if t not in ["#", "?"]]
 
-        idx_jjr = -1
         if (
             "IN GR_JJS COL NUM" in real_tp_str
             or "from GR_JJS GR_JJS NUM" in real_tp_str
@@ -1130,7 +1125,6 @@ def question_modify(token_pattern, question, list_idx, sq, schema):
                 else:
                     table_idx = real_tp_list[-num_pdb - 1][1]
                     pdb_idx = real_tp_list[-num_pdb][1]
-            count_name = 0
             store_pdb_idx = pdb_idx
             for tb in sq.table_match[list_idx[i]][table_idx]:
                 for k, cc in enumerate(schema.tbl_col_tokens_lemma_str[tb]):
@@ -2018,11 +2012,8 @@ def add_same_col_for_select(sq, schema):
 def for_each_analyse(token_pattern, question, list_idx, sq, schema):
     add_to_each = []
     add_to_each_p = []
-    each_tables = []
     for i, tps in enumerate(token_pattern):
-        tp_str = " ".join(tps)
         real_tp_str = " ".join([t for t in tps if t not in ["#", "?"]])
-        real_tp_list = [(t, j) for j, t in enumerate(tps) if t not in ["#", "?"]]
         if (
             "IN each ST" in real_tp_str
             or "IN each ST NN" in real_tp_str
@@ -2030,7 +2021,6 @@ def for_each_analyse(token_pattern, question, list_idx, sq, schema):
         ):
             each_idx = tps.index("each")
             st_idx = each_idx + 1
-            each_tables = sq.table_match[list_idx[i]][st_idx]
             for tb in sq.table_match[list_idx[i]][st_idx]:
                 for k, cc in enumerate(schema.tbl_col_tokens_lemma_str[tb]):
                     if (
@@ -2057,11 +2047,7 @@ def for_each_analyse(token_pattern, question, list_idx, sq, schema):
                             not_add = True
         if not not_add:
             for i, tps in enumerate(token_pattern):
-                tp_str = " ".join(tps)
                 real_tp_str = " ".join([t for t in tps if t not in ["#", "?"]])
-                real_tp_list = [
-                    (t, j) for j, t in enumerate(tps) if t not in ["#", "?"]
-                ]
                 if (
                     "IN each ST" in real_tp_str
                     or "IN each ST NN" in real_tp_str

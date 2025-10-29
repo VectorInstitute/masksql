@@ -297,10 +297,6 @@ def question_repair_select_part(sql, token_list, schema):
     ):
         replace_old = []
         replace_new = []
-        select, where, group, order = (None, None, None, None)
-        sentence_num = len(sentences)
-        re_value = []
-        key_word = []
         for sentence, table_match, list_idx in zip(sentences, table_matchs, list_idxs):
             (
                 availble_sent,
@@ -517,8 +513,6 @@ def preprocess_sql(
         if not ONE_ID:
             all_schema[table["db_id"]] = Schema_Token(_tokenizer, None, table, None)
 
-    fast_db_match_json = None
-
     if not keep_original_question:
         for i, sql in enumerate(sqls):
             if ONE_ID and i != ONE_ID:
@@ -574,7 +568,6 @@ def preprocess_sql(
                 and not split_final[1].isalpha()
             ):
                 sql["question"] = sql["question"][0:-1] + " " + sql["question"][-1]
-    sqls2 = []
     for i, sql in enumerate(sqls):
         if ONE_ID and i != ONE_ID:
             continue

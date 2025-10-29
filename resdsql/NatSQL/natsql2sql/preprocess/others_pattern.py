@@ -1508,7 +1508,6 @@ def choose_possible_pattern_token(
                 return None, None
         return None, None
 
-    final_pattern = ""
     words = pattern_str.split(",")
     for tok in words:
         if tok[0] == "$":
@@ -1625,7 +1624,6 @@ def pattern_recomand(
 
     pattern_every_token = []
     raw_pattern_tokens = []
-    raw_pattern_tokens2 = []
 
     for i, token in enumerate(sentence_ts.tokens):
         if (

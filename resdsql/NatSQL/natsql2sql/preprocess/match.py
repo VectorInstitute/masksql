@@ -1344,7 +1344,6 @@ def word_is_grsm(word_tok):
 
 
 def table_match(table_str, schema):
-    table_id = -1
     table_str = " ".join(table_str).split(" , ")
     return schema.table_match(table_str)
 

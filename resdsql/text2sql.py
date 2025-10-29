@@ -205,8 +205,6 @@ def _train(opt):
 
             batch_inputs = [data[0] for data in batch]
             batch_sqls = [data[1] for data in batch]
-            batch_db_ids = [data[2] for data in batch]  # unused
-            batch_tc_original = [data[3] for data in batch]  # unused
 
             if epoch == 0:
                 for batch_id in range(len(batch_inputs)):

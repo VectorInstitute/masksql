@@ -205,8 +205,6 @@ def condition_str(column):
 def get_where_column(sql_dict, table_list, start_index, sql_type, table_json, args):
     and_or_type = 1
     sub_sql_type = 2
-    sub_sub_sql_type = 3
-    top_sql_type = and_or_type
 
     break_idx = -1
     next_type = None
@@ -1212,15 +1210,6 @@ def maybe_order_by(
             if args.keep_top_order_by and sql_type_now == SQL_TOP:
                 return ""
 
-            order_by_sql = (
-                " ORDER BY "
-                + sql_dict["where"][idx][2][1][1]
-                + (
-                    " DESC LIMIT 1 "
-                    if sql_dict["where"][idx][3][0] == 1
-                    else " ASC LIMIT 1 "
-                )
-            )
     return ""
 
 
@@ -3564,7 +3553,6 @@ def join2subquery(
             and table_json["column_names"][fks[1]][0] not in bridge_table
             and group_col_idx not in fks
         ):
-            table_idx = table_json["column_names"][fks[1]][0]
             sql_dict["where"].insert(insert_idx, "and")
             sql_dict["where"].insert(
                 insert_idx,
@@ -3586,7 +3574,6 @@ def join2subquery(
             and table_json["column_names"][fks[0]][0] not in bridge_table
             and group_col_idx not in fks
         ):
-            table_idx = table_json["column_names"][fks[0]][0]
             sql_dict["where"].insert(insert_idx, "and")
             sql_dict["where"].insert(
                 insert_idx,

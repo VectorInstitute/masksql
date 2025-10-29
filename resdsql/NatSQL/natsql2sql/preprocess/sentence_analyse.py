@@ -192,7 +192,6 @@ STOP_WORDS = {
 
 def one_group_in_ahead(all_tokens, token, father_idx, offset):
     next_token = [token]
-    valid_len = 0
     start = False
     break_check = True
     while True:
@@ -305,7 +304,6 @@ def check_behind_children_len(token):
 
 def prep_table_break(token, table_match):
     next_token = [c for c in token.children]
-    valid_len = 0
     table_num = set()
     there_is_break = False
     while True:
@@ -482,7 +480,6 @@ def merge_punctuation_2(sentence, sent_data):
 
 
 def sentence_cut(sentence, table_match, offset, sent_idx, sent_num):
-    tokens = [token for token in sentence]
     root = [token for token in sentence if token.head == token]
     if len(root) > 1:
         return None
@@ -1071,7 +1068,6 @@ def final_correct_special_pattern(token_list):
 
 
 def sentence_dump(sentence, sent_data):
-    tokens = [token for token in sentence]
     root = [token for token in sentence if token.head == token]
     if len(root) > 1:
         return None
@@ -1192,7 +1188,6 @@ def sentence_cut_analyze(
                         return True
         return False
 
-    others = []
     previous_col_match = []
     skip_once = False
     conditional_skip = False
@@ -1948,7 +1943,6 @@ def add_col_analyze(
                                 )
         return None, None, None
 
-    others = []
     previous_col_match = []
     new_insert_idxs = []
     offset = 0
@@ -2470,7 +2464,6 @@ def select_split(token_list, col_match_list, db_match):
         return token_list
 
     def there_are_condition_values():
-        type_start = token_list[i][1]
         for j in range(i + 1, len(token_list)):
             if token_list[j][1] != token_list[j - 1][1]:
                 break
@@ -3062,7 +3055,6 @@ def db_correction(token_list, col_match, sql, schema):
                 question_toks[sii] = SToken(text=db_tok)
 
     question_toks = [tok[0] for tok in token_list]
-    all_db_str = []
     db_ = DBEngine.new_db(schema)
     offset = 0
 

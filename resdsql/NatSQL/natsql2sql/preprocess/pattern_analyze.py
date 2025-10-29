@@ -280,8 +280,6 @@ def pre_analyse_table_match(
     schema,
     table_idxs=[-1],
 ):
-    column_all = []
-    where_all = []
     for col, a_col, a_col_idx, o_col_idx, col_table, c_idx in zip(
         original_sent,
         availble_sent,

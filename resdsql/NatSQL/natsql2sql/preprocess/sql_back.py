@@ -469,7 +469,7 @@ def return_all_where_col(where):
 
 def replace_the_second(sql):
     if sql.count("select ") > 1:
-        idx = sql.index("select ")
+        sql.index("select ")
 
 
 def cut_sql_to_piece(sql):

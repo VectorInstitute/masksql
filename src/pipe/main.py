@@ -118,7 +118,7 @@ async def main():
     pipeline = Pipeline(mask_pipe)
     # pipeline = Pipeline(slm_mask)
 
-    out_path = await pipeline.run(input_path)
+    await pipeline.run(input_path)
     print("LLM MODEL:", LLM_MODEL)
     print("SLM MODEL:", SLM_MODEL)
     # print("LINK MODEL:", LINK_MODEL)
