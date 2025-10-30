@@ -84,7 +84,7 @@ class ExtraKeywords(SqlTag):
             if node.op.value.lower() == "in":
                 tags += TagCollectorResult(ExtraKeywords.IN)
             if node.op.value.lower() in ["is not", "is"] and (
-                node.left == NULL_LITERAL or node.right == NULL_LITERAL
+                NULL_LITERAL in (node.left, node.right)
             ):
                 tags += TagCollectorResult(ExtraKeywords.IS_NULL)
             return tags

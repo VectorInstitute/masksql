@@ -38,6 +38,7 @@ class SqlAstNode(ABC):
         """Accept a visitor for the visitor pattern implementation."""
         pass
 
+    @abstractmethod
     def log_self(self):
         """Log this node for debugging purposes."""
         # logger.debug(f"{self.__class__.__name__}: {str(self)}")

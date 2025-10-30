@@ -40,7 +40,7 @@ def wrap_prompt(prompt):
     return prompt
 
 
-async def send_prompt(prompt, model=os.getenv("OPENAI_MODEL")) -> Tuple[str, str]:
+async def send_prompt(prompt, model=None) -> Tuple[str, str]:
     """
     Send prompt to language model and get response.
 
@@ -56,6 +56,8 @@ async def send_prompt(prompt, model=os.getenv("OPENAI_MODEL")) -> Tuple[str, str
     Tuple[str, str]
         Response content and token usage
     """
+    if model is None:
+        model = os.getenv("OPENAI_MODEL")
     if model == "vlm":
         prompt = wrap_prompt(prompt)
     client = AsyncClient(

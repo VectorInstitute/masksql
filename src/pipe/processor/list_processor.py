@@ -73,11 +73,11 @@ class JsonListProcessor(ABC):
         """
         return self.__class__.__name__
 
-    def _pre_run(self):
-        pass
+    def _pre_run(self):  # noqa: B027
+        """Override to add pre-processing logic before run."""
 
-    def _post_run(self):
-        pass
+    def _post_run(self):  # noqa: B027
+        """Override to add post-processing logic after run."""
 
     def _get_input_data(self, input_file):
         with open(input_file) as f:
@@ -97,6 +97,8 @@ class JsonListProcessor(ABC):
         list
             Processed data rows
         """
+        self._pre_run()
+
         in_data = self._get_input_data(input_file)
 
         output = await apply_async(self._process_row, in_data, self.name)

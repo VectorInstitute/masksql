@@ -56,10 +56,7 @@ class Results(JsonListTransformer):
             for term in masked_terms:
                 if term.lower() in attack.lower():
                     ri_terms += 1
-            if num_masks > 0:
-                ris = ri_terms / num_masks
-            else:
-                ris = 0
+            ris = ri_terms / num_masks if num_masks > 0 else 0
             stat["ris"] = 1 - ris
 
             mask_covering = 0

@@ -2,7 +2,7 @@
 
 from loguru import logger
 
-from src.pipe.abl_prompts.schema_value_link import SCHEMA_VALUE_LINK_PROMPT_V1
+from src.pipe.able_prompts.schema_value_link import SCHEMA_VALUE_LINK_PROMPT_V1
 from src.pipe.detect_values_prompts.prompt_processor import PromptProcessor
 from src.pipe.llm_util import extract_object
 

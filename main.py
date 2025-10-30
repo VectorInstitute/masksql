@@ -22,7 +22,7 @@ from src.pipe.repair_sql import RepairSQL
 from src.pipe.repair_symb_sql import RepairSymbolicSQL
 from src.pipe.resdsql import AddResd
 from src.pipe.results import Results
-from src.pipe.SlmSQL import SlmSQL
+from src.pipe.slm_sql import SlmSQL
 from src.pipe.symb_table import AddSymbolTable
 from src.pipe.unmask import AddConcreteSql
 from src.pipe.value_links import LinkValues
