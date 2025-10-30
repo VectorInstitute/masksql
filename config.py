@@ -42,7 +42,7 @@ class MaskSqlConfig:
     __tables_file: str = "tables.json"
     __resd_file: str = "resd_output.json"
 
-    def get_abs_path(self, rel_path):
+    def get_abs_path(self, rel_path: str) -> str:
         """Convert a relative path to an absolute path within the data directory.
 
         Parameters
@@ -58,21 +58,21 @@ class MaskSqlConfig:
         return os.path.join(self.data_dir, rel_path)
 
     @property
-    def input_path(self):
+    def input_path(self) -> str:
         """Get the absolute path to the input JSON file."""
         return self.get_abs_path(self.__input_file)
 
     @property
-    def tables_path(self):
+    def tables_path(self) -> str:
         """Get the absolute path to the tables JSON file."""
         return self.get_abs_path(self.__tables_file)
 
     @property
-    def resd_path(self):
+    def resd_path(self) -> str:
         """Get the absolute path to the RESD output JSON file."""
         return self.get_abs_path(self.__resd_file)
 
     @property
-    def db_path(self):
+    def db_path(self) -> str:
         """Get the absolute path to the databases directory."""
         return self.get_abs_path(self.__db_dir)

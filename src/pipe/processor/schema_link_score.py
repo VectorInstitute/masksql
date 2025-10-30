@@ -1,5 +1,7 @@
 """Schema linking score calculation."""
 
+from typing import Any
+
 from src.pipe.processor.printer import DataPrinter
 
 
@@ -27,20 +29,20 @@ def similar(a: str, b: str) -> bool:
 class SchemaLinkScore(DataPrinter):
     """Calculate schema linking coverage scores."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self.sum = 0
-        self.score = 0
+        self.score: int | float = 0
         self.total = 0
         self.total_pred = 0
         self.count = 0
 
-    def _post_run(self):
+    def _post_run(self) -> None:
         print(f"Total Links: {self.total_pred}")
         print(f"Masks: {self.sum}/{self.total}")
         print(f"Mask Score: {self.score / self.count}")
 
-    async def _process_row(self, row):
+    async def _process_row(self, row: dict[str, Any]) -> dict[str, Any]:
         gold_links = row["gold_links"]
         pred_links = row["filtered_schema_links"]
         pred_values = row["filtered_value_links"]

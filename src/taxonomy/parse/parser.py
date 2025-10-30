@@ -1,13 +1,14 @@
 """SQL parser implementation using PLY (Python Lex-Yacc)."""
 
+# Get the token map from the lexer. This is required.
+from dataclasses import replace
 from typing import Any
 
 from loguru import logger
 from ply import yacc
 
-from src.util.str_utils import shrink_whitespaces
+from src.utils.strings import shrink_whitespaces
 
-# Get the token map from the lexer. This is required.
 from .lexer import get_lexer
 from .node import *  # noqa: F403
 from .node import (  # noqa: F401
@@ -36,7 +37,6 @@ from .node import (  # noqa: F401
     WindowDefinitionNode,
     WindowExpressionNode,
     WithClauseNode,
-    replace,
 )
 
 
@@ -234,7 +234,7 @@ def _handle_len_5_table_or_subquery(p: Any) -> TableOrSubqueryNode:
 def _handle_len_6_table_or_subquery(p: Any) -> TableOrSubqueryNode:
     """Handle len(p) == 6 case for table_or_subquery parsing."""
     if p[2] == "." and p[4] == ".":
-        return TableOrSubqueryNode(db_name=p[1], schema_name=p[3], table_name=p[5])
+        return TableOrSubqueryNode(db_name=p[1], schema_name=p[3], table_name=p[5])  # type: ignore[call-arg]
     if p[2] == ".":
         return TableOrSubqueryNode(schema_name=p[1], table_name=p[3], table_alias=p[5])
     return TableOrSubqueryNode(select_statement=p[2], table_alias=p[5])
@@ -708,8 +708,10 @@ class SqlParser:
     # FIXME:
     def clean(self, sql: str) -> str:
         """Clean SQL string by normalizing whitespace and removing newlines."""
-        sql = shrink_whitespaces(sql)
-        return sql.replace("\\n", "")
+        cleaned = shrink_whitespaces(sql)
+        if cleaned is None:
+            return ""
+        return cleaned.replace("\\n", "")
 
     def parse(self, sql: str) -> SelectStatementNode | None:
         """Parse SQL string and return the AST representation.

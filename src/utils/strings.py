@@ -6,7 +6,7 @@ from enum import Enum
 from typing import Optional
 
 
-def delete_whitespace(content):
+def delete_whitespace(content: str) -> str:
     """
     Remove all newline and carriage return characters from a string.
 
@@ -23,7 +23,7 @@ def delete_whitespace(content):
     return content.replace("\n", "").replace("\r", "")
 
 
-def is_quoted(s) -> bool:
+def is_quoted(s: str) -> bool:
     """
     Check if a string is wrapped in quotes.
 
@@ -42,7 +42,7 @@ def is_quoted(s) -> bool:
     )
 
 
-def quote_str(s) -> str:
+def quote_str(s: str) -> str:
     """
     Wrap a string in single quotes if not already quoted.
 
@@ -161,7 +161,7 @@ class Color(Enum):
     ENDC = "\033[0m"
 
 
-def colored(s: str, color: Color):
+def colored(s: str, color: Color) -> str:
     """
     Apply color formatting to a string.
 

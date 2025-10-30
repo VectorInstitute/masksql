@@ -30,7 +30,7 @@ from src.pipe.slm_mask import SlmMask, SlmUnmask
 from src.pipe.symb_table import AddSymbolTable
 from src.pipe.unmask import AddConcreteSql
 from src.pipe.value_links import LinkValues
-from src.pipe.wrong_exec_acc import ExecuteConcreteSql  # type: ignore[import-untyped]
+from src.pipe.wrong_exec_acc import ExecuteConcreteSql
 
 
 LLM_MODEL: str | None = os.getenv("LLM_MODEL")
@@ -82,7 +82,7 @@ mask_pipe: list[JsonListProcessor] = [
     # CopyTransformer("masked_terms", "symbolic.masked_terms"),
     # SchemaLinkScore(),
     # PrivacyScore(),
-    PrintResults(),  # type: ignore[no-untyped-call]
+    PrintResults(),
 ]
 
 slm_mask: list[JsonListProcessor] = [
@@ -98,8 +98,8 @@ slm_mask: list[JsonListProcessor] = [
     ExecuteConcreteSql(database_path),
     RepairSQL("pred_sql", model=REPAIR_MODEL),  # type: ignore[arg-type]
     CalcExecAcc(database_path),  # type: ignore[call-arg]
-    PrivacyScore(),  # type: ignore[no-untyped-call]
-    PrintResults(),  # type: ignore[no-untyped-call]
+    PrivacyScore(),
+    PrintResults(),
 ]
 
 

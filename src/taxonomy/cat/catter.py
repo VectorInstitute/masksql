@@ -31,6 +31,8 @@ class Catter:
         """
         try:
             ast = self.parser.parse(sql)
+            if ast is None:
+                return None
             tags = self.tag_extractor.extract_tags(ast)
             return self.categorizer.get_category(tags.tag_set)
         except Exception as e:
@@ -51,6 +53,8 @@ class Catter:
             The sub-category of the statement.
         """
         ast = self.parser.parse(sql)
+        if ast is None:
+            return SubCategory("unknown", frozenset())
         tags = self.tag_extractor.extract_tags(ast)
         return self.categorizer.get_sub_category(tags.tag_set)
 

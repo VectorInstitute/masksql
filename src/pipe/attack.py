@@ -1,5 +1,7 @@
 """Attack processors for testing model robustness."""
 
+from typing import Any
+
 from src.pipe.attack_prompts.attack_raw_v1 import ATTACK_PROMPT_RAW_V1
 from src.pipe.attack_prompts.attack_v2 import ATTACK_PROMPT_V2
 from src.pipe.detect_values_prompts.prompt_processor import PromptProcessor
@@ -14,10 +16,10 @@ class AddInferenceAttack(PromptProcessor):
     symbolic representations.
     """
 
-    def _process_output(self, row, output):
+    def _process_output(self, row: dict[str, Any], output: str) -> str:
         return output
 
-    def _get_prompt(self, row):
+    def _get_prompt(self, row: dict[str, Any]) -> str:
         symbolic_question = row["symbolic"]["question"]
         symbolic_schema = row["symbolic"]["schema"]
         return ATTACK_PROMPT_V2.format(
@@ -32,9 +34,9 @@ class AttackRaw(PromptProcessor):
     Tests inference attacks on raw symbolic representations without schema context.
     """
 
-    def _process_output(self, row, output):
+    def _process_output(self, row: dict[str, Any], output: str) -> str:
         return output
 
-    def _get_prompt(self, row):
+    def _get_prompt(self, row: dict[str, Any]) -> str:
         symbolic_raw = row["symbolic"]["raw"]
         return ATTACK_PROMPT_RAW_V1.format(symbolic_raw=symbolic_raw)

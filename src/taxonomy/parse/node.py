@@ -42,11 +42,14 @@ class SqlAstNode(ABC):
         """Accept a visitor for the visitor pattern implementation."""
         pass
 
-    @abstractmethod
     def log_self(self) -> None:
-        """Log this node for debugging purposes."""
+        """Log this node for debugging purposes.
+
+        Default implementation does nothing. Override in subclasses if needed.
+        """
+        # Placeholder for logging - currently disabled
         # logger.debug(f"{self.__class__.__name__}: {str(self)}")
-        pass
+        return
 
     def __hash__(self) -> int:
         """Return hash value for this node."""
@@ -546,7 +549,7 @@ class JoinClauseNode(SqlAstNode):
         table_or_subquery: TableOrSubqueryNode,
         op: TerminalNode,
         constraint: JoinConstraintNode | None,
-    ):
+    ) -> "JoinClauseNode":
         """Add a table to the join with its operator and constraint."""
         return replace(
             self,
@@ -1035,7 +1038,7 @@ class WindowDefinitionNode(SqlAstNode):
         ORDER BY clause within the window.
     """
 
-    cols: list[ResultColumnNode]
+    cols: list[ResultColumnNode]  # type: ignore[assignment]
     orderby: OrderByNode | None = None
 
     def accept(self, visitor: "NodeVisitor") -> Any:
@@ -1052,7 +1055,7 @@ class WindowDefinitionNode(SqlAstNode):
         """Check equality based on columns and order by clause."""
         if not isinstance(other, WindowDefinitionNode):
             return False
-        if self.orderby == other.orderby and self.col == other.col:
+        if self.orderby == other.orderby and self.cols == other.cols:
             return True
         self.log_self()
         return False

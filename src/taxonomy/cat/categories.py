@@ -215,7 +215,7 @@ SUB_INF = SubCategory("s100", frozenset(), "Inf complexity")
 CATS = [CAT_1, CAT_2, CAT_3, CAT_4_NEW, CAT_5, CAT_6]
 
 
-def get_all_sub_cats(cats: List[StatementCategory]):
+def get_all_sub_cats(cats: List[StatementCategory]) -> list[str]:
     """Get all sub-category names from a list of statement categories.
 
     Parameters
@@ -237,7 +237,7 @@ def get_all_sub_cats(cats: List[StatementCategory]):
     return sub_cats
 
 
-def get_all_cats(cats: List[StatementCategory]):
+def get_all_cats(cats: List[StatementCategory]) -> list[str]:
     """Get all category names from a list of statement categories.
 
     Parameters

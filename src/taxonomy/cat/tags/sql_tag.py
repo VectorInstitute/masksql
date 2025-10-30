@@ -6,13 +6,13 @@ from enum import Enum
 class SqlTag(Enum):
     """Base class for SQL tags."""
 
-    def __ge__(self, other):
+    def __ge__(self, other: object) -> bool:
         """Check if this tag is greater than or equal to another."""
         if not isinstance(other, self.__class__):
             return False
         return self.value == other.value
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Return string representation of the tag."""
         return self.name
 
@@ -20,7 +20,7 @@ class SqlTag(Enum):
 class OrderedTag(SqlTag):
     """SQL tag with ordering based on complexity."""
 
-    def __ge__(self, other):
+    def __ge__(self, other: object) -> bool:
         """Check if this tag is at least as hard as another.
 
         (t1 >= t2 ==> t1 is at least as hard as t2).

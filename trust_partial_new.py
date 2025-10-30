@@ -18,6 +18,7 @@ from src.pipe.gen_masked_sql import GenerateSymbolicSql
 from src.pipe.link_schema import LinkSchema
 from src.pipe.pipeline import Pipeline
 from src.pipe.processor.limit_list import LimitJson
+from src.pipe.processor.list_processor import JsonListProcessor
 from src.pipe.processor.list_transformer import JsonListTransformer
 from src.pipe.rank_schema import RankSchemaResd
 from src.pipe.repair_sql import RepairSQL
@@ -27,7 +28,7 @@ from src.pipe.results import Results
 from src.pipe.symb_table import AddSymbolTable
 from src.pipe.unmask import AddConcreteSql
 from src.pipe.value_links import LinkValues
-from src.util.log_utils import configure_logging
+from src.utils.logging import configure_logging
 
 
 class FixFormat(JsonListTransformer):
@@ -38,7 +39,7 @@ class FixFormat(JsonListTransformer):
         return row
 
 
-def create_pipeline_stages(conf: MaskSqlConfig):
+def create_pipeline_stages(conf: MaskSqlConfig) -> list[JsonListProcessor]:
     """Create and return the pipeline stages for MaskSQL processing.
 
     Args:
@@ -49,7 +50,7 @@ def create_pipeline_stages(conf: MaskSqlConfig):
         List of pipeline stage processors.
     """
     return [
-        LimitJson("limit"),
+        LimitJson(),
         AddResd(conf.resd_path),
         RankSchemaResd(conf.tables_path),
         AddFilteredSchema(conf.tables_path),
@@ -75,7 +76,7 @@ def create_pipeline_stages(conf: MaskSqlConfig):
     ]
 
 
-async def main():
+async def main() -> None:
     """Run the MaskSQL pipeline."""
     parser = argparse.ArgumentParser(description="MaskSQL")
     parser.add_argument(

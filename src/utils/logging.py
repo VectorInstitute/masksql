@@ -10,7 +10,7 @@ from loguru import logger
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
 
 
-def configure_logging():
+def configure_logging() -> None:
     """Configure loguru logger with custom formatting and settings."""
     with contextlib.suppress(Exception):
         logger.remove(0)

@@ -14,12 +14,12 @@ class Categorizer:
 
     categories: List[StatementCategory]
 
-    def __init__(self, categories=None):
+    def __init__(self, categories: List[StatementCategory] | None = None) -> None:
         if categories is None:
             categories = CATS
         self.categories = categories
 
-    def get_category(self, tag_set: SubCategory):
+    def get_category(self, tag_set: SubCategory) -> StatementCategory:
         """Get the statement category for a given tag set.
 
         Parameters
@@ -42,7 +42,7 @@ class Categorizer:
                 return c
         return CAT_INF
 
-    def get_sub_category(self, tag_set: SubCategory):
+    def get_sub_category(self, tag_set: SubCategory) -> SubCategory:
         """Get the sub-category for a given tag set.
 
         Parameters

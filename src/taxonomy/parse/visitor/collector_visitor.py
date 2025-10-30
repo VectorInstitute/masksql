@@ -153,7 +153,7 @@ class CollectorVisitor(NodeVisitor):
             List of all attributes from the node.
         """
         attrs = []
-        for f in fields(node.__class__):
+        for f in fields(node.__class__):  # type: ignore[arg-type]
             attr = node.__getattribute__(f.name)
             if type(attr) is list:
                 attrs += attr

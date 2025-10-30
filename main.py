@@ -16,6 +16,7 @@ from src.pipe.gen_masked_sql import GenerateSymbolicSql
 from src.pipe.link_schema import LinkSchema
 from src.pipe.pipeline import Pipeline
 from src.pipe.processor.limit_list import LimitJson
+from src.pipe.processor.list_processor import JsonListProcessor
 from src.pipe.rank_schema import RankSchemaResd
 from src.pipe.rank_schema_llm import RankSchemaItems
 from src.pipe.repair_sql import RepairSQL
@@ -26,10 +27,10 @@ from src.pipe.slm_sql import SlmSQL
 from src.pipe.symb_table import AddSymbolTable
 from src.pipe.unmask import AddConcreteSql
 from src.pipe.value_links import LinkValues
-from src.util.log_utils import configure_logging
+from src.utils.logging import configure_logging
 
 
-def create_pipeline_stages(conf: MaskSqlConfig):
+def create_pipeline_stages(conf: MaskSqlConfig) -> list[JsonListProcessor]:
     """Create the pipeline stages for MaskSQL processing.
 
     Parameters
@@ -74,7 +75,7 @@ def create_pipeline_stages(conf: MaskSqlConfig):
     ]
 
 
-async def main():
+async def main() -> None:
     """Run the MaskSQL main pipeline."""
     # Printing entire DB schema items
     # with open("data/tables.json") as tables:

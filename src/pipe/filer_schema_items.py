@@ -1,5 +1,7 @@
 """Filter schema items based on relevance."""
 
+from typing import Any
+
 from src.pipe.detect_values_prompts.prompt_processor import PromptProcessor
 from src.pipe.filer_schema_links import CONCEPTS
 from src.pipe.llm_util import extract_object
@@ -14,10 +16,10 @@ class FilterSchemaItems(PromptProcessor):
     specific concepts like person names, locations, and occupations.
     """
 
-    def _process_output(self, row, output):
+    def _process_output(self, row: dict[str, Any], output: str) -> Any:
         return extract_object(output)
 
-    def _get_prompt(self, row):
+    def _get_prompt(self, row: dict[str, Any]) -> str:
         schema_items = row["schema_items"]
         return FILTER_SCHEMA_ITEMS_PROMPT_V1.format(
             concepts=CONCEPTS, schema_items=schema_items

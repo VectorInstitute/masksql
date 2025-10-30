@@ -28,12 +28,12 @@ from src.pipe.symb_table import AddSymbolTable
 from src.pipe.wrong_exec_acc import ExecuteConcreteSql
 
 
-LLM_MODEL = os.getenv("LLM_MODEL")
-LINK_MODEL = os.getenv("LINK_MODEL")
-REPAIR_MODEL = os.getenv("REPAIR_MODEL")
-PRIVATE_MODEL = os.getenv("PRIVATE_MODEL")
-SLM_MODEL = os.getenv("SLM_MODEL")
-ALT_MODEL = os.getenv("ALT_MODEL")
+LLM_MODEL = os.getenv("LLM_MODEL", "openai/gpt-4")
+LINK_MODEL = os.getenv("LINK_MODEL", "openai/gpt-4")
+REPAIR_MODEL = os.getenv("REPAIR_MODEL", "openai/gpt-4")
+PRIVATE_MODEL = os.getenv("PRIVATE_MODEL", "openai/gpt-4")
+SLM_MODEL = os.getenv("SLM_MODEL", "openai/gpt-4")
+ALT_MODEL = os.getenv("ALT_MODEL", "openai/gpt-4")
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
 
 out_dir = os.path.join("out", "paper", "1_test")
@@ -48,18 +48,18 @@ output_path = os.path.join(out_dir, "output.json")
 eval_path = os.path.join(out_dir, "eval.json")
 
 mask_pipe = [
-    LimitJson("limit"),
+    LimitJson(),
     RankSchemaResd(tables_path),
     AddFilteredSchema(tables_path),
     AddSymbolTable(tables_path),
     CopyTransformer("schema_links", "filtered_schema_links"),
-    AddSymbolicSchema("symbolic", tables_path),
+    AddSymbolicSchema(tables_path),
     AddSymbolicQuestion(),
     CustomPrinter(),
 ]
 
 slm_mask = [
-    LimitJson("limit"),
+    LimitJson(),
     RankSchemaResd(tables_path),
     AddFilteredSchema(tables_path),
     GenGoldLinks("gold_links", model=LLM_MODEL),
