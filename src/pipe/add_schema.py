@@ -1,12 +1,12 @@
 """Module for adding database schema information to data rows."""
 
-from typing import List
+from typing import Any
 
 from src.pipe.processor.list_transformer import JsonListTransformer
 from src.pipe.schema_repo import DatabaseSchema, DatabaseSchemaRepo
 
 
-def filter_schema(schema: DatabaseSchema, schema_items: List[str]):
+def filter_schema(schema: DatabaseSchema, schema_items: list[str]) -> DatabaseSchema:
     """
     Filter database schema to include only specified schema items.
 
@@ -36,7 +36,8 @@ def filter_schema(schema: DatabaseSchema, schema_items: List[str]):
         col_data = schema.tables[table_name][col_name]
         if isinstance(col_data, dict) and "foreign_key" in col_data:
             fk_ref = col_data["foreign_key"]
-            columns.add(fk_ref)
+            if isinstance(fk_ref, str):
+                columns.add(fk_ref)
 
     filtered_schema = DatabaseSchema()
     for table_name, table_columns in schema.tables.items():
@@ -59,11 +60,11 @@ class AddSchema(JsonListTransformer):
         Path to the database tables/schemas repository.
     """
 
-    def __init__(self, tables_path):
+    def __init__(self, tables_path: str) -> None:
         super().__init__(force=True)
         self.schema_repo = DatabaseSchemaRepo(tables_path)
 
-    async def _process_row(self, row):
+    async def _process_row(self, row: dict[str, Any]) -> dict[str, Any]:
         schema = self.schema_repo.dbs[row["db_id"]]
         row["schema"] = schema.to_yaml()
         return row
@@ -81,11 +82,11 @@ class AddFilteredSchema(JsonListTransformer):
         Path to the database tables/schemas repository.
     """
 
-    def __init__(self, tables_path):
+    def __init__(self, tables_path: str) -> None:
         super().__init__(force=True)
         self.schema_repo = DatabaseSchemaRepo(tables_path)
 
-    async def _process_row(self, row):
+    async def _process_row(self, row: dict[str, Any]) -> dict[str, Any]:
         schema = self.schema_repo.dbs[row["db_id"]]
         schema_items = row["schema_items"]
         filtered_schema = filter_schema(schema, schema_items)
@@ -105,11 +106,11 @@ class AddSchemaItems(JsonListTransformer):
         Path to the database tables/schemas repository.
     """
 
-    def __init__(self, tables_path):
+    def __init__(self, tables_path: str) -> None:
         super().__init__(force=True)
         self.schema_repo = DatabaseSchemaRepo(tables_path)
 
-    async def _process_row(self, row):
+    async def _process_row(self, row: dict[str, Any]) -> dict[str, Any]:
         schema = self.schema_repo.dbs[row["db_id"]]
         schema_items = []
         for table, columns in schema.tables.items():

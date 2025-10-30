@@ -3,6 +3,7 @@
 import asyncio
 import json
 import re
+from typing import Any
 
 from RESDSQL.llm_util import send_prompt
 
@@ -21,10 +22,10 @@ Return the masked question in a code block.
 """
 
 
-async def gen():
+async def gen() -> None:
     """Generate masked questions from RESDSQL test data."""
     with open("resdsql_test.json") as f:
-        data = json.load(f)
+        data: Any = json.load(f)
 
     masked_data = []
     with (
@@ -49,7 +50,7 @@ async def gen():
         f.write(json.dumps(masked_data, indent=4))
 
 
-async def main():
+async def main() -> None:
     """Execute masking generation."""
     await gen()
 

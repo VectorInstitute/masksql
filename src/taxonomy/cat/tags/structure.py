@@ -1,6 +1,7 @@
 """SQL query structure type tags."""
 
 from enum import auto
+from typing import cast
 
 from src.taxonomy.cat.tag_collector import TagCollector
 from src.taxonomy.cat.tag_collector_result import TagCollectorResult
@@ -21,17 +22,19 @@ class StructureType(SqlTag):
         cur_level: int
         max_level: int
 
-        def __init__(self):
+        def __init__(self) -> None:
             """Initialize the collector with structure tracking."""
             super().__init__()
             self.cur_level = 0
             self.max_level = 0
 
-        def visit_select_statement(self, node: SelectStatementNode):
+        def visit_select_statement(
+            self, node: SelectStatementNode
+        ) -> TagCollectorResult:
             """Visit a SELECT statement node."""
             self.cur_level += 1
             self.max_level = max(self.max_level, self.cur_level)
-            tags = super().visit_select_statement(node)
+            tags = cast(TagCollectorResult, super().visit_select_statement(node))
             if len(node.set_ops) > 0:
                 tags += TagCollectorResult(StructureType.Compound)
             if self.cur_level > 1:

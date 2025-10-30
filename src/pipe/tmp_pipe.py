@@ -70,13 +70,13 @@ slm_mask = [
     SlmUnmask("concrete_sql", model=SLM_MODEL),
     ExecuteConcreteSql(database_path),
     RepairSQL("pred_sql", model=REPAIR_MODEL),
-    CalcExecAcc(database_path),
+    CalcExecAcc(database_path, "slm_mask"),
     PrivacyScore(),
     PrintResults(),
 ]
 
 
-async def main():
+async def main() -> None:
     """Run the temporary pipeline for testing."""
     with contextlib.suppress(Exception):
         logger.remove(0)

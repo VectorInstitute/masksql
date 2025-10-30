@@ -1,6 +1,6 @@
 """Module for deterministic masking of terms in natural language questions."""
 
-from typing import Dict, List, Union
+from typing import Any
 
 from loguru import logger
 
@@ -16,20 +16,20 @@ class AddMaskedTermsDeterministic(JsonListTransformer):
     replacing them with symbolic representations based on schema and value links.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__(force=True)
 
     def get_symbol(
-        self, schema_items: Union[List[str], str], symbol_table: Dict[str, str]
+        self, schema_items: list[str] | str, symbol_table: dict[str, str]
     ) -> str:
         """
         Get symbolic representation for schema items.
 
         Parameters
         ----------
-        schema_items : Union[List[str], str]
+        schema_items : list[str] | str
             Schema item(s) to get symbols for.
-        symbol_table : Dict[str, str]
+        symbol_table : dict[str, str]
             Mapping from schema items to their symbolic representations.
 
         Returns
@@ -39,20 +39,20 @@ class AddMaskedTermsDeterministic(JsonListTransformer):
         """
         if not isinstance(schema_items, list):
             schema_items = [schema_items]
-        symbols = []
+        symbols: list[str | None] = []
         for schema_item in schema_items:
             schema_item_parts = schema_item.split(":")
             schema_item_name = schema_item_parts[1]
             symbol = symbol_table.get(schema_item_name)
             symbols.append(symbol)
-        return ",".join(symbols)
+        return ",".join(str(s) for s in symbols if s is not None)
 
     def symbolize_term(
         self,
         question: str,
         question_term: str,
         schema_items: str,
-        symbol_table: Dict[str, str],
+        symbol_table: dict[str, str],
     ) -> str:
         """
         Replace a question term with its symbolic representation.
@@ -81,9 +81,9 @@ class AddMaskedTermsDeterministic(JsonListTransformer):
         question: str,
         question_term: str,
         column_ref: str,
-        updated_schema_links: Dict[str, str],
-        filtered_value_links: Dict[str, str],
-        symbol_table: Dict[str, str],
+        updated_schema_links: dict[str, str],
+        filtered_value_links: dict[str, str],
+        symbol_table: dict[str, str],
     ) -> str:
         """
         Replace a value term with its symbolic representation.
@@ -123,8 +123,8 @@ class AddMaskedTermsDeterministic(JsonListTransformer):
         return f"{symbolic_question}; {evidence}"
 
     def add_tables_of_columns(
-        self, schema_links: Dict[str, str], filtered_schema_links: Dict[str, str]
-    ):
+        self, schema_links: dict[str, str], filtered_schema_links: dict[str, str]
+    ) -> dict[str, str]:
         """
         Add table references for columns in filtered schema links.
 
@@ -167,9 +167,9 @@ class AddMaskedTermsDeterministic(JsonListTransformer):
                         updated_schema_links[question_term] = schema_item
         return updated_schema_links
 
-    async def _process_row(self, row):
-        self.vid = 1
-        self.value_dict = {}
+    async def _process_row(self, row: dict[str, Any]) -> dict[str, Any]:
+        self.vid: int = 1
+        self.value_dict: dict[str, str] = {}
         filtered_schema_links = row["filtered_schema_links"]
         schema_links = row["schema_links"]
         question = row["question"]

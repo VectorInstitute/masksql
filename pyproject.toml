@@ -70,7 +70,9 @@ default-groups = ["dev", "docs"]
 
 [tool.mypy]
 follow_imports = "normal"
-
+exclude = [
+    "resdsql/"
+]
 ignore_missing_imports = false
 install_types = true
 pretty = true
@@ -165,3 +167,9 @@ markers = [
     [tool.coverage.run]
     source=["src/"]
     omit=["tests/*", "*__init__.py"]
+
+[tool.typos.files]
+extend-exclude = ["src/taxonomy/parse/parsetab.py"]
+
+[tool.typos.default.extend-words]
+ot = "ot"

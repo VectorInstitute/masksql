@@ -1,5 +1,7 @@
 """JOIN table count tags."""
 
+from typing import cast
+
 from src.taxonomy.cat.tag_collector import TagCollector
 from src.taxonomy.cat.tag_collector_result import TagCollectorResult
 from src.taxonomy.cat.tags.sql_tag import OrderedTag
@@ -17,9 +19,9 @@ class JoinTables(OrderedTag):
     class Collector(TagCollector):
         """Collector for JOIN table counts."""
 
-        def visit_join_clause(self, node: JoinClauseNode):
+        def visit_join_clause(self, node: JoinClauseNode) -> TagCollectorResult:
             """Visit a JOIN clause node."""
-            tags = super().visit_join_clause(node)
+            tags = cast(TagCollectorResult, super().visit_join_clause(node))
             if len(node.tables) == 2:
                 return tags + TagCollectorResult(JoinTables.SingleJoin)
             return tags + TagCollectorResult(JoinTables.MultiJoin)

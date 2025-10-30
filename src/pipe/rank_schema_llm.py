@@ -1,5 +1,7 @@
 """LLM-based schema ranking."""
 
+from typing import Any
+
 from src.pipe.detect_values_prompts.prompt_processor import PromptProcessor
 from src.pipe.llm_util import extract_object
 from src.pipe.rank_schema_prompts.v1 import RANK_SCHEMA_ITEMS_V1
@@ -20,14 +22,14 @@ class RankSchemaItems(PromptProcessor):
         Model identifier to use
     """
 
-    def __init__(self, prop_name, tables_path, model):
+    def __init__(self, prop_name: str, tables_path: str, model: str) -> None:
         super().__init__(prop_name, model=model)
         self.schema_repo = DatabaseSchemaRepo(tables_path)
 
-    def _process_output(self, row, output):
+    def _process_output(self, row: dict[str, Any], output: str) -> Any:
         return extract_object(output)
 
-    def extract_schema_items(self, row):
+    def extract_schema_items(self, row: dict[str, Any]) -> list[str]:
         """
         Extract all schema items from database.
 
@@ -51,7 +53,7 @@ class RankSchemaItems(PromptProcessor):
                 schema_items.append(f"COLUMN:{table_name}.{col_name}")
         return schema_items
 
-    def _get_prompt(self, row):
+    def _get_prompt(self, row: dict[str, Any]) -> str:
         question = row["question"]
         schema_items = self.extract_schema_items(row)
         return RANK_SCHEMA_ITEMS_V1.format(question=question, schema_items=schema_items)

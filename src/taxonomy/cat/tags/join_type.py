@@ -1,5 +1,7 @@
 """JOIN type and subtype tags."""
 
+from typing import cast
+
 from src.taxonomy.cat.tag_collector import TagCollector
 from src.taxonomy.cat.tag_collector_result import TagCollectorResult
 from src.taxonomy.cat.tags.sql_tag import SqlTag
@@ -31,9 +33,9 @@ class JoinType(SqlTag):
     class Collector(TagCollector):
         """Collector for JOIN types."""
 
-        def visit_join_clause(self, node: JoinClauseNode):
+        def visit_join_clause(self, node: JoinClauseNode) -> TagCollectorResult:
             """Visit a JOIN clause node."""
-            tags = super().visit_join_clause(node)
+            tags = cast(TagCollectorResult, super().visit_join_clause(node))
             if all(constr is None for constr in node.constraints):
                 tags += TagCollectorResult(JoinType.NaturalJoin)
             if any(op.value.lower() != "join" for op in node.ops):
@@ -49,7 +51,7 @@ class JoinType(SqlTag):
                     tags += TagCollectorResult(JoinSub.RIGHT)
             return tags
 
-        def visit_join_constraint(self, node: JoinConstraintNode):
+        def visit_join_constraint(self, node: JoinConstraintNode) -> TagCollectorResult:
             """Visit a JOIN constraint node."""
             if isinstance(node.expr, BinOpExpressionNode) and node.expr.op.value == "=":
                 return TagCollectorResult(JoinType.EquiJoin)

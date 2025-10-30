@@ -43,7 +43,7 @@ unmask_pipe_llm = [
     RankSchemaResd(tables_path),
     AddSchema(tables_path),
     GenSql("pred_sql", model="openai/gpt-4.1"),
-    ExecAccCalc(database_path),
+    ExecAccCalc(database_path, "unmask_llm"),
 ]
 
 unmask_pipe_slm = [
@@ -51,7 +51,7 @@ unmask_pipe_slm = [
     RankSchemaResd(tables_path),
     AddSchema(tables_path),
     GenSql("pred_sql", model=PRIVATE_MODEL),
-    ExecAccCalc(database_path),
+    ExecAccCalc(database_path, "unmask_slm"),
     PrintResults(),
 ]
 
@@ -114,6 +114,6 @@ full_gold = [
     AddConcreteSql(),
     WrongExecAccOutput(database_path),
     RepairSQL("pred_sql", model=SLM_MODEL),
-    ExecAccCalc(database_path),
+    ExecAccCalc(database_path, "full_gold"),
     PrintResults(),
 ]

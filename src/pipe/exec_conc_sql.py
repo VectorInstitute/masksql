@@ -1,5 +1,7 @@
 """Concurrent SQL execution utilities."""
 
+from typing import Any
+
 from loguru import logger
 
 from src.pipe.processor.list_transformer import JsonListTransformer
@@ -19,14 +21,14 @@ class ExecuteConcreteSql(JsonListTransformer):
         Directory containing SQLite database files
     """
 
-    async def _process_row(self, row):
+    async def _process_row(self, row: dict[str, Any]) -> dict[str, Any]:
         return await self.get_exec_acc(row)
 
-    def __init__(self, database_dir):
+    def __init__(self, database_dir: str) -> None:
         super().__init__(False)
         self.dbf = SqliteFacade(database_dir)
 
-    async def get_exec_acc(self, row):
+    async def get_exec_acc(self, row: dict[str, Any]) -> dict[str, Any]:
         """
         Calculate execution accuracy for a row.
 

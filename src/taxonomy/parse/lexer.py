@@ -7,6 +7,7 @@ and cannot be changed to lowercase (ruff: noqa: N802).
 """
 
 import re
+from typing import Any
 
 from ply import lex
 
@@ -163,6 +164,6 @@ def t_error(t):
     t.lexer.skip(1)
 
 
-def get_lexer():
+def get_lexer() -> Any:
     """Create and return a lexer instance with case-insensitive matching."""
     return lex.lex(reflags=re.IGNORECASE)

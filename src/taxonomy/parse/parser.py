@@ -1,5 +1,7 @@
 """SQL parser implementation using PLY (Python Lex-Yacc)."""
 
+from typing import Any
+
 from loguru import logger
 from ply import yacc
 
@@ -46,7 +48,7 @@ precedence = (
 NULL_LITERAL = LiteralNode("NULL")
 
 
-def p_select_statement(p):
+def p_select_statement(p: Any) -> None:
     """Parse grammar rule for SELECT statements.
 
     select_statement : select_core
@@ -67,7 +69,7 @@ def p_select_statement(p):
         p[0] = replace(p[2], with_clause=p[1])
 
 
-def p_select_core(p):
+def p_select_core(p: Any) -> None:
     """Parse grammar rule for SELECT core.
 
     select_core : select_clause
@@ -89,7 +91,7 @@ def p_select_core(p):
         p[0] = SelectCoreNode(p[1], p[2], p[3], p[4])
 
 
-def p_select_clause(p):
+def p_select_clause(p: Any) -> None:
     """Parse grammar rule for SELECT clause.
 
     select_clause : SELECT result_column
@@ -104,7 +106,7 @@ def p_select_clause(p):
         p[0] = SelectClauseNode([p[3]], True)
 
 
-def p_column_list(p):
+def p_column_list(p: Any) -> None:
     """Parse grammar rule for column lists.
 
     column_list : column
@@ -116,7 +118,7 @@ def p_column_list(p):
         p[0] = [p[1], p[3]]
 
 
-def p_common_table_expression(p):
+def p_common_table_expression(p: Any) -> None:
     """Parse grammar rule for common table expressions (CTEs).
 
     common_table_expression : table_name LPAREN column_list RPAREN AS LPAREN
@@ -129,7 +131,7 @@ def p_common_table_expression(p):
         p[0] = CommonTableExpressionNode(p[1], [p[3]], p[7])
 
 
-def p_with_clause(p):
+def p_with_clause(p: Any) -> None:
     """Parse grammar rule for WITH clause.
 
     with_clause : WITH common_table_expression
@@ -144,7 +146,7 @@ def p_with_clause(p):
         p[0] = WithClauseNode(p[3])
 
 
-def p_result_column(p):
+def p_result_column(p: Any) -> None:
     """Parse grammar rule for result columns.
 
     result_column : expr
@@ -159,7 +161,7 @@ def p_result_column(p):
         p[0] = ResultColumnNode(p[1], p[3])
 
 
-def p_order_by(p):
+def p_order_by(p: Any) -> None:
     """Parse grammar rule for ORDER BY clause.
 
     order_by : ORDER BY ordering_term
@@ -171,7 +173,7 @@ def p_order_by(p):
         p[0] = OrderByNode([p[3]])
 
 
-def p_ordering_term(p):
+def p_ordering_term(p: Any) -> None:
     """Parse grammar rule for ordering terms.
 
     ordering_term : expr
@@ -183,7 +185,7 @@ def p_ordering_term(p):
         p[0] = OrderingTerm(p[1], p[2])
 
 
-def p_limit(p):
+def p_limit(p: Any) -> None:
     """Parse grammar rule for LIMIT clause.
 
     Limit : LIMIT expr
@@ -195,7 +197,7 @@ def p_limit(p):
         p[0] = LimitNode([p[2], p[4]])
 
 
-def p_from_clause(p):
+def p_from_clause(p: Any) -> None:
     """Parse grammar rule for FROM clause.
 
     from_clause : FROM table_or_subquery
@@ -211,7 +213,7 @@ def p_from_clause(p):
         p[0] = p[1] + p[3]
 
 
-def _handle_len_4_table_or_subquery(p):
+def _handle_len_4_table_or_subquery(p: Any) -> TableOrSubqueryNode:
     """Handle len(p) == 4 case for table_or_subquery parsing."""
     if isinstance(p[2], SelectStatementNode):
         return TableOrSubqueryNode(select_statement=p[2])
@@ -222,14 +224,14 @@ def _handle_len_4_table_or_subquery(p):
     return TableOrSubqueryNode(table_name=p[1], table_alias=p[3])
 
 
-def _handle_len_5_table_or_subquery(p):
+def _handle_len_5_table_or_subquery(p: Any) -> TableOrSubqueryNode:
     """Handle len(p) == 5 case for table_or_subquery parsing."""
     if p[2] == ".":
         return TableOrSubqueryNode(table_name=p[3], schema_name=p[1], table_alias=p[4])
     return TableOrSubqueryNode(select_statement=p[2], table_alias=p[4])
 
 
-def _handle_len_6_table_or_subquery(p):
+def _handle_len_6_table_or_subquery(p: Any) -> TableOrSubqueryNode:
     """Handle len(p) == 6 case for table_or_subquery parsing."""
     if p[2] == "." and p[4] == ".":
         return TableOrSubqueryNode(db_name=p[1], schema_name=p[3], table_name=p[5])
@@ -238,7 +240,7 @@ def _handle_len_6_table_or_subquery(p):
     return TableOrSubqueryNode(select_statement=p[2], table_alias=p[5])
 
 
-def p_table_or_subquery(p):
+def p_table_or_subquery(p: Any) -> None:
     """Parse grammar rule for table or subquery references.
 
     table_or_subquery : table_name
@@ -265,7 +267,7 @@ def p_table_or_subquery(p):
         p[0] = _handle_len_6_table_or_subquery(p)
 
 
-def p_table_name(p):
+def p_table_name(p: Any) -> None:
     """Parse grammar rule for table names.
 
     table_name : ID
@@ -274,7 +276,7 @@ def p_table_name(p):
     p[0] = TerminalNode("table_name", p[1])
 
 
-def p_table_alias(p):
+def p_table_alias(p: Any) -> None:
     """Parse grammar rule for table aliases.
 
     table_alias : ID
@@ -283,7 +285,7 @@ def p_table_alias(p):
     p[0] = TerminalNode("table_alias", p[1])
 
 
-def p_join_clause(p):
+def p_join_clause(p: Any) -> None:
     """Parse grammar rule for JOIN clauses.
 
     join_clause : table_or_subquery join_op table_or_subquery join_constraint
@@ -302,7 +304,7 @@ def p_join_clause(p):
         p[0] = p[1].add_table(p[3], (p[2]), None)
 
 
-def p_join_constraint(p):
+def p_join_constraint(p: Any) -> None:
     """Parse grammar rule for JOIN constraints.
 
     join_constraint : ON expr
@@ -311,12 +313,12 @@ def p_join_constraint(p):
     p[0] = JoinConstraintNode(p[2])
 
 
-def p_where_clause(p):
+def p_where_clause(p: Any) -> None:
     """Parse grammar rule for WHERE clause."""
     p[0] = WhereClauseNode(p[2])
 
 
-def p_group_clause(p):
+def p_group_clause(p: Any) -> None:
     """Parse grammar rule for GROUP BY clause.
 
     group_clause : GROUP BY expr
@@ -338,7 +340,7 @@ def p_group_clause(p):
         p[0] = replace(p[1], rollup=True, having=p[5])
 
 
-def p_column(p):
+def p_column(p: Any) -> None:
     """Parse grammar rule for column references.
 
     Column : column_name
@@ -350,7 +352,7 @@ def p_column(p):
         p[0] = ColumnNode(p[3], p[1])
 
 
-def p_fun_expr(p):
+def p_fun_expr(p: Any) -> None:
     """Parse grammar rule for function expressions.
 
     fun_expr : fun_name LPAREN RPAREN
@@ -382,7 +384,7 @@ def p_fun_expr(p):
 
 
 # expr bin_op expr
-def p_bin_op_expr(p):
+def p_bin_op_expr(p: Any) -> None:
     """Parse grammar rule for binary operation expressions.
 
     bin_op_expr : NOT expr
@@ -417,7 +419,7 @@ def p_bin_op_expr(p):
         p[0] = BinOpExpressionNode(p[1], TerminalNode("bin_op", "NOT IN"), p[5])
 
 
-def p_expr(p):
+def p_expr(p: Any) -> None:
     """Parse grammar rule for expressions.
 
     Expr : column
@@ -441,7 +443,7 @@ def p_expr(p):
         p[0] = p[2]
 
 
-def p_set_op(p):
+def p_set_op(p: Any) -> None:
     """Parse grammar rule for set operations.
 
     set_op : UNION
@@ -453,7 +455,7 @@ def p_set_op(p):
     p[0] = TerminalNode("set_op", p[1])
 
 
-def p_sort_order(p):
+def p_sort_order(p: Any) -> None:
     """Parse grammar rule for sort order.
 
     sort_order : ASC
@@ -462,7 +464,7 @@ def p_sort_order(p):
     p[0] = TerminalNode("sort_order", p[1])
 
 
-def p_bin_op(p):
+def p_bin_op(p: Any) -> None:
     """Parse grammar rule for binary operators.
 
     bin_op : ARITH_OP
@@ -474,7 +476,7 @@ def p_bin_op(p):
     p[0] = TerminalNode("bin_op", p[1])
 
 
-def p_join_op(p):
+def p_join_op(p: Any) -> None:
     """Parse grammar rule for JOIN operators.
 
     join_op : JOIN
@@ -493,7 +495,7 @@ def p_join_op(p):
         p[0] = TerminalNode("join_op", " ".join(p[1:]))
 
 
-def p_type_name(p):
+def p_type_name(p: Any) -> None:
     """Parse grammar rule for type names.
 
     type_name : TYPE_NAME
@@ -505,13 +507,13 @@ def p_type_name(p):
         p[0] = TerminalNode("type_name", f"{p[1]}({p[3]})")
 
 
-def p_cast_expr(p):
+def p_cast_expr(p: Any) -> None:
     """Parse grammar rule for CAST expressions."""
     p[0] = CastExpressionNode(p[3], p[5])
 
 
 # FIXME: Not between
-def p_between_expr(p):
+def p_between_expr(p: Any) -> None:
     """Parse grammar rule for BETWEEN expressions.
 
     between_expr : expr BETWEEN expr bin_op expr
@@ -523,7 +525,7 @@ def p_between_expr(p):
         p[0] = BetweenExpressionNode(p[1], p[4], p[6])
 
 
-def p_column_alias(p):
+def p_column_alias(p: Any) -> None:
     """Parse grammar rule for column aliases.
 
     column_alias : ID
@@ -535,7 +537,7 @@ def p_column_alias(p):
     p[0] = TerminalNode("column_alias", p[1])
 
 
-def p_fun_name(p):
+def p_fun_name(p: Any) -> None:
     """Parse grammar rule for function names.
 
     fun_name : ID
@@ -545,7 +547,7 @@ def p_fun_name(p):
     p[0] = TerminalNode("fun_name", p[1])
 
 
-def p_literal_value(p):
+def p_literal_value(p: Any) -> None:
     """Parse grammar rule for literal values.
 
     literal_value : NUMBER
@@ -560,7 +562,7 @@ def p_literal_value(p):
         p[0] = LiteralNode(-p[2])
 
 
-def p_column_name(p):
+def p_column_name(p: Any) -> None:
     """Parse grammar rule for column names.
 
     column_name : ID
@@ -573,7 +575,7 @@ def p_column_name(p):
     p[0] = TerminalNode("column_name", p[1])
 
 
-def p_win_expr(p):
+def p_win_expr(p: Any) -> None:
     """Parse grammar rule for window expressions.
 
     win_expr : win_fun LPAREN RPAREN OVER LPAREN win_def RPAREN
@@ -596,7 +598,7 @@ def p_win_expr(p):
 #     p[0] = WindowDefinitionNode(p[7], p[6])
 
 
-def p_win_def(p):
+def p_win_def(p: Any) -> None:
     """Parse grammar rule for window definitions.
 
     win_def : order_by
@@ -617,7 +619,7 @@ def p_win_def(p):
         p[0] = WindowDefinitionNode([p[3]], p[4])
 
 
-def p_win_fun(p):
+def p_win_fun(p: Any) -> None:
     """Parse grammar rule for window functions.
 
     win_fun : RANK
@@ -627,7 +629,7 @@ def p_win_fun(p):
     p[0] = TerminalNode("win_fun_name", p[1])
 
 
-def p_case_expr(p):
+def p_case_expr(p: Any) -> None:
     """Parse grammar rule for CASE expressions.
 
     case_expr : CASE case_when_expr END
@@ -639,7 +641,7 @@ def p_case_expr(p):
         p[0] = FunctionExpressionNode(TerminalNode("fun_name", "case"), [p[2]] + p[3])
 
 
-def p_case_when_expr(p):
+def p_case_when_expr(p: Any) -> None:
     """Parse grammar rule for CASE WHEN expressions.
 
     case_when_expr : WHEN expr THEN expr
@@ -654,7 +656,7 @@ def p_case_when_expr(p):
         p[0] = [p[2], p[4]] + p[5]
 
 
-# def p_order_by(p):
+# def p_order_by(p: Any) -> None:
 #     '''order_by : ORDER BY ordering_term
 #                 | order_by COMMA ordering_term'''
 #     if isinstance(p[1], OrderByNode):
@@ -663,7 +665,7 @@ def p_case_when_expr(p):
 #         p[0] = OrderByNode([p[3]])
 
 
-def p_literal_list(p):
+def p_literal_list(p: Any) -> None:
     """Parse grammar rule for literal lists.
 
     literal_list : literal_value
@@ -677,13 +679,13 @@ def p_literal_list(p):
 
 
 # Error rule for syntax errors
-def p_error(p):
+def p_error(p: Any) -> None:
     """Handle parser syntax errors by logging and raising an exception."""
     logger.debug(f"Syntax error in input, Invalid token:{p}")
     raise SyntaxError(f"{p}")
 
 
-def get_parser():
+def get_parser() -> Any:
     """Create and return a PLY yacc parser instance."""
     return yacc.yacc()
 
@@ -699,7 +701,7 @@ class SqlParser:
         The PLY yacc parser instance.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.lexer = get_lexer()
         self.parser = get_parser()
 
@@ -709,7 +711,7 @@ class SqlParser:
         sql = shrink_whitespaces(sql)
         return sql.replace("\\n", "")
 
-    def parse(self, sql: str) -> SelectStatementNode:
+    def parse(self, sql: str) -> SelectStatementNode | None:
         """Parse SQL string and return the AST representation.
 
         Parameters

@@ -22,10 +22,10 @@ class JsonListTransformer(JsonListProcessor, ABC):
         Force reprocessing even if output exists, default True
     """
 
-    def __init__(self, force=True):
+    def __init__(self, force: bool = True) -> None:
         self.force = force or FORCE
 
-    def get_output_file(self, input_file):
+    def get_output_file(self, input_file: str) -> str:
         """
         Generate output filename from input filename.
 
@@ -44,7 +44,7 @@ class JsonListTransformer(JsonListProcessor, ABC):
         num = int(file_name.split("_", 1)[0])
         return os.path.join(dir_path, f"{num + 1}_{self.name}.json")
 
-    async def run(self, input_file):
+    async def run(self, input_file: str) -> str:
         """
         Transform input file and write to new output file.
 

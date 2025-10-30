@@ -20,6 +20,7 @@ from src.pipe.gen_masked_sql_raw import GenerateSymbolicSqlRaw
 from src.pipe.link_schema import LinkSchema
 from src.pipe.pipeline import Pipeline
 from src.pipe.processor.limit_list import LimitJson
+from src.pipe.processor.list_processor import JsonListProcessor
 from src.pipe.processor.print_results import PrintResults
 from src.pipe.processor.privacy_score import PrivacyScore
 from src.pipe.rank_schema import RankSchemaResd
@@ -29,80 +30,80 @@ from src.pipe.slm_mask import SlmMask, SlmUnmask
 from src.pipe.symb_table import AddSymbolTable
 from src.pipe.unmask import AddConcreteSql
 from src.pipe.value_links import LinkValues
-from src.pipe.wrong_exec_acc import ExecuteConcreteSql
+from src.pipe.wrong_exec_acc import ExecuteConcreteSql  # type: ignore[import-untyped]
 
 
-LLM_MODEL = os.getenv("LLM_MODEL")
-LINK_MODEL = os.getenv("LINK_MODEL")
-REPAIR_MODEL = os.getenv("REPAIR_MODEL")
-PRIVATE_MODEL = os.getenv("PRIVATE_MODEL")
-SLM_MODEL = os.getenv("SLM_MODEL")
-ALT_MODEL = os.getenv("ALT_MODEL")
-LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
+LLM_MODEL: str | None = os.getenv("LLM_MODEL")
+LINK_MODEL: str | None = os.getenv("LINK_MODEL")
+REPAIR_MODEL: str | None = os.getenv("REPAIR_MODEL")
+PRIVATE_MODEL: str | None = os.getenv("PRIVATE_MODEL")
+SLM_MODEL: str | None = os.getenv("SLM_MODEL")
+ALT_MODEL: str | None = os.getenv("ALT_MODEL")
+LOG_LEVEL: str = os.getenv("LOG_LEVEL", "INFO")
 
-out_dir = os.path.join("out", "ablation", "1_perfect_base_new")
+out_dir: str = os.path.join("out", "ablation", "1_perfect_base_new")
 
 if not os.path.exists(out_dir):
     os.makedirs(out_dir, exist_ok=True)
 
-database_path = "../parser/data/bird/database"
-input_path = os.path.join(out_dir, "1_input.json")
-tables_path = os.path.join(out_dir, "tables.json")
-output_path = os.path.join(out_dir, "output.json")
-eval_path = os.path.join(out_dir, "eval.json")
+database_path: str = "../parser/data/bird/database"
+input_path: str = os.path.join(out_dir, "1_input.json")
+tables_path: str = os.path.join(out_dir, "tables.json")
+output_path: str = os.path.join(out_dir, "output.json")
+eval_path: str = os.path.join(out_dir, "eval.json")
 
-mask_pipe = [
+mask_pipe: list[JsonListProcessor] = [
     LimitJson(),
     RankSchemaResd(tables_path),
     AddFilteredSchema(tables_path),
-    GenGoldLinks("gold_links", model=LLM_MODEL),
+    GenGoldLinks("gold_links", model=LLM_MODEL),  # type: ignore[arg-type]
     CopyTransformer("question", "bar"),
     AddSymbolTable(tables_path),
-    DetectValues("values", model=SLM_MODEL),
-    LinkValues("value_links", model=SLM_MODEL),
+    DetectValues("values", model=SLM_MODEL),  # type: ignore[arg-type]
+    LinkValues("value_links", model=SLM_MODEL),  # type: ignore[arg-type]
     CopyTransformer("value_links", "filtered_value_links"),
     # AddValueSymbolTable(tables_path),
-    LinkSchema("schema_links", model=SLM_MODEL),
+    LinkSchema("schema_links", model=SLM_MODEL),  # type: ignore[arg-type]
     CopyTransformer("schema_links", "filtered_schema_links"),
-    AddSymbolicSchema("symbolic", tables_path),
+    AddSymbolicSchema("symbolic", tables_path),  # type: ignore[call-arg]
     AddSymbolicQuestion(),
     # SlmMaskWithSymbolTable("symbolic", model=SLM_MODEL),
-    AddInferenceAttack("attack", model=LLM_MODEL),
-    GenerateSymbolicSql("symbolic", model=LLM_MODEL),
+    AddInferenceAttack("attack", model=LLM_MODEL),  # type: ignore[arg-type]
+    GenerateSymbolicSql("symbolic", model=LLM_MODEL),  # type: ignore[arg-type]
     # CopyTransformer("symbolic.sql", "symbolic.repaired_sql"),
-    RepairSymbolicSQL("symbolic", model=LLM_MODEL),
+    RepairSymbolicSQL("symbolic", model=LLM_MODEL),  # type: ignore[arg-type]
     # SlmUnmaskAndRepair("pred_sql", model=SLM_MODEL),
     AddConcreteSql(),
     ExecuteConcreteSql(database_path),
-    RepairSQL("pred_sql", model=SLM_MODEL),
+    RepairSQL("pred_sql", model=SLM_MODEL),  # type: ignore[arg-type]
     # CopyTransformer('concrete_sql', 'pred_sql'),
-    CalcExecAcc(database_path),
+    CalcExecAcc(database_path),  # type: ignore[call-arg]
     # AddMaskedTerms("masked_terms", model=LLM_MODEL),
     # CopyTransformer("masked_terms", "symbolic.masked_terms"),
     # SchemaLinkScore(),
     # PrivacyScore(),
-    PrintResults(),
+    PrintResults(),  # type: ignore[no-untyped-call]
 ]
 
-slm_mask = [
-    LimitJson("limit"),
+slm_mask: list[JsonListProcessor] = [
+    LimitJson("limit"),  # type: ignore[arg-type]
     RankSchemaResd(tables_path),
     AddFilteredSchema(tables_path),
-    GenGoldLinks("gold_links", model=LLM_MODEL),
-    SlmMask("symbolic", model=SLM_MODEL),
-    AttackRaw("attack", model=LLM_MODEL),
-    GenerateSymbolicSqlRaw("symbolic", model=LLM_MODEL),
-    RepairSymbolicSQLRaw("symbolic", model=LLM_MODEL),
-    SlmUnmask("concrete_sql", model=SLM_MODEL),
+    GenGoldLinks("gold_links", model=LLM_MODEL),  # type: ignore[arg-type]
+    SlmMask("symbolic", model=SLM_MODEL),  # type: ignore[arg-type]
+    AttackRaw("attack", model=LLM_MODEL),  # type: ignore[arg-type]
+    GenerateSymbolicSqlRaw("symbolic", model=LLM_MODEL),  # type: ignore[arg-type]
+    RepairSymbolicSQLRaw("symbolic", model=LLM_MODEL),  # type: ignore[arg-type]
+    SlmUnmask("concrete_sql", model=SLM_MODEL),  # type: ignore[arg-type]
     ExecuteConcreteSql(database_path),
-    RepairSQL("pred_sql", model=REPAIR_MODEL),
-    CalcExecAcc(database_path),
-    PrivacyScore(),
-    PrintResults(),
+    RepairSQL("pred_sql", model=REPAIR_MODEL),  # type: ignore[arg-type]
+    CalcExecAcc(database_path),  # type: ignore[call-arg]
+    PrivacyScore(),  # type: ignore[no-untyped-call]
+    PrintResults(),  # type: ignore[no-untyped-call]
 ]
 
 
-async def main():
+async def main() -> None:
     """Execute main pipeline processing."""
     with contextlib.suppress(Exception):
         logger.remove(0)

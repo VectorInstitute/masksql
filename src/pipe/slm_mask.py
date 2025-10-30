@@ -1,5 +1,7 @@
 """Small language model masking."""
 
+from typing import Any
+
 from src.pipe.detect_values_prompts.prompt_processor import PromptProcessor
 from src.pipe.gen_sql import extract_sql
 from src.pipe.slm_mask_prompts.mask_v1 import SLM_MASK_PROMPT_V1
@@ -9,10 +11,10 @@ from src.pipe.slm_mask_prompts.unmask_v1 import SLM_UNMASK_PROMPT_V1
 class SlmMask(PromptProcessor):
     """Generate masked questions using small language model."""
 
-    def _process_output(self, row, output):
+    def _process_output(self, row: dict[str, Any], output: str) -> dict[str, str]:
         return {"raw": output}
 
-    def _get_prompt(self, row):
+    def _get_prompt(self, row: dict[str, Any]) -> str:
         question = row["question"]
         schema = row["schema"]
         return SLM_MASK_PROMPT_V1.format(question=question, schema=schema)
@@ -21,10 +23,10 @@ class SlmMask(PromptProcessor):
 class SlmUnmask(PromptProcessor):
     """Unmask questions and generate SQL using small language model."""
 
-    def _process_output(self, row, output):
+    def _process_output(self, row: dict[str, Any], output: str) -> str:
         return extract_sql(output)
 
-    def _get_prompt(self, row):
+    def _get_prompt(self, row: dict[str, Any]) -> str:
         question = row["question"]
         schema = row["schema"]
         masked_raw = row["symbolic"]["raw"]

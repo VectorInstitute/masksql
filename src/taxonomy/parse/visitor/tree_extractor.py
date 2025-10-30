@@ -16,10 +16,10 @@ from src.util.str_utils import split_pascal
 class AstDiagramTreeExtractor(CollectorVisitor):
     """Extract a diagram tree structure from SQL AST nodes for visualization."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__(DiagramTreeNode)
 
-    def get_new_result_instance(self, attr: Any):
+    def get_new_result_instance(self, attr: Any) -> DiagramTreeNode | None:
         """
         Create a new diagram tree node instance from an attribute.
 
@@ -42,7 +42,7 @@ class AstDiagramTreeExtractor(CollectorVisitor):
             return DiagramTreeNode(str(attr))
         return None
 
-    def get_join_attrs(self, node: JoinClauseNode):
+    def get_join_attrs(self, node: JoinClauseNode) -> list[Any]:
         """
         Get join clause attributes.
 
@@ -100,7 +100,7 @@ class AstDiagramTreeExtractor(CollectorVisitor):
             attrs.append(node.limit)
         return attrs
 
-    def get_attrs(self, node: SqlAstNode):
+    def get_attrs(self, node: SqlAstNode) -> list[Any]:
         """
         Get attributes for a SQL AST node.
 

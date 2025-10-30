@@ -1,6 +1,6 @@
 """Results management utilities."""
 
-from typing import Dict
+from typing import Any
 
 import pandas as pd
 
@@ -10,9 +10,9 @@ from src.pipe.processor.list_transformer import JsonListTransformer
 class Results(JsonListTransformer):
     """Collect and aggregate evaluation results."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
-        self.stat_rows = []
+        self.stat_rows: list[dict[str, Any]] = []
         self.ea = 0
         self.pre_ea = 0
         self.time = 0
@@ -22,9 +22,9 @@ class Results(JsonListTransformer):
         self.total_leaks = 0
         self.total_masks = 0
         self.a_count = 0
-        self.recall_scores = []
+        self.recall_scores: list[float] = []
 
-    def _post_run(self):
+    def _post_run(self) -> None:
         df = pd.DataFrame(self.stat_rows)
         print(df.mean())
         # print("Count: ", self.count)
@@ -33,7 +33,7 @@ class Results(JsonListTransformer):
         #     print(len(self.recall_scores))
         #     print(sum(self.recall_scores) / len(self.recall_scores))
 
-    async def _process_row(self, row: Dict) -> Dict:
+    async def _process_row(self, row: dict[str, Any]) -> dict[str, Any]:
         stat = {}
         if "eval" in row:
             ea = row["eval"]["acc"]
@@ -69,7 +69,7 @@ class Results(JsonListTransformer):
                         mask_covering += 1
                         break
             if a_masks == 0:
-                mcs = 1
+                mcs: float = 1
             else:
                 mcs = mask_covering / a_masks
                 self.recall_scores.append(mcs)

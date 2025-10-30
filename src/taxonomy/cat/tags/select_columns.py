@@ -1,6 +1,7 @@
 """SELECT column type tags."""
 
 from enum import auto
+from typing import cast
 
 from src.taxonomy.cat.tag_collector import TagCollector
 from src.taxonomy.cat.tag_collector_result import TagCollectorResult
@@ -22,15 +23,15 @@ class SelectColumns(SqlTag):
     class Collector(TagCollector):
         """Collector for SELECT column types."""
 
-        def visit_column(self, node: ColumnNode):
+        def visit_column(self, node: ColumnNode) -> TagCollectorResult:
             """Visit a column node."""
             if node.column_name.value == "*":
                 return TagCollectorResult(SelectColumns.StarColumn)
             return TagCollectorResult()
 
-        def visit_select_clause(self, node: SelectClauseNode):
+        def visit_select_clause(self, node: SelectClauseNode) -> TagCollectorResult:
             """Visit a SELECT clause node."""
-            tags = super().visit_select_clause(node)
+            tags = cast(TagCollectorResult, super().visit_select_clause(node))
             if len(node.result_columns) > 1:
                 tags += TagCollectorResult(SelectColumns.MultiColumn)
             elif len(node.result_columns) == 1:

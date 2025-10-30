@@ -3,6 +3,7 @@
 import os
 from abc import abstractmethod
 from json import JSONDecodeError
+from typing import Any
 
 from loguru import logger
 
@@ -33,11 +34,11 @@ class PromptProcessor(JsonListTransformer):
 
     def __init__(
         self,
-        prop_name,
-        model=os.environ["DEFAULT_MODEL"],
-        force=False,
-        include_stats=True,
-    ):
+        prop_name: str,
+        model: str = os.environ["DEFAULT_MODEL"],
+        force: bool = False,
+        include_stats: bool = True,
+    ) -> None:
         super().__init__(force)
         self.model = model
         self.prop_name = prop_name
@@ -45,12 +46,12 @@ class PromptProcessor(JsonListTransformer):
         self.response_file = "/dev/null"
         self.include_stats = include_stats
 
-    async def _prompt_llm(self, row, prompt: str):
+    async def _prompt_llm(self, row: dict[str, Any], prompt: str) -> tuple[Any, str]:
         try:
             res, toks = await send_prompt(prompt, model=self.model)
         except JSONDecodeError as e:
             logger.error(f"Sending prompt failed: {e}")
-            return "", 0
+            return "", "0"
         except Exception as e:
             logger.error(f"Sending prompt failed: {e}")
             raise e
@@ -58,14 +59,14 @@ class PromptProcessor(JsonListTransformer):
         return processed_res, toks
 
     @abstractmethod
-    def _process_output(self, row, output):
+    def _process_output(self, row: dict[str, Any], output: str) -> Any:
         pass
 
     @abstractmethod
-    def _get_prompt(self, row):
+    def _get_prompt(self, row: dict[str, Any]) -> str:
         pass
 
-    async def _process_row(self, row):
+    async def _process_row(self, row: dict[str, Any]) -> dict[str, Any]:
         prompt = self._get_prompt(row)
         with open(self.prompt_file, "a") as f:
             f.write(f"######################\n {prompt}\n")
@@ -82,7 +83,7 @@ class PromptProcessor(JsonListTransformer):
 
             if "total_toks" not in row:
                 row["total_toks"] = 0
-            row["total_toks"] += toks
+            row["total_toks"] += int(toks)
 
         if self.prop_name in row and not isinstance(row[self.prop_name], str):
             row[self.prop_name].update(res)
@@ -90,7 +91,7 @@ class PromptProcessor(JsonListTransformer):
             row[self.prop_name] = res
         return row
 
-    async def run(self, input_file):
+    async def run(self, input_file: str) -> str:
         """
         Run the processor and log prompts/responses.
 

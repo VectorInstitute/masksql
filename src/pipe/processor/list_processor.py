@@ -2,7 +2,7 @@
 
 import json
 from abc import ABC, abstractmethod
-from typing import Dict
+from typing import Any
 
 from src.pipe.async_utils import apply_async
 
@@ -11,10 +11,10 @@ class JsonListProcessor(ABC):
     """Base class for JSON list processing operations."""
 
     @abstractmethod
-    async def _process_row(self, row: Dict) -> Dict:
+    async def _process_row(self, row: Any) -> Any:
         pass
 
-    def get_prop(self, row, prop):
+    def get_prop(self, row: Any, prop: str) -> Any:
         """
         Get nested property from row using dot notation.
 
@@ -36,7 +36,7 @@ class JsonListProcessor(ABC):
             d = d[p]
         return d
 
-    def set_prop(self, row, prop, value):
+    def set_prop(self, row: Any, prop: str, value: Any) -> Any:
         """
         Set nested property in row using dot notation.
 
@@ -62,7 +62,7 @@ class JsonListProcessor(ABC):
         return row
 
     @property
-    def name(self):
+    def name(self) -> str:
         """
         Get processor name.
 
@@ -73,17 +73,17 @@ class JsonListProcessor(ABC):
         """
         return self.__class__.__name__
 
-    def _pre_run(self):  # noqa: B027
+    def _pre_run(self) -> None:  # noqa: B027
         """Override to add pre-processing logic before run."""
 
-    def _post_run(self):  # noqa: B027
+    def _post_run(self) -> None:  # noqa: B027
         """Override to add post-processing logic after run."""
 
-    def _get_input_data(self, input_file):
+    def _get_input_data(self, input_file: str) -> Any:
         with open(input_file) as f:
             return json.load(f)
 
-    async def run(self, input_file):
+    async def run(self, input_file: str) -> list[Any] | str:
         """
         Process input file and return output.
 
@@ -94,8 +94,8 @@ class JsonListProcessor(ABC):
 
         Returns
         -------
-        list
-            Processed data rows
+        list | str
+            Processed data rows or output file path
         """
         self._pre_run()
 

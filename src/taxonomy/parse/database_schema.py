@@ -6,7 +6,7 @@ from typing import Dict, FrozenSet, List, Set, Tuple
 from loguru import logger
 
 
-def str_similarity(s1, s2):
+def str_similarity(s1: str, s2: str) -> float:
     """Calculate similarity ratio between two strings (case-insensitive).
 
     Parameters
@@ -43,7 +43,9 @@ class DatabaseSchemaSqlyzr:
         self.tables = {}
         self.foreign_keys = set()
 
-    def find_most_similar_column(self, table_name, col_name, cand_cols: Set[str]):
+    def find_most_similar_column(
+        self, table_name: str, col_name: str, cand_cols: Set[str]
+    ) -> str | None:
         """Find the most similar column name in a table.
 
         Searches first in candidate columns, then in all table columns.
@@ -84,7 +86,7 @@ class DatabaseSchemaSqlyzr:
             return best_col
         return None
 
-    def get_col_type(self, table_name, col_name) -> str:
+    def get_col_type(self, table_name: str, col_name: str) -> str:
         """Get the type of a column in a table.
 
         Parameters

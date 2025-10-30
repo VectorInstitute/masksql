@@ -1,5 +1,7 @@
 """SQL execution accuracy calculation."""
 
+from typing import Any
+
 from src.pipe.processor.list_transformer import JsonListTransformer
 from src.pipe.sqlite_facade import SqliteFacade
 
@@ -19,14 +21,14 @@ class CalcExecAcc(JsonListTransformer):
         Policy identifier for tracking failures
     """
 
-    def __init__(self, database_dir, policy):
+    def __init__(self, database_dir: str, policy: str) -> None:
         super().__init__(False)
         self.dbf = SqliteFacade(database_dir)
         self.count = 0
         self.policy = policy
-        self.failures_arr = []
+        self.failures_arr: list[Any] = []
 
-    async def _process_row(self, row):
+    async def _process_row(self, row: dict[str, Any]) -> dict[str, Any]:
         gold = row["query"]
         pred = row["pred_sql"]
         db_id = row["db_id"]

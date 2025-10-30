@@ -1,5 +1,7 @@
 """Schema ranking utilities."""
 
+from typing import Any
+
 from src.pipe.processor.list_transformer import JsonListTransformer
 from src.pipe.schema_repo import DatabaseSchemaRepo
 
@@ -14,11 +16,11 @@ class RankSchemaResd(JsonListTransformer):
         Path to tables JSON file
     """
 
-    def __init__(self, tables_path):
+    def __init__(self, tables_path: str) -> None:
         super().__init__(force=True)
         self.schema_repo = DatabaseSchemaRepo(tables_path)
 
-    async def _process_row(self, row):
+    async def _process_row(self, row: dict[str, Any]) -> dict[str, Any]:
         schema_items = row["tc_original"]
         schema = self.schema_repo.dbs[row["db_id"]]
         refined_schema_items = []

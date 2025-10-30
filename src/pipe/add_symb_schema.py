@@ -1,6 +1,6 @@
 """Module for converting database schemas to symbolic representations."""
 
-from typing import Dict, Union
+from typing import Any
 
 from src.pipe.processor.list_transformer import JsonListTransformer
 from src.pipe.schema_repo import DatabaseSchema, DatabaseSchemaRepo
@@ -18,11 +18,11 @@ class AddSymbolicSchema(JsonListTransformer):
         Path to the database tables/schemas repository.
     """
 
-    def __init__(self, tables_path):
+    def __init__(self, tables_path: str) -> None:
         super().__init__()
         self.schema_repo = DatabaseSchemaRepo(tables_path)
 
-    async def _process_row(self, row):
+    async def _process_row(self, row: dict[str, Any]) -> dict[str, Any]:
         schema = DatabaseSchema.from_yaml(row["schema"])
         symbol_table = row["symbolic"]["to_symbol"]
 
@@ -34,7 +34,7 @@ class AddSymbolicSchema(JsonListTransformer):
         return row
 
     def get_col_symbol(
-        self, table_name: str, col_name: str, symbol_table: Dict[str, str]
+        self, table_name: str, col_name: str, symbol_table: dict[str, str]
     ) -> str:
         """
         Get symbolic representation for a column.
@@ -56,7 +56,7 @@ class AddSymbolicSchema(JsonListTransformer):
         col_ref = f"{table_name}.{col_name}"
         return symbol_table[col_ref]
 
-    def get_table_symbol(self, table_name: str, symbol_table: Dict[str, str]) -> str:
+    def get_table_symbol(self, table_name: str, symbol_table: dict[str, str]) -> str:
         """
         Get symbolic representation for a table.
 
@@ -75,8 +75,8 @@ class AddSymbolicSchema(JsonListTransformer):
         return symbol_table[table_name]
 
     def get_symbolic_col_data(
-        self, col_data: Union[str, Dict[str, str]], symbol_table: Dict[str, str]
-    ) -> str:
+        self, col_data: str | dict[str, Any], symbol_table: dict[str, str]
+    ) -> str | dict[str, Any]:
         """
         Convert column data to symbolic representation.
 
@@ -92,6 +92,7 @@ class AddSymbolicSchema(JsonListTransformer):
         str
             Symbolic representation of column data.
         """
+        symbolic_col_data: str | dict[str, Any]
         if isinstance(col_data, dict) and "foreign_key" in col_data:
             symbolic_col_data = col_data.copy()
             foreign_col_ref = symbolic_col_data["foreign_key"]
@@ -105,7 +106,7 @@ class AddSymbolicSchema(JsonListTransformer):
         return symbolic_col_data
 
     def get_symb_schema(
-        self, schema: DatabaseSchema, symbol_table: Dict[str, str]
+        self, schema: DatabaseSchema, symbol_table: dict[str, str]
     ) -> DatabaseSchema:
         """
         Convert entire schema to symbolic representation.
@@ -135,8 +136,8 @@ class AddSymbolicSchema(JsonListTransformer):
         return symbolic_schema
 
     def get_reverse_dict(
-        self, schema: DatabaseSchema, symbol_table: Dict[str, str]
-    ) -> Dict[str, str]:
+        self, schema: DatabaseSchema, symbol_table: dict[str, str]
+    ) -> dict[str, str]:
         """
         Create reverse mapping from symbols to original names.
 

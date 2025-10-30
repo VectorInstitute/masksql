@@ -1,6 +1,6 @@
 """RESDSQL model integration for SQL generation."""
 
-from typing import Dict
+from typing import Any
 
 from src.pipe.processor.list_transformer import JsonListTransformer
 from src.util.json_utils import read_json
@@ -16,11 +16,11 @@ class AddResd(JsonListTransformer):
         Path to RESDSQL predictions JSON file
     """
 
-    def __init__(self, resd_path):
+    def __init__(self, resd_path: str) -> None:
         super().__init__()
-        self.resd = read_json(resd_path)
+        self.resd: Any = read_json(resd_path)
 
-    async def _process_row(self, row: Dict) -> Dict:
+    async def _process_row(self, row: dict[str, Any]) -> dict[str, Any]:
         for r in self.resd:
             if r["question_id"] == row["question_id"]:
                 row["tc_original"] = r["tc_original"]

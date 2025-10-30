@@ -1,6 +1,6 @@
 """Filtered symbolic schema generation."""
 
-from typing import Dict, Set, Tuple, Union
+from typing import Any
 
 from loguru import logger
 
@@ -18,11 +18,11 @@ class AddFilteredSymbolicSchema(JsonListTransformer):
         Path to tables JSON file
     """
 
-    def __init__(self, tables_path):
+    def __init__(self, tables_path: str) -> None:
         super().__init__()
         self.schema_repo = DatabaseSchemaRepo(tables_path)
 
-    async def _process_row(self, row):
+    async def _process_row(self, row: dict[str, Any]) -> dict[str, Any]:
         tables, col_refs = self.get_items_to_symbolize(row)
 
         schema = DatabaseSchema.from_yaml(row["schema"])
@@ -41,8 +41,8 @@ class AddFilteredSymbolicSchema(JsonListTransformer):
         self,
         table_name: str,
         col_name: str,
-        col_refs: Set[str],
-        symbol_table: Dict[str, str],
+        col_refs: set[str],
+        symbol_table: dict[str, str],
     ) -> str:
         """
         Get symbolic representation for a column.
@@ -69,7 +69,7 @@ class AddFilteredSymbolicSchema(JsonListTransformer):
         return col_name
 
     def get_table_symbol(
-        self, table_name: str, tables: Set[str], symbol_table: Dict[str, str]
+        self, table_name: str, tables: set[str], symbol_table: dict[str, str]
     ) -> str:
         """
         Get symbolic representation for a table.
@@ -94,11 +94,11 @@ class AddFilteredSymbolicSchema(JsonListTransformer):
 
     def get_symbolic_col_data(
         self,
-        col_data: Union[str, Dict[str, str]],
-        tables: Set[str],
-        col_refs: Set[str],
-        symbol_table: Dict[str, str],
-    ) -> str:
+        col_data: str | dict[str, Any],
+        tables: set[str],
+        col_refs: set[str],
+        symbol_table: dict[str, str],
+    ) -> str | dict[str, Any]:
         """
         Convert column data to symbolic form.
 
@@ -118,6 +118,7 @@ class AddFilteredSymbolicSchema(JsonListTransformer):
         str
             Symbolic column data
         """
+        symbolic_col_data: str | dict[str, Any]
         if isinstance(col_data, dict) and "foreign_key" in col_data:
             symbolic_col_data = col_data.copy()
             foreign_col_ref = symbolic_col_data["foreign_key"]
@@ -132,7 +133,7 @@ class AddFilteredSymbolicSchema(JsonListTransformer):
             symbolic_col_data = col_data
         return symbolic_col_data
 
-    def get_items_to_symbolize(self, row) -> Tuple[Set[str], Set[str]]:
+    def get_items_to_symbolize(self, row: dict[str, Any]) -> tuple[set[str], set[str]]:
         """
         Extract tables and columns to symbolize from row.
 
@@ -176,9 +177,9 @@ class AddFilteredSymbolicSchema(JsonListTransformer):
     def get_symb_schema(
         self,
         schema: DatabaseSchema,
-        symbol_table: Dict[str, str],
-        tables: Set[str],
-        col_refs: Set[str],
+        symbol_table: dict[str, str],
+        tables: set[str],
+        col_refs: set[str],
     ) -> DatabaseSchema:
         """
         Create symbolic database schema.
@@ -216,8 +217,8 @@ class AddFilteredSymbolicSchema(JsonListTransformer):
         return symbolic_schema
 
     def get_reverse_dict(
-        self, tables: Set[str], col_refs: Set[str], symbol_table: Dict[str, str]
-    ) -> Dict[str, str]:
+        self, tables: set[str], col_refs: set[str], symbol_table: dict[str, str]
+    ) -> dict[str, str]:
         """
         Create reverse mapping from symbols to original names.
 
