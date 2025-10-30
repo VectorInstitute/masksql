@@ -8,7 +8,6 @@ tensorboard_log
 third_party
 predictions
 database
-.python-version
 out
 .env
 out_old
