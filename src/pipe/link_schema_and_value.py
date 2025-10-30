@@ -1,5 +1,7 @@
 """Combined schema and value linking."""
 
+from typing import Any
+
 from loguru import logger
 
 from src.pipe.able_prompts.schema_value_link import SCHEMA_VALUE_LINK_PROMPT_V1
@@ -10,13 +12,13 @@ from src.pipe.llm_util import extract_object
 class LinkSchemaAndValue(PromptProcessor):
     """Link question terms to both schema items and values."""
 
-    def _process_output(self, row, output):
+    def _process_output(self, row: dict[str, Any], output: str) -> dict[str, Any]:
         schema_links = extract_object(output)
         if schema_links is None:
             schema_links = {}
         question = row["question"]
         schema_items = row["schema_items"]
-        refined_links = {}
+        refined_links: dict[str, Any] = {}
         if isinstance(schema_links, (list, str)):
             logger.error(f"Invalid schema links: {schema_links}")
             refined_links = {}
@@ -41,7 +43,7 @@ class LinkSchemaAndValue(PromptProcessor):
             refined_links[question_term] = orig_schema_item
         return refined_links
 
-    def _get_prompt(self, row):
+    def _get_prompt(self, row: dict[str, Any]) -> str:
         question = row["question"]
         schema_items = row["schema_items"]
         value_list = row["values"]

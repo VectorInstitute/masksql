@@ -26,9 +26,9 @@ from src.pipe.value_links import LinkValues
 
 
 # Model configurations
-LLM_MODEL = os.getenv("LLM_MODEL")
-PRIVATE_MODEL = os.getenv("PRIVATE_MODEL")
-SLM_MODEL = os.getenv("SLM_MODEL")
+LLM_MODEL = os.getenv("LLM_MODEL", "openai/gpt-4")
+PRIVATE_MODEL = os.getenv("PRIVATE_MODEL", "openai/gpt-4")
+SLM_MODEL = os.getenv("SLM_MODEL", "openai/gpt-4")
 
 # Path configurations - these should be set appropriately for your environment
 database_path = os.getenv("DATABASE_PATH", "../parser/data/bird/database")
@@ -39,7 +39,7 @@ ExecAccCalc = CalcExecAcc
 WrongExecAccOutput = ExecuteConcreteSql
 
 unmask_pipe_llm = [
-    LimitJson("limit"),
+    LimitJson(),
     RankSchemaResd(tables_path),
     AddSchema(tables_path),
     GenSql("pred_sql", model="openai/gpt-4.1"),
@@ -47,7 +47,7 @@ unmask_pipe_llm = [
 ]
 
 unmask_pipe_slm = [
-    LimitJson("limit"),
+    LimitJson(),
     RankSchemaResd(tables_path),
     AddSchema(tables_path),
     GenSql("pred_sql", model=PRIVATE_MODEL),
@@ -56,7 +56,7 @@ unmask_pipe_slm = [
 ]
 
 value_link_eval = [
-    LimitJson("limit"),
+    LimitJson(),
     RankSchemaResd(tables_path),
     AddFilteredSchema(tables_path),
     AddSymbolTable(tables_path),
@@ -67,7 +67,7 @@ value_link_eval = [
 ]
 
 schema_link_eval = [
-    LimitJson("limit"),
+    LimitJson(),
     RankSchemaResd(tables_path),
     AddFilteredSchema(tables_path),
     AddSymbolTable(tables_path),
@@ -79,7 +79,7 @@ schema_link_eval = [
 ]
 
 gen_sql_eval = [
-    LimitJson("limit"),
+    LimitJson(),
     RankSchemaResd(tables_path),
     AddFilteredSchema(tables_path),
     AddSymbolTable(tables_path),
@@ -88,7 +88,7 @@ gen_sql_eval = [
     AddGoldValues(),
     CopyTransformer("gold_schema_links", "schema_links"),
     CopyTransformer("gold_schema_links", "filtered_schema_links"),
-    AddSymbolicSchema("symbolic", tables_path),
+    AddSymbolicSchema(tables_path),
     AddSymbolicQuestion(),
     GenerateSymbolicSql("symbolic", model=LLM_MODEL),
     RepairSymbolicSQL("symbolic", model=LLM_MODEL),
@@ -98,7 +98,7 @@ gen_sql_eval = [
 ]
 
 full_gold = [
-    LimitJson("limit"),
+    LimitJson(),
     RankSchemaResd(tables_path),
     AddFilteredSchema(tables_path),
     AddSymbolTable(tables_path),
@@ -107,7 +107,7 @@ full_gold = [
     AddGoldValues(),
     CopyTransformer("gold_schema_links", "schema_links"),
     CopyTransformer("gold_schema_links", "filtered_schema_links"),
-    AddSymbolicSchema("symbolic", tables_path),
+    AddSymbolicSchema(tables_path),
     AddSymbolicQuestion(),
     GenerateSymbolicSql("symbolic", model=LLM_MODEL),
     RepairSymbolicSQL("symbolic", model=LLM_MODEL),

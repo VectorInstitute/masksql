@@ -1,10 +1,12 @@
 """Results printing processor."""
 
+from typing import Any
+
 from src.pipe.processor.printer import DataPrinter
 from src.pipe.processor.schema_link_score import similar
 
 
-def print_color(text, color="green"):
+def print_color(text: str, color: str = "green") -> None:
     """
     Print text with ANSI color codes.
 
@@ -28,7 +30,7 @@ def print_color(text, color="green"):
 class PrintResults(DataPrinter):
     """Print execution accuracy and privacy metrics."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self.score = 0
         self.pre_score = 0
@@ -39,14 +41,14 @@ class PrintResults(DataPrinter):
         self.leakage = 0
         self.total_masks = 0
 
-    def _post_run(self):
+    def _post_run(self) -> None:
         print(f"PreScore: {self.pre_score}/{self.total}")
         print(f"Accuracy: {self.score}/{self.total}")
         print(f"Masked: {self.masks}/{self.total_gold_masks}")
         print(f"Leak: {self.leakage}/{self.total_masks}")
         # print(f"Toks: {self.total_toks}/{self.total}")
 
-    async def _process_row(self, row):
+    async def _process_row(self, row: dict[str, Any]) -> dict[str, Any] | None:
         self.total += 1
         # self.total_toks += row['total_toks']
         exec_acc = row["eval"]["acc"]

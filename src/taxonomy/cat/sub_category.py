@@ -14,15 +14,15 @@ class SubCategory:
     tags: FrozenSet[SqlTag]
     description: str = ""
 
-    def __ge__(self, other: "SubCategory"):
+    def __ge__(self, other: "SubCategory") -> bool:
         """Check if this sub-category is at least as complex as another."""
         return all(self.has_greater(tag) for tag in other.tags)
 
-    def __lt__(self, other):
+    def __lt__(self, other: "SubCategory") -> bool:
         """Check if this sub-category is less complex than another."""
         return not (self >= other)
 
-    def has_greater(self, tag: SqlTag):
+    def has_greater(self, tag: SqlTag) -> bool:
         """Check if this sub-category has a tag greater than or equal to the given tag.
 
         Parameters
@@ -37,11 +37,11 @@ class SubCategory:
         """
         return any(t >= tag for t in self.tags)
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Return string representation of the sub-category."""
         return self.name
 
-    def __add__(self, other):
+    def __add__(self, other: "SqlTag | SubCategory") -> "SubCategory":
         """Add a tag or another sub-category's tags to this sub-category."""
         if isinstance(other, SqlTag):
             return replace(self, tags=self.tags.union({other}))
@@ -76,6 +76,6 @@ class SubCategory:
     #                 to_remove.add(t)
     #     return SubCategory(frozenset(self.tags.difference(to_remove)))
     #
-    def __repr__(self):
+    def __repr__(self) -> str:
         """Return string representation of the sub-category."""
         return str(self)

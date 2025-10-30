@@ -4,10 +4,12 @@ This module provides tools for analyzing failed test cases by comparing
 JSON result files and extracting SQL query details for further investigation.
 """
 
-from src.util.json_utils import read_json, write_json
+from typing import Any
+
+from src.utils.json_io import read_json, write_json
 
 
-def finder(path1, path2):
+def finder(path1: str, path2: str) -> list[Any]:
     """Find differences between two JSON files and write results.
 
     Parameters
@@ -36,7 +38,7 @@ def finder(path1, path2):
     return diff
 
 
-def analyser(arr):
+def analyser(arr: list[Any]) -> None:
     """Analyze failure cases and extract SQL details.
 
     Parameters
@@ -62,7 +64,7 @@ def analyser(arr):
     write_json("data/EA_sql_diff", res)
 
 
-def main():
+def main() -> None:
     """Run the EA failure analysis workflow."""
     path1 = "data/full/EA_failures.json"
     path2 = "data/category/EA_failures.json"

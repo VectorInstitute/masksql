@@ -16,7 +16,7 @@ class StatementCategory:
         self.sub_cats = set(tag_sets)
 
     @property
-    def name(self):
+    def name(self) -> str:
         """Get the category name.
 
         Returns
@@ -26,17 +26,17 @@ class StatementCategory:
         """
         return f"c{self.rank}"
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Return string representation of the category."""
         return self.name
 
-    def __le__(self, other):
+    def __le__(self, other: "StatementCategory") -> bool:
         """Compare categories by rank (less than or equal)."""
         if not isinstance(other, StatementCategory):
             raise RuntimeError(f"Invalid operand: {type(other)}")
         return self.rank <= other.rank
 
-    def matches(self, feature_set: SubCategory):
+    def matches(self, feature_set: SubCategory) -> list[SubCategory] | None:
         """Check if a feature set matches any sub-categories.
 
         Parameters

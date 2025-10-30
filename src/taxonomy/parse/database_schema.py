@@ -38,7 +38,7 @@ class DatabaseSchemaSqlyzr:
     tables: Dict[str, Dict[str, str]]  # {table_name -> {col_name -> col_type}}
     foreign_keys: Set[FrozenSet[Tuple[str, str]]]
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize empty database schema."""
         self.tables = {}
         self.foreign_keys = set()
@@ -68,7 +68,7 @@ class DatabaseSchemaSqlyzr:
             logger.debug(f"Table not found: {table_name}")
             return None
         table = self.tables[table_name]
-        max_sim = 0
+        max_sim: float = 0
         best_col = None
         for col in cand_cols:
             sim = str_similarity(col, col_name)
@@ -159,7 +159,7 @@ class DatabaseSchemaSqlyzr:
             return matched_tables[0]
         return "NA"
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Return string representation of the database schema."""
         res = "\nTables: \n"
         for table, columns in self.tables.items():

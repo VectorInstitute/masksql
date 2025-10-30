@@ -1,5 +1,7 @@
 """Module for extracting value links from schema links."""
 
+from typing import Any
+
 from src.pipe.processor.list_transformer import JsonListTransformer
 
 
@@ -11,7 +13,7 @@ class AddValueLinksFromSchemaLinks(JsonListTransformer):
     creating separate mappings for each.
     """
 
-    async def _process_row(self, row):
+    async def _process_row(self, row: dict[str, Any]) -> dict[str, Any]:
         schema_links = row["schema_links"]
         value_links = {}
         updated_schema_links = {}

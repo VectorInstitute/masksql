@@ -10158,7 +10158,7 @@ _lr_action_items = {
     "PARTITION": ([257, 271, 286, 296], [279, 279, 279, 279]),
 }
 
-_lr_action = {}
+_lr_action: dict[int, dict[str, int]] = {}
 for _k, _v in _lr_action_items.items():
     for _x, _y in zip(_v[0], _v[1]):
         if _x not in _lr_action:
@@ -11603,7 +11603,7 @@ _lr_goto_items = {
     "win_def": ([257, 271, 286, 296], [277, 283, 297, 301]),
 }
 
-_lr_goto = {}
+_lr_goto: dict[int, dict[str, int]] = {}
 for _k, _v in _lr_goto_items.items():
     for _x, _y in zip(_v[0], _v[1]):
         if _x not in _lr_goto:

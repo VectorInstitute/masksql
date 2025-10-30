@@ -5,7 +5,7 @@ import json
 import re
 from typing import Any
 
-from RESDSQL.llm_util import send_prompt
+from src.pipe.llm_util import send_prompt
 
 
 DATA_DIR = "data"
@@ -37,7 +37,7 @@ async def gen() -> None:
             sitems = row["tc_original"]
             question = row["question"]
             prompt = PROMPT.format(question=question, sitems=sitems, slinks=slinks)
-            res = await send_prompt(prompt)
+            res, _usage = await send_prompt(prompt)
             masked = re.findall(r"```([\s\S]*?)```", res)
             final_answer = masked[0]
             final_answer = final_answer.strip()

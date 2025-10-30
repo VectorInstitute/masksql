@@ -17,7 +17,7 @@ class TagCollectorResult(MergeableVisitorResult):
         self.tag_set = SubCategory("", frozenset([*tags]))
         self.extras = set()
 
-    def merge(self, other):
+    def merge(self, other: "TagCollectorResult") -> "TagCollectorResult":
         """Merge another tag collector result into this one.
 
         Parameters
@@ -34,7 +34,7 @@ class TagCollectorResult(MergeableVisitorResult):
             self.tag_set += other.tag_set
         return self
 
-    def add(self, tag: SqlTag):
+    def add(self, tag: SqlTag) -> None:
         """Add a tag to the result.
 
         Parameters
@@ -44,7 +44,7 @@ class TagCollectorResult(MergeableVisitorResult):
         """
         self.tag_set += tag
 
-    def add_extra(self, s):
+    def add_extra(self, s: str) -> None:
         """Add an extra string value to the result.
 
         Parameters
@@ -54,6 +54,6 @@ class TagCollectorResult(MergeableVisitorResult):
         """
         self.extras.add(s)
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Return string representation of the tag set."""
         return str(self.tag_set)

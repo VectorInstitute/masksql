@@ -10,7 +10,7 @@ from src.taxonomy.parse.node import (
 )
 from src.taxonomy.parse.tree_node import DiagramTreeNode
 from src.taxonomy.parse.visitor.collector_visitor import CollectorVisitor
-from src.util.str_utils import split_pascal
+from src.utils.strings import split_pascal
 
 
 class AstDiagramTreeExtractor(CollectorVisitor):
@@ -19,7 +19,7 @@ class AstDiagramTreeExtractor(CollectorVisitor):
     def __init__(self) -> None:
         super().__init__(DiagramTreeNode)
 
-    def get_new_result_instance(self, attr: Any) -> DiagramTreeNode | None:
+    def get_new_result_instance(self, attr: Any) -> DiagramTreeNode | None:  # type: ignore[override]
         """
         Create a new diagram tree node instance from an attribute.
 
@@ -59,7 +59,7 @@ class AstDiagramTreeExtractor(CollectorVisitor):
         list
             List of attributes from the join clause.
         """
-        attrs = []
+        attrs: list[Any] = []
         if len(node.tables) > 0:
             attrs.append(node.tables[0])
             for table, op, constraint in zip(
@@ -71,7 +71,7 @@ class AstDiagramTreeExtractor(CollectorVisitor):
                     attrs.append(constraint)
         return attrs
 
-    def get_select_stmt_attrs(self, node: SelectStatementNode):
+    def get_select_stmt_attrs(self, node: SelectStatementNode) -> list[Any]:
         """
         Get select statement attributes.
 
@@ -88,7 +88,7 @@ class AstDiagramTreeExtractor(CollectorVisitor):
         list
             List of attributes from the select statement.
         """
-        attrs = []
+        attrs: list[Any] = []
         if len(node.select_cores) > 0:
             attrs.append(node.select_cores[0])
             for core, op in zip(node.select_cores[1:], node.set_ops):
@@ -120,7 +120,7 @@ class AstDiagramTreeExtractor(CollectorVisitor):
             return self.get_select_stmt_attrs(node)
         return super().get_attrs(node)
 
-    def visit_terminal(self, node: TerminalNode):
+    def visit_terminal(self, node: TerminalNode) -> DiagramTreeNode:
         """
         Visit a terminal node and create a diagram tree node.
 
