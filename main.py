@@ -3,12 +3,6 @@
 import argparse
 import asyncio
 
-from dotenv import load_dotenv
-
-
-# Load environment variables from .env file
-load_dotenv()
-
 from config import MaskSqlConfig
 from src.pipe.add_schema import AddFilteredSchema
 from src.pipe.add_symb_schema import AddSymbolicSchema

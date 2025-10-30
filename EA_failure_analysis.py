@@ -1,3 +1,9 @@
+"""Execution Accuracy failure analysis utilities.
+
+This module provides tools for analyzing failed test cases by comparing
+JSON result files and extracting SQL query details for further investigation.
+"""
+
 from src.util.json_utils import read_json, write_json
 
 

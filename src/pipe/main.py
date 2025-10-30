@@ -1,6 +1,7 @@
 """Main pipeline execution script."""
 
 import asyncio
+import contextlib
 import os
 import sys
 
@@ -103,10 +104,8 @@ slm_mask = [
 
 async def main():
     """Execute main pipeline processing."""
-    try:
+    with contextlib.suppress(Exception):
         logger.remove(0)
-    except Exception:
-        pass
     logger.add(
         sys.stderr,
         level=LOG_LEVEL,
