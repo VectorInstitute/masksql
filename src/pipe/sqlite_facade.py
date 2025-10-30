@@ -3,8 +3,10 @@
 import os.path
 import sqlite3
 import time
+from collections.abc import Generator
 from contextlib import contextmanager
 from sqlite3 import Connection
+from typing import Any
 
 from loguru import logger
 
@@ -13,7 +15,7 @@ DB_TIMEOUT = 10000
 
 
 @contextmanager
-def sqlite_timelimit(conn: Connection, ms):
+def sqlite_timelimit(conn: Connection, ms: int) -> Generator[None, None, None]:
     """
     Context manager for enforcing SQLite query time limits.
 
@@ -34,7 +36,7 @@ def sqlite_timelimit(conn: Connection, ms):
     if ms <= 20:
         n = 1
 
-    def handler():
+    def handler() -> int:
         if time.perf_counter() >= deadline:
             return 1
         return 0
@@ -60,10 +62,10 @@ class SqliteFacade:
         Directory containing database subdirectories
     """
 
-    def __init__(self, db_dir):
+    def __init__(self, db_dir: str) -> None:
         self.db_dir = db_dir
 
-    def get_schema_str(self, db_id):
+    def get_schema_str(self, db_id: str) -> str:
         """
         Get complete schema string for a database.
 
@@ -82,7 +84,7 @@ class SqliteFacade:
             tables_str.append(self.get_table_schema_str(db_id, table))
         return "\n".join(tables_str)
 
-    def get_table_schema_str(self, db_id, table):
+    def get_table_schema_str(self, db_id: str, table: str) -> str:
         """
         Get schema string for a specific table with sample rows.
 
@@ -99,10 +101,10 @@ class SqliteFacade:
             Schema description with CREATE statement and sample rows
         """
         schema_str = ""
-        create_sql = self.get_create_sql(db_id, table)
+        create_sql = self.get_create_sql(db_id, table)  # type: ignore[attr-defined]
         cols = self.get_col_names(db_id, table)
         cols_str = "\t".join(cols)
-        sample_rows = self.exec_query_sync(db_id, f"SELECT * FROM {table} LIMIT 3")
+        sample_rows, _ = self.exec_query_sync(db_id, f"SELECT * FROM {table} LIMIT 3")
         if sample_rows:
             rows_str = "\n".join(
                 "\t".join([str(cv)[:50] for cv in r]) for r in sample_rows
@@ -113,7 +115,7 @@ class SqliteFacade:
         schema_str += f"\n/*\n3 rows from {table}:\n{cols_str}\n{rows_str}\n*/\n"
         return schema_str
 
-    def get_col_names(self, db_id, table_name):
+    def get_col_names(self, db_id: str, table_name: str) -> list[str]:
         """
         Get column names for a table.
 
@@ -129,10 +131,10 @@ class SqliteFacade:
         list
             List of column names
         """
-        res = self.exec_query_sync(db_id, f'PRAGMA table_info("{table_name}")')
-        return [_[1] for _ in res]
+        res, _ = self.exec_query_sync(db_id, f'PRAGMA table_info("{table_name}")')
+        return [_[1] for _ in res] if res else []
 
-    def get_foreign_key(self, db_id, table_name):
+    def get_foreign_key(self, db_id: str, table_name: str) -> list[str]:
         """
         Get foreign key relationships for a table.
 
@@ -148,17 +150,18 @@ class SqliteFacade:
         list
             List of foreign key relationship strings
         """
-        res_raw = self.exec_query_sync(
+        res_raw, _ = self.exec_query_sync(
             db_id, f'PRAGMA foreign_key_list("{table_name}")'
         )
         res_clean = []
-        for row in res_raw:
-            table, source, to = row[2:5]
-            row_clean = f"({table_name}.{source}, {table}.{to})"
-            res_clean.append(row_clean)
+        if res_raw:
+            for row in res_raw:
+                table, source, to = row[2:5]
+                row_clean = f"({table_name}.{source}, {table}.{to})"
+                res_clean.append(row_clean)
         return res_clean
 
-    def get_primary_key(self, db_id, table_name):
+    def get_primary_key(self, db_id: str, table_name: str) -> list[str]:
         """
         Get primary key columns for a table.
 
@@ -174,14 +177,15 @@ class SqliteFacade:
         list
             List of primary key column names
         """
-        res_raw = self.exec_query_sync(db_id, f'PRAGMA table_info("{table_name}");')
+        res_raw, _ = self.exec_query_sync(db_id, f'PRAGMA table_info("{table_name}");')
         pks = []
-        for row in res_raw:
-            if row[5] == 1:
-                pks.append(row[1])
+        if res_raw:
+            for row in res_raw:
+                if row[5] == 1:
+                    pks.append(row[1])
         return pks
 
-    def get_tables(self, db_id: str):
+    def get_tables(self, db_id: str) -> list[str]:
         """
         Get list of table names in database.
 
@@ -195,12 +199,14 @@ class SqliteFacade:
         list
             List of table names
         """
-        result = self.exec_query_sync(
+        result, _ = self.exec_query_sync(
             db_id, "SELECT name FROM sqlite_master WHERE type='table'"
         )
-        return [_[0] for _ in result]
+        return [_[0] for _ in result] if result else []
 
-    def exec_query_sync(self, db_id: str, sql: str, timeout: int = DB_TIMEOUT):
+    def exec_query_sync(
+        self, db_id: str, sql: str, timeout: int = DB_TIMEOUT
+    ) -> tuple[list[Any] | None, str | None]:
         """
         Execute SQL query synchronously with timeout.
 

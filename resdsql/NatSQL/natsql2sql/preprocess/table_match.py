@@ -404,7 +404,7 @@ def clean_table(full_match, question_tokens, schema, for_table_match=True, table
                 else:
                     row[0][i] = int(row[0][i])
 
-    for k, row in enumerate(full_match):  # remove the same rows
+    for _k, row in enumerate(full_match):  # remove the same rows
         if row and len(row[0]) == len(row[1]) and len(row[0]) == len(row[-1]):
             for j in range(len(row[0])):
                 for i in reversed(range(len(row[0]))):
@@ -427,7 +427,7 @@ def clean_table(full_match, question_tokens, schema, for_table_match=True, table
 
 def final_table_list(full_match):
     table_list = set()
-    for j, row in enumerate(full_match):
+    for _j, row in enumerate(full_match):
         if row:
             for i in row[0]:
                 table_list.add(int(i))
@@ -443,7 +443,6 @@ def update_partly_match_tok(
     real_len,
     previous_match_idx,
 ):
-    new_table_idx = round(table_idx + tok_in_table_idx / 1000, 3)
     for tok_index in tok_indexes:
         if exact_match[tok_index] and (
             exact_match[tok_index][1][0] > real_len
@@ -699,7 +698,7 @@ def combined_exact_match_table_name(
                             tok_indexes, i, 3, full_match, table_idx
                         )
             else:
-                for j, t in enumerate(t_tok.split(" ")):
+                for _j, t in enumerate(t_tok.split(" ")):
                     if len(t) >= 8 and t in question.replace(" ", ""):
                         for k in range(3, len(t), 1):
                             if " " + t[:k] + " " + t[k:] + " " in question:
@@ -769,7 +768,6 @@ def modified_exact_match_table_name(question_tokens, table_name_list, full_match
             for t_tok in new_list:
                 if " " in t_tok:
                     too = t_tok.split(" ")
-                    list_ = []
                     for j, t in enumerate(too):
                         if t not in STOP_WORDS and j < len(too) - 1:
                             t = lstem.stem(t)
@@ -781,7 +779,6 @@ def modified_exact_match_table_name(question_tokens, table_name_list, full_match
                                     "RBR",
                                     "RBS",
                                 ]:
-                                    count = 1
                                     tok_indexes.append(z)
                                     offset = 1
                                     while True:

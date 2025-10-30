@@ -6,7 +6,7 @@ from typing import Dict, FrozenSet, List, Set, Tuple
 from loguru import logger
 
 
-def str_similarity(s1, s2):
+def str_similarity(s1: str, s2: str) -> float:
     """Calculate similarity ratio between two strings (case-insensitive).
 
     Parameters
@@ -38,12 +38,14 @@ class DatabaseSchemaSqlyzr:
     tables: Dict[str, Dict[str, str]]  # {table_name -> {col_name -> col_type}}
     foreign_keys: Set[FrozenSet[Tuple[str, str]]]
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize empty database schema."""
         self.tables = {}
         self.foreign_keys = set()
 
-    def find_most_similar_column(self, table_name, col_name, cand_cols: Set[str]):
+    def find_most_similar_column(
+        self, table_name: str, col_name: str, cand_cols: Set[str]
+    ) -> str | None:
         """Find the most similar column name in a table.
 
         Searches first in candidate columns, then in all table columns.
@@ -66,7 +68,7 @@ class DatabaseSchemaSqlyzr:
             logger.debug(f"Table not found: {table_name}")
             return None
         table = self.tables[table_name]
-        max_sim = 0
+        max_sim: float = 0
         best_col = None
         for col in cand_cols:
             sim = str_similarity(col, col_name)
@@ -84,7 +86,7 @@ class DatabaseSchemaSqlyzr:
             return best_col
         return None
 
-    def get_col_type(self, table_name, col_name) -> str:
+    def get_col_type(self, table_name: str, col_name: str) -> str:
         """Get the type of a column in a table.
 
         Parameters
@@ -157,7 +159,7 @@ class DatabaseSchemaSqlyzr:
             return matched_tables[0]
         return "NA"
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Return string representation of the database schema."""
         res = "\nTables: \n"
         for table, columns in self.tables.items():

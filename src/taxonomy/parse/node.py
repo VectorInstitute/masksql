@@ -2,7 +2,11 @@
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, replace
-from typing import List, Optional, Set, Union
+from typing import TYPE_CHECKING, Any
+
+
+if TYPE_CHECKING:
+    from src.taxonomy.parse.visitor.node_visitor import NodeVisitor
 
 from src.taxonomy.parse.database_schema import DatabaseSchemaSqlyzr
 
@@ -22,7 +26,7 @@ class SqlAstNode(ABC):
         Natural language question associated with the query.
     db_schema : DatabaseSchemaSqlyzr
         Database schema information.
-    cols : Set[str]
+    cols : set[str]
         Set of columns referenced in the node.
     """
 
@@ -31,19 +35,23 @@ class SqlAstNode(ABC):
     raw_sql: str
     question: str
     db_schema: DatabaseSchemaSqlyzr
-    cols: Set[str]
+    cols: set[str]
 
     @abstractmethod
-    def accept(self, visitor):
+    def accept(self, visitor: "NodeVisitor") -> Any:
         """Accept a visitor for the visitor pattern implementation."""
         pass
 
-    def log_self(self):
-        """Log this node for debugging purposes."""
-        # logger.debug(f"{self.__class__.__name__}: {str(self)}")
-        pass
+    def log_self(self) -> None:
+        """Log this node for debugging purposes.
 
-    def __hash__(self):
+        Default implementation does nothing. Override in subclasses if needed.
+        """
+        # Placeholder for logging - currently disabled
+        # logger.debug(f"{self.__class__.__name__}: {str(self)}")
+        return
+
+    def __hash__(self) -> int:
         """Return hash value for this node."""
         return 1
 
@@ -65,11 +73,11 @@ class TerminalNode(SqlAstNode):
     name: str
     value: str
 
-    def accept(self, visitor):
+    def accept(self, visitor: "NodeVisitor") -> Any:
         """Accept a visitor for the visitor pattern implementation."""
         return visitor.visit_terminal(self)
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         """Check equality based on name and value."""
         if not isinstance(other, TerminalNode):
             return False
@@ -78,7 +86,7 @@ class TerminalNode(SqlAstNode):
         self.log_self()
         return False
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """Return hash value for this node."""
         return 1
 
@@ -86,7 +94,7 @@ class TerminalNode(SqlAstNode):
 class ExpressionNode(SqlAstNode, ABC):
     """Abstract base class for SQL expression nodes."""
 
-    def has_sub_expr(self):
+    def has_sub_expr(self) -> bool:
         """Check if this expression contains sub-expressions."""
         return False
 
@@ -109,17 +117,17 @@ class BinOpExpressionNode(ExpressionNode):
     op: TerminalNode
     right: ExpressionNode
 
-    def has_sub_expr(self):
+    def has_sub_expr(self) -> bool:
         """Check if this expression contains sub-expressions."""
         return True
 
-    def left_and_right_terminal(self):
+    def left_and_right_terminal(self) -> bool:
         """Check if both left and right operands are terminal expressions."""
         return (isinstance(self.left, str) or not self.left.has_sub_expr()) and (
             isinstance(self.right, str) or not self.right.has_sub_expr()
         )
 
-    def is_arith_expr(self):
+    def is_arith_expr(self) -> bool:
         """Check if this is an arithmetic expression."""
         if self.left_and_right_terminal() and self.op.value in "/*+-":
             return True
@@ -129,11 +137,11 @@ class BinOpExpressionNode(ExpressionNode):
             isinstance(self.right, BinOpExpressionNode) and self.right.is_arith_expr()
         )
 
-    def accept(self, visitor):
+    def accept(self, visitor: "NodeVisitor") -> Any:
         """Accept a visitor for the visitor pattern implementation."""
         return visitor.visit_bin_op_expression(self)
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         """Check equality with operator commutativity support.
 
         Supports commutative operators (=, !=) and flipped comparisons (<, >, <=, >=).
@@ -159,7 +167,7 @@ class BinOpExpressionNode(ExpressionNode):
         self.log_self()
         return False
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """Return hash value for this node."""
         return 1
 
@@ -183,15 +191,15 @@ class BetweenExpressionNode(ExpressionNode):
     lower: ExpressionNode
     upper: ExpressionNode
 
-    def has_sub_expr(self):
+    def has_sub_expr(self) -> bool:
         """Check if this expression contains sub-expressions."""
         return True
 
-    def accept(self, visitor):
+    def accept(self, visitor: "NodeVisitor") -> Any:
         """Accept a visitor for the visitor pattern implementation."""
         return visitor.visit_between_expression(self)
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         """Check equality based on expression and bounds."""
         if not isinstance(other, BetweenExpressionNode):
             return False
@@ -200,7 +208,7 @@ class BetweenExpressionNode(ExpressionNode):
         self.log_self()
         return False
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """Return hash value for this node."""
         return 1
 
@@ -213,7 +221,7 @@ class FunctionExpressionNode(ExpressionNode):
     ----------
     fun_name : TerminalNode
         Function name.
-    expr : List[ExpressionNode]
+    expr : list[ExpressionNode]
         Function arguments.
     negation : bool
         Whether function is negated (e.g., NOT EXISTS).
@@ -222,19 +230,19 @@ class FunctionExpressionNode(ExpressionNode):
     """
 
     fun_name: TerminalNode
-    expr: List[ExpressionNode]
+    expr: list[ExpressionNode]
     negation: bool = False  # Used when not of function used NOT EXISTS
     distinct: bool = False
 
-    def has_sub_expr(self):
+    def has_sub_expr(self) -> bool:
         """Check if this expression contains sub-expressions."""
         return True
 
-    def accept(self, visitor):
+    def accept(self, visitor: "NodeVisitor") -> Any:
         """Accept a visitor for the visitor pattern implementation."""
         return visitor.visit_function_expression(self)
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         """Check equality based on function name, arguments, and negation."""
         if not isinstance(other, FunctionExpressionNode):
             return False
@@ -247,7 +255,7 @@ class FunctionExpressionNode(ExpressionNode):
         self.log_self()
         return False
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """Return hash value for this node."""
         return 1
 
@@ -260,18 +268,18 @@ class ColumnNode(ExpressionNode):
     ----------
     column_name : TerminalNode
         Column name.
-    table_name : Optional[TerminalNode]
+    table_name : TerminalNode | None
         Table name if qualified.
     """
 
     column_name: TerminalNode
-    table_name: Optional[TerminalNode] = None
+    table_name: TerminalNode | None = None
 
-    def accept(self, visitor):
+    def accept(self, visitor: "NodeVisitor") -> Any:
         """Accept a visitor for the visitor pattern implementation."""
         return visitor.visit_column(self)
 
-    def exists_in_foreign_keys(self, node: "ColumnNode"):
+    def exists_in_foreign_keys(self, node: "ColumnNode") -> bool:
         """Check if the node's column exists in foreign key relationships."""
         for foreign_key_set in self.db_schema.foreign_keys:
             if (
@@ -281,7 +289,7 @@ class ColumnNode(ExpressionNode):
                 return True
         return False
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         """Check equality based on column and table names.
 
         Also checks foreign key relationships.
@@ -296,7 +304,7 @@ class ColumnNode(ExpressionNode):
         self.log_self()
         return False
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """Return hash value for this node."""
         return 1
 
@@ -307,17 +315,17 @@ class LiteralNode(ExpressionNode):
 
     Attributes
     ----------
-    value : Union[int, str, ExpressionNode]
+    value : int | str | ExpressionNode
         The literal value.
     """
 
-    value: Union[int, str, ExpressionNode]
+    value: int | str | ExpressionNode
 
-    def accept(self, visitor):
+    def accept(self, visitor: "NodeVisitor") -> Any:
         """Accept a visitor for the visitor pattern implementation."""
         return visitor.visit_literal(self)
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         """Check equality - always returns True for literal comparison."""
         return True
         # if not isinstance(other, LiteralNode):
@@ -327,7 +335,7 @@ class LiteralNode(ExpressionNode):
         # else:
         #     return True
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """Return hash value for this node."""
         return 1
 
@@ -338,29 +346,29 @@ class LiteralListNode(ExpressionNode):
 
     Attributes
     ----------
-    literals : List[LiteralNode]
+    literals : list[LiteralNode]
         List of literal values.
     """
 
-    literals: List[LiteralNode]
+    literals: list[LiteralNode]
 
-    def accept(self, visitor):
+    def accept(self, visitor: "NodeVisitor") -> Any:
         """Accept a visitor for the visitor pattern implementation."""
         return visitor.visit_literal_list(self)
 
-    def __add__(self, other):
+    def __add__(self, other: LiteralNode) -> "LiteralListNode":
         """Add a literal to this list."""
         if isinstance(other, LiteralNode):
             return replace(self, literals=self.literals + [other])
         raise RuntimeError("Invalid operand type: {}".format(type(other)))
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         """Check equality based on set of literals."""
         if not isinstance(other, LiteralListNode):
             return False
         return set(self.literals) == set(other.literals)
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """Return hash value for this node."""
         return 1
 
@@ -374,18 +382,18 @@ class ResultColumnNode(SqlAstNode):
     ----------
     expr : ExpressionNode
         The expression for this result column.
-    column_alias : Optional[TerminalNode]
+    column_alias : TerminalNode | None
         Optional alias for the column.
     """
 
     expr: ExpressionNode
-    column_alias: Optional[TerminalNode] = None
+    column_alias: TerminalNode | None = None
 
-    def accept(self, visitor):
+    def accept(self, visitor: "NodeVisitor") -> Any:
         """Accept a visitor for the visitor pattern implementation."""
         return visitor.visit_result_column(self)
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         """Check equality based on expression and alias."""
         if not isinstance(other, ResultColumnNode):
             return False
@@ -394,7 +402,7 @@ class ResultColumnNode(SqlAstNode):
         self.log_self()
         return False
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """Return hash value for this node."""
         return 1
 
@@ -406,26 +414,26 @@ class SelectClauseNode(SqlAstNode):
 
     Attributes
     ----------
-    result_columns : List[ResultColumnNode]
+    result_columns : list[ResultColumnNode]
         List of result columns to select.
     distinct : bool
         Whether DISTINCT is specified.
     """
 
-    result_columns: List[ResultColumnNode]
+    result_columns: list[ResultColumnNode]
     distinct: bool = False
 
-    def accept(self, visitor):
+    def accept(self, visitor: "NodeVisitor") -> Any:
         """Accept a visitor for the visitor pattern implementation."""
         return visitor.visit_select_clause(self)
 
-    def __add__(self, other):
+    def __add__(self, other: Any) -> Any:
         """Add a result column to this SELECT clause."""
         if isinstance(other, ResultColumnNode):
             return replace(self, result_columns=self.result_columns + [other])
         raise RuntimeError("Invalid operand type: {}".format(type(other)))
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         """Check equality based on set of result columns."""
         if not isinstance(other, SelectClauseNode):
             return False
@@ -436,7 +444,7 @@ class SelectClauseNode(SqlAstNode):
         self.log_self()
         return False
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """Return hash value for this node."""
         return 1
 
@@ -447,29 +455,29 @@ class TableOrSubqueryNode(SqlAstNode):
 
     Attributes
     ----------
-    schema_name : Optional[TerminalNode]
+    schema_name : TerminalNode | None
         Schema name if specified.
-    table_name : Optional[TerminalNode]
+    table_name : TerminalNode | None
         Table name.
-    select_statement : Optional[SelectStatementNode]
+    select_statement : SelectStatementNode | None
         Subquery if this is a subquery.
-    table_alias : Optional[TerminalNode]
+    table_alias : TerminalNode | None
         Alias for the table or subquery.
-    join_clause : Optional[JoinClauseNode]
+    join_clause : JoinClauseNode | None
         JOIN clause if present.
     """
 
-    schema_name: Optional[TerminalNode] = None
-    table_name: Optional[TerminalNode] = None  # none or one object
-    select_statement: Optional["SelectStatementNode"] = None
-    table_alias: Optional[TerminalNode] = None
-    join_clause: Optional["JoinClauseNode"] = None
+    schema_name: TerminalNode | None = None
+    table_name: TerminalNode | None = None  # none or one object
+    select_statement: "SelectStatementNode" | None = None
+    table_alias: TerminalNode | None = None
+    join_clause: "JoinClauseNode" | None = None
 
-    def accept(self, visitor):
+    def accept(self, visitor: "NodeVisitor") -> Any:
         """Accept a visitor for the visitor pattern implementation."""
         return visitor.visit_table_or_subquery(self)
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         """Check equality based on schema, table, subquery, and join clause."""
         if not isinstance(other, TableOrSubqueryNode):
             return False
@@ -483,7 +491,7 @@ class TableOrSubqueryNode(SqlAstNode):
         self.log_self()
         return False
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """Return hash value for this node."""
         return 1
 
@@ -500,11 +508,11 @@ class JoinConstraintNode(SqlAstNode):
 
     expr: ExpressionNode
 
-    def accept(self, visitor):
+    def accept(self, visitor: "NodeVisitor") -> Any:
         """Accept a visitor for the visitor pattern implementation."""
         return visitor.visit_join_constraint(self)
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         """Check equality based on join condition expression."""
         if not isinstance(other, JoinConstraintNode):
             return False
@@ -513,7 +521,7 @@ class JoinConstraintNode(SqlAstNode):
         self.log_self()
         return False
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """Return hash value for this node."""
         return 1
 
@@ -524,24 +532,24 @@ class JoinClauseNode(SqlAstNode):
 
     Attributes
     ----------
-    tables : List[TableOrSubqueryNode]
+    tables : list[TableOrSubqueryNode]
         List of tables in the join.
-    ops : List[TerminalNode]
+    ops : list[TerminalNode]
         Join operators (JOIN, LEFT JOIN, etc.).
-    constraints : List[Optional[JoinConstraintNode]]
+    constraints : list[JoinConstraintNode | None]
         Join constraints (ON conditions).
     """
 
-    tables: List[TableOrSubqueryNode]
-    ops: List[TerminalNode]
-    constraints: List[Optional[JoinConstraintNode]]
+    tables: list[TableOrSubqueryNode]
+    ops: list[TerminalNode]
+    constraints: list[JoinConstraintNode | None]
 
     def add_table(
         self,
         table_or_subquery: TableOrSubqueryNode,
         op: TerminalNode,
-        constraint: Optional[JoinConstraintNode],
-    ):
+        constraint: JoinConstraintNode | None,
+    ) -> "JoinClauseNode":
         """Add a table to the join with its operator and constraint."""
         return replace(
             self,
@@ -550,11 +558,11 @@ class JoinClauseNode(SqlAstNode):
             constraints=self.constraints + [constraint],
         )
 
-    def accept(self, visitor):
+    def accept(self, visitor: "NodeVisitor") -> Any:
         """Accept a visitor for the visitor pattern implementation."""
         return visitor.visit_join_clause(self)
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         """Check equality based on tables, operators, and constraints."""
         if not isinstance(other, JoinClauseNode):
             return False
@@ -567,7 +575,7 @@ class JoinClauseNode(SqlAstNode):
         self.log_self()
         return False
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """Return hash value for this node."""
         return 1
 
@@ -580,18 +588,18 @@ class OrderingTerm(SqlAstNode):
     ----------
     expr : ExpressionNode
         The expression to order by.
-    sort_order : Optional[TerminalNode]
+    sort_order : TerminalNode | None
         Sort direction (ASC or DESC).
     """
 
     expr: ExpressionNode
-    sort_order: Optional[TerminalNode] = None  # ascending or descending
+    sort_order: TerminalNode | None = None  # ascending or descending
 
-    def accept(self, visitor):
+    def accept(self, visitor: "NodeVisitor") -> Any:
         """Accept a visitor for the visitor pattern implementation."""
         return visitor.visit_ordering_term(self)
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         """Check equality based on expression and sort order."""
         if not isinstance(other, OrderingTerm):
             return False
@@ -611,7 +619,7 @@ class OrderingTerm(SqlAstNode):
         self.log_self()
         return False
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """Return hash value for this node."""
         return 1
 
@@ -622,23 +630,23 @@ class OrderByNode(SqlAstNode):
 
     Attributes
     ----------
-    ordering_terms : List[OrderingTerm]
+    ordering_terms : list[OrderingTerm]
         List of ordering terms specifying sort expressions and directions.
     """
 
-    ordering_terms: List[OrderingTerm]
+    ordering_terms: list[OrderingTerm]
 
-    def accept(self, visitor):
+    def accept(self, visitor: "NodeVisitor") -> Any:
         """Accept a visitor for the visitor pattern implementation."""
         return visitor.visit_order_by(self)
 
-    def __add__(self, other):
+    def __add__(self, other: Any) -> Any:
         """Add an ordering term to this ORDER BY clause."""
         if isinstance(other, OrderingTerm):
             return replace(self, ordering_terms=self.ordering_terms + [other])
         raise RuntimeError("Invalid operand type: {}".format(type(other)))
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         """Check equality based on ordering terms."""
         if not isinstance(other, OrderByNode):
             return False
@@ -647,7 +655,7 @@ class OrderByNode(SqlAstNode):
         self.log_self()
         return False
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """Return hash value for this node."""
         return 1
 
@@ -658,17 +666,17 @@ class LimitNode(SqlAstNode):
 
     Attributes
     ----------
-    expr : List[ExpressionNode]
+    expr : list[ExpressionNode]
         List of expressions for LIMIT and optional OFFSET.
     """
 
-    expr: List[ExpressionNode]
+    expr: list[ExpressionNode]
 
-    def accept(self, visitor):
+    def accept(self, visitor: "NodeVisitor") -> Any:
         """Accept a visitor for the visitor pattern implementation."""
         return visitor.visit_limit(self)
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         """Check equality based on limit expressions."""
         if not isinstance(other, LimitNode):
             return False
@@ -677,7 +685,7 @@ class LimitNode(SqlAstNode):
         self.log_self()
         return False
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """Return hash value for this node."""
         return 1
 
@@ -688,26 +696,26 @@ class FromClauseNode(SqlAstNode):
 
     Attributes
     ----------
-    tables : List[TableOrSubqueryNode]
+    tables : list[TableOrSubqueryNode]
         List of tables or subqueries in the FROM clause.
-    join_clause : Optional[JoinClauseNode]
+    join_clause : JoinClauseNode | None
         JOIN clause if present.
     """
 
-    tables: List[TableOrSubqueryNode]
-    join_clause: Optional[JoinClauseNode] = None
+    tables: list[TableOrSubqueryNode]
+    join_clause: JoinClauseNode | None = None
 
-    def accept(self, visitor):
+    def accept(self, visitor: "NodeVisitor") -> Any:
         """Accept a visitor for the visitor pattern implementation."""
         return visitor.visit_from_clause(self)
 
-    def __add__(self, other):
+    def __add__(self, other: Any) -> Any:
         """Add a table or subquery to this FROM clause."""
         if isinstance(other, TableOrSubqueryNode):
             return replace(self, tables=self.tables + [other])
         raise RuntimeError("Invalid operand type: {}".format(type(other)))
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         """Check equality based on tables and join clause."""
         if not isinstance(other, FromClauseNode):
             return False
@@ -719,7 +727,7 @@ class FromClauseNode(SqlAstNode):
         self.log_self()
         return False
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """Return hash value for this node."""
         return 1
 
@@ -736,11 +744,11 @@ class WhereClauseNode(SqlAstNode):
 
     expr: ExpressionNode
 
-    def accept(self, visitor):
+    def accept(self, visitor: "NodeVisitor") -> Any:
         """Accept a visitor for the visitor pattern implementation."""
         return visitor.visit_where_clause(self)
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         """Check equality based on extracted variables from the expression."""
         if not isinstance(other, WhereClauseNode):
             return False
@@ -751,7 +759,7 @@ class WhereClauseNode(SqlAstNode):
         self.log_self()
         return False
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """Return hash value for this node."""
         return 1
 
@@ -762,29 +770,29 @@ class GroupClauseNode(SqlAstNode):
 
     Attributes
     ----------
-    exprs : List[ExpressionNode]
+    exprs : list[ExpressionNode]
         Grouping expressions.
-    having : Optional[ExpressionNode]
+    having : ExpressionNode | None
         HAVING clause filter condition.
     rollup : bool
         Whether WITH ROLLUP is specified.
     """
 
-    exprs: List[ExpressionNode]
-    having: Optional[ExpressionNode] = None
+    exprs: list[ExpressionNode]
+    having: ExpressionNode | None = None
     rollup: bool = False
 
-    def __add__(self, other):
+    def __add__(self, other: Any) -> Any:
         """Add a grouping expression to this GROUP BY clause."""
         if isinstance(other, ExpressionNode):
             return replace(self, exprs=self.exprs + [other])
         raise RuntimeError("Invalid operand type: {}".format(type(other)))
 
-    def accept(self, visitor):
+    def accept(self, visitor: "NodeVisitor") -> Any:
         """Accept a visitor for the visitor pattern implementation."""
         return visitor.visit_group_clause(self)
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         """Check equality based on grouping expressions and HAVING clause."""
         if not isinstance(other, GroupClauseNode):
             return False
@@ -793,7 +801,7 @@ class GroupClauseNode(SqlAstNode):
         self.log_self()
         return False
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """Return hash value for this node."""
         return 1
 
@@ -807,24 +815,24 @@ class SelectCoreNode(SqlAstNode):
     ----------
     select_clause : SelectClauseNode
         The SELECT clause with result columns.
-    from_clause : Optional[FromClauseNode]
+    from_clause : FromClauseNode | None
         The FROM clause with tables/subqueries.
-    where_clause : Optional[WhereClauseNode]
+    where_clause : WhereClauseNode | None
         The WHERE clause with filter conditions.
-    group_clause : Optional[GroupClauseNode]
+    group_clause : GroupClauseNode | None
         The GROUP BY clause with grouping expressions.
     """
 
     select_clause: SelectClauseNode
-    from_clause: Optional[FromClauseNode] = None
-    where_clause: Optional[WhereClauseNode] = None
-    group_clause: Optional[GroupClauseNode] = None
+    from_clause: FromClauseNode | None = None
+    where_clause: WhereClauseNode | None = None
+    group_clause: GroupClauseNode | None = None
 
-    def accept(self, visitor):
+    def accept(self, visitor: "NodeVisitor") -> Any:
         """Accept a visitor for the visitor pattern implementation."""
         return visitor.visit_select_core(self)
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         """Check equality based on all clauses."""
         if not isinstance(other, SelectCoreNode):
             return False
@@ -838,7 +846,7 @@ class SelectCoreNode(SqlAstNode):
         self.log_self()
         return False
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """Return hash value for this node."""
         return 1
 
@@ -851,27 +859,27 @@ class CommonTableExpressionNode(SqlAstNode):
     ----------
     table_name : LiteralNode
         Name of the CTE.
-    columns : List[ColumnNode]
+    columns : list[ColumnNode]
         Column list for the CTE (optional).
     select_stmt : SelectStatementNode
         The SELECT statement defining the CTE.
     """
 
     table_name: LiteralNode
-    columns: List[ColumnNode]
+    columns: list[ColumnNode]
     select_stmt: "SelectStatementNode"
 
-    def accept(self, visitor):
+    def accept(self, visitor: "NodeVisitor") -> Any:
         """Accept a visitor for the visitor pattern implementation."""
         return visitor.visit_common_table_expression(self)
 
-    def __add__(self, other):
+    def __add__(self, other: Any) -> Any:
         """Add a column to this CTE."""
         if isinstance(other, ColumnNode):
             return replace(self, columns=self.columns + [other])
         raise RuntimeError("Invalid operand type: {}".format(type(other)))
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         """Check equality based on table name, columns, and select statement."""
         if not isinstance(other, CommonTableExpressionNode):
             return False
@@ -881,7 +889,7 @@ class CommonTableExpressionNode(SqlAstNode):
             and self.select_stmt == other.select_stmt
         )
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """Return hash value for this node."""
         return 1
 
@@ -892,27 +900,27 @@ class WithClauseNode(SqlAstNode):
 
     Attributes
     ----------
-    common_table_expr : List[CommonTableExpressionNode]
+    common_table_expr : list[CommonTableExpressionNode]
         List of common table expressions in the WITH clause.
     """
 
-    common_table_expr: List[CommonTableExpressionNode]
+    common_table_expr: list[CommonTableExpressionNode]
 
-    def accept(self, visitor):
+    def accept(self, visitor: "NodeVisitor") -> Any:
         """Accept a visitor for the visitor pattern implementation."""
         return visitor.visit_with_clause(self)
 
-    def __add__(self, other):
+    def __add__(self, other: Any) -> Any:
         """Add a common table expression to this WITH clause."""
         if isinstance(other, CommonTableExpressionNode):
             return replace(self, common_table_expr=self.common_table_expr + [other])
         raise RuntimeError("Invalid operand type: {}".format(type(other)))
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """Return hash value for this node."""
         return 1
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         """Check equality based on common table expressions."""
         if not isinstance(other, WithClauseNode):
             return False
@@ -929,29 +937,31 @@ class SelectStatementNode(ExpressionNode):
 
     Attributes
     ----------
-    select_cores : List[SelectCoreNode]
+    select_cores : list[SelectCoreNode]
         List of SELECT cores (can be multiple with set operations).
-    set_ops : List[TerminalNode]
+    set_ops : list[TerminalNode]
         Set operations connecting select cores (UNION, INTERSECT, etc.).
-    orderby : Optional[OrderByNode]
+    orderby : OrderByNode | None
         ORDER BY clause for the statement.
-    limit : Optional[LimitNode]
+    limit : LimitNode | None
         LIMIT clause for the statement.
-    with_clause : Optional[WithClauseNode]
+    with_clause : WithClauseNode | None
         WITH clause (CTEs) for the statement.
     """
 
-    select_cores: List[SelectCoreNode]
-    set_ops: List[TerminalNode]
-    orderby: Optional[OrderByNode] = None
-    limit: Optional[LimitNode] = None
-    with_clause: Optional[WithClauseNode] = None
+    select_cores: list[SelectCoreNode]
+    set_ops: list[TerminalNode]
+    orderby: OrderByNode | None = None
+    limit: LimitNode | None = None
+    with_clause: WithClauseNode | None = None
 
-    def has_sub_expr(self):
+    def has_sub_expr(self) -> bool:
         """Check if this expression contains sub-expressions."""
         return True
 
-    def add_core(self, set_op: TerminalNode, select_core: SelectCoreNode):
+    def add_core(
+        self, set_op: TerminalNode, select_core: SelectCoreNode
+    ) -> "SelectStatementNode":
         """Add a select core with a set operation (UNION, INTERSECT, etc.)."""
         return replace(
             self,
@@ -959,11 +969,11 @@ class SelectStatementNode(ExpressionNode):
             set_ops=self.set_ops + [set_op],
         )
 
-    def accept(self, visitor):
+    def accept(self, visitor: "NodeVisitor") -> Any:
         """Accept a visitor for the visitor pattern implementation."""
         return visitor.visit_select_statement(self)
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         """Check equality based on select cores, set operations, and clauses."""
         if not isinstance(other, SelectStatementNode):
             return False
@@ -978,7 +988,7 @@ class SelectStatementNode(ExpressionNode):
         self.log_self()
         return False
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """Return hash value for this node."""
         return 1
 
@@ -998,11 +1008,11 @@ class CastExpressionNode(ExpressionNode):
     expr: ExpressionNode
     type_name: TerminalNode  # all things that we don't know to use which func!
 
-    def accept(self, visitor):
+    def accept(self, visitor: "NodeVisitor") -> Any:
         """Accept a visitor for the visitor pattern implementation."""
         return visitor.visit_cast_expression(self)
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         """Check equality based on expression and type name."""
         if not isinstance(other, CastExpressionNode):
             return False
@@ -1011,7 +1021,7 @@ class CastExpressionNode(ExpressionNode):
         self.log_self()
         return False
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """Return hash value for this node."""
         return 1
 
@@ -1022,35 +1032,35 @@ class WindowDefinitionNode(SqlAstNode):
 
     Attributes
     ----------
-    cols : List[ResultColumnNode]
+    cols : list[ResultColumnNode]
         Columns for PARTITION BY clause.
-    orderby : Optional[OrderByNode]
+    orderby : OrderByNode | None
         ORDER BY clause within the window.
     """
 
-    cols: List[ResultColumnNode]
-    orderby: Optional[OrderByNode] = None
+    cols: list[ResultColumnNode]  # type: ignore[assignment]
+    orderby: OrderByNode | None = None
 
-    def accept(self, visitor):
+    def accept(self, visitor: "NodeVisitor") -> Any:
         """Accept a visitor for the visitor pattern implementation."""
         return visitor.visit_window_definition(self)
 
-    def __add__(self, other):
+    def __add__(self, other: Any) -> Any:
         """Add a result column to this window definition."""
         if isinstance(other, ResultColumnNode):
             return replace(self, cols=self.cols + [other])
         raise RuntimeError("Invalid operand type: {}".format(type(other)))
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         """Check equality based on columns and order by clause."""
         if not isinstance(other, WindowDefinitionNode):
             return False
-        if self.orderby == other.orderby and self.col == other.col:
+        if self.orderby == other.orderby and self.cols == other.cols:
             return True
         self.log_self()
         return False
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """Return hash value for this node."""
         return 1
 
@@ -1063,7 +1073,7 @@ class WindowExpressionNode(ExpressionNode):
     ----------
     win_fun : TerminalNode
         Window function name.
-    win_fun_exprs : List[ExpressionNode]
+    win_fun_exprs : list[ExpressionNode]
         Arguments to the window function.
     win_def : WindowDefinitionNode
         Window definition (PARTITION BY and ORDER BY clauses).
@@ -1072,15 +1082,15 @@ class WindowExpressionNode(ExpressionNode):
     """
 
     win_fun: TerminalNode
-    win_fun_exprs: List[ExpressionNode]
+    win_fun_exprs: list[ExpressionNode]
     win_def: WindowDefinitionNode
     distinct: bool = False
 
-    def accept(self, visitor):
+    def accept(self, visitor: "NodeVisitor") -> Any:
         """Accept a visitor for the visitor pattern implementation."""
         return visitor.visit_window_expression(self)
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         """Check equality based on window function and definition."""
         if not isinstance(other, WindowExpressionNode):
             return False
@@ -1089,12 +1099,12 @@ class WindowExpressionNode(ExpressionNode):
         self.log_self()
         return False
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """Return hash value for this node."""
         return 1
 
 
-def variable_extractor(expr: ExpressionNode) -> Set[SqlAstNode]:
+def variable_extractor(expr: ExpressionNode) -> set[SqlAstNode]:
     """Extract variables from binary operation expressions.
 
     Parameters
@@ -1104,7 +1114,7 @@ def variable_extractor(expr: ExpressionNode) -> Set[SqlAstNode]:
 
     Returns
     -------
-    Set[SqlAstNode]
+    set[SqlAstNode]
         Set of extracted variable nodes.
     """
     if not isinstance(expr, BinOpExpressionNode):

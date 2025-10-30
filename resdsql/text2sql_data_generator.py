@@ -157,7 +157,7 @@ def generate_train_ranked_dataset(opt):
         dataset = json.load(f)
 
     output_dataset = []
-    for data_id, data in enumerate(dataset):
+    for _data_id, data in enumerate(dataset):
         ranked_data = {}
         ranked_data["question"] = data["question"]
         ranked_data["sql"] = data["sql"]  # unused
@@ -285,7 +285,7 @@ def generate_eval_ranked_dataset(opt):
 
     table_coverage_state_list, column_coverage_state_list = [], []
     output_dataset = []
-    for data_id, data in enumerate(dataset):
+    for _data_id, data in enumerate(dataset):
         ranked_data = {}
         ranked_data["question"] = data["question"]
         ranked_data["sql"] = data["sql"]

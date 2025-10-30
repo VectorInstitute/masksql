@@ -79,12 +79,12 @@ def col_unit_back(col_unit, tables_with_alias=None):
     if name.endswith("*"):
         name = "*"
 
-    nameArray = name.split(".")
-    if len(nameArray) == 2 and tables_with_alias:
-        table_name = nameArray[0]
+    name_array = name.split(".")
+    if len(name_array) == 2 and tables_with_alias:
+        table_name = name_array[0]
         for key, value in tables_with_alias.items():
             if key != table_name and value == table_name:
-                name = key + "." + nameArray[1]
+                name = key + "." + name_array[1]
                 break
 
     col = col + name

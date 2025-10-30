@@ -1,7 +1,7 @@
 """Unmasking of symbolic placeholders in generated SQL."""
 
 import re
-from typing import List
+from typing import Any
 
 from src.pipe.processor.list_transformer import JsonListTransformer
 from src.pipe.utils import replace_str_punc
@@ -15,10 +15,10 @@ class AddConcreteSql(JsonListTransformer):
     with their original table names, column names, and values.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__(force=True)
 
-    def get_value_variations(self, value_symbol) -> List[str]:
+    def get_value_variations(self, value_symbol: str) -> list[str]:
         """
         Generate different quote variations of a value symbol.
 
@@ -34,7 +34,7 @@ class AddConcreteSql(JsonListTransformer):
         """
         return [value_symbol, f'"{value_symbol[1:-1]}"', f"'{value_symbol[1:-1]}'"]
 
-    async def _process_row(self, row):
+    async def _process_row(self, row: dict[str, Any]) -> dict[str, Any]:
         reverse_dict = row["symbolic"]["reverse_dict"]
         value_table = row["symbolic"]["to_value"]
 

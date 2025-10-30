@@ -1,5 +1,7 @@
 """Privacy score calculation processor."""
 
+from typing import Any
+
 import spacy
 
 from src.pipe.processor.printer import DataPrinter
@@ -8,7 +10,7 @@ from src.pipe.processor.printer import DataPrinter
 nlp = spacy.load("en_core_web_sm")
 
 
-def tokenize(text):
+def tokenize(text: str) -> list[str]:
     """
     Tokenize text using spaCy.
 
@@ -29,23 +31,21 @@ def tokenize(text):
 class PrivacyScore(DataPrinter):
     """Calculate privacy leakage scores from inference attacks."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self.score = 0
         self.leaked = 0
         self.total_masked = 0
         self.count = 0
 
-    def _post_run(self):
+    def _post_run(self) -> None:
         print(f"Leakage: {self.score / self.count}")
         print(f"Leaks: {self.leaked}/{self.total_masked}")
 
-    async def _process_row(self, row):
+    async def _process_row(self, row: dict[str, Any]) -> dict[str, Any]:
         schema_links = row["filtered_schema_links"]
         value_links = row["filtered_value_links"]
-        question = row["question"]
         guess = row["attack"]
-        gold_links = row["gold_links"]
         masked_terms = list(value_links.keys()) + list((schema_links.keys()))
         leaked = 0
         for term in masked_terms:

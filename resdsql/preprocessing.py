@@ -335,14 +335,17 @@ def isFloat(string):
 
 
 def main(opt):
-    dataset = json.load(open(opt.input_dataset_path))
-    all_db_infos = json.load(open(opt.table_path))
+    with open(opt.input_dataset_path) as f:
+        dataset = json.load(f)
+    with open(opt.table_path) as f:
+        all_db_infos = json.load(f)
 
     assert opt.mode in ["train", "eval", "test"]
 
     if opt.mode in ["train", "eval"] and opt.target_type == "natsql":
         # only train_spider.json and dev.json have corresponding natsql dataset
-        natsql_dataset = json.load(open(opt.natsql_dataset_path))
+        with open(opt.natsql_dataset_path) as f:
+            natsql_dataset = json.load(f)
     else:
         # empty natsql dataset
         natsql_dataset = [None for _ in range(len(dataset))]

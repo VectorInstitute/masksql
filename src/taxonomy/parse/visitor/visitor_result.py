@@ -1,6 +1,7 @@
 """Abstract base class for mergeable visitor results."""
 
 from abc import ABC, abstractmethod
+from typing import Self
 
 
 class MergeableVisitorResult(ABC):
@@ -10,7 +11,7 @@ class MergeableVisitorResult(ABC):
     the result of visiting parent node.
     """
 
-    def __add__(self, other):
+    def __add__(self, other: Self) -> Self:
         """
         Add two visitor results by merging them.
 
@@ -27,7 +28,7 @@ class MergeableVisitorResult(ABC):
         return self.merge(other)
 
     @abstractmethod
-    def merge(self, other):
+    def merge(self, other: Self) -> Self:
         """
         Merge this result with another result.
 

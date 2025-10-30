@@ -1,5 +1,7 @@
 """Generate gold standard schema links."""
 
+from typing import Any
+
 from src.pipe.detect_values_prompts.prompt_processor import PromptProcessor
 from src.pipe.gold_schema_link.v1 import GOLD_SCHEMA_LINKING_PROMPT_V1
 from src.pipe.llm_util import extract_object
@@ -8,10 +10,10 @@ from src.pipe.llm_util import extract_object
 class GenGoldLinks(PromptProcessor):
     """Generate gold standard schema links from SQL queries."""
 
-    def _process_output(self, row, output):
+    def _process_output(self, row: dict[str, Any], output: str) -> Any:
         return extract_object(output)
 
-    def _get_prompt(self, row):
+    def _get_prompt(self, row: dict[str, Any]) -> str:
         question = row["question"]
         schema = row["schema"]
         sql = row["query"]

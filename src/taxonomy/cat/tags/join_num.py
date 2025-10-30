@@ -16,10 +16,10 @@ class NumJoins(SqlTag):
     class Collector(TagCollector):
         """Collector for join count (currently not fully implemented)."""
 
-        def __init__(self):
+        def __init__(self) -> None:
             super().__init__()
-            self.cur_level = 0
-            self.max_level = 0
+            self.cur_level: int = 0
+            self.max_level: int = 0
 
         # def visit_join_clause(self, node: JoinClauseNode):
         # def visit_select_statement(self, node: SelectStatementNode):

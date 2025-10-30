@@ -1,5 +1,7 @@
 """Value linking evaluation processor."""
 
+from typing import Any
+
 import pandas as pd
 
 from src.pipe.processor.list_processor import JsonListProcessor
@@ -8,11 +10,11 @@ from src.pipe.processor.list_processor import JsonListProcessor
 class ValueLinkEval(JsonListProcessor):
     """Evaluate value linking accuracy."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
-        self.scores = []
+        self.scores: list[dict[str, int]] = []
 
-    def _post_run(self):
+    def _post_run(self) -> None:
         df = pd.DataFrame(self.scores)
         df["bin"] = (df["score"] == df["total"]).astype(int)
         avg = df["score"].sum() / df["total"].sum()
@@ -23,7 +25,7 @@ class ValueLinkEval(JsonListProcessor):
         print(f"Overall AVG Score: {overall_avg}")
         print(f"Binary Score: {bin_avg}")
 
-    async def _process_row(self, row):
+    async def _process_row(self, row: dict[str, Any]) -> dict[str, Any]:
         gold = row["gold_value_links"]
         pred = row["filtered_value_links"]
         print("##############################")
@@ -39,3 +41,4 @@ class ValueLinkEval(JsonListProcessor):
                 score += 1
 
         self.scores.append({"score": score, "total": total})
+        return row

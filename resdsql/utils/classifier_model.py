@@ -129,11 +129,6 @@ class MyClassifier(nn.Module):
                 batch_id, :, :
             ].to(device)  # (seq_length x hidden_size)
 
-            # obtain the embeddings of tokens in the question
-            question_token_embeddings = sequence_embeddings[
-                batch_aligned_question_ids[batch_id], :
-            ]
-
             # obtain table ids for each table
             aligned_table_name_ids = batch_aligned_table_name_ids[batch_id]
             # obtain column ids for each column

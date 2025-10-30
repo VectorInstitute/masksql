@@ -1,11 +1,15 @@
 import json
 
 
-spider_dev = json.load(open("data/dev.json", "r"))
-spider_train = json.load(open("data/train_spider.json", "r"))
+with open("data/dev.json", "r") as f:
+    spider_dev = json.load(f)
+with open("data/train_spider.json", "r") as f:
+    spider_train = json.load(f)
 
-natsql_dev = json.load(open("NatSQLv1_6/dev-natsql.json", "r"))
-natsql_train = json.load(open("NatSQLv1_6/train_spider-natsql.json", "r"))
+with open("NatSQLv1_6/dev-natsql.json", "r") as f:
+    natsql_dev = json.load(f)
+with open("NatSQLv1_6/train_spider-natsql.json", "r") as f:
+    natsql_train = json.load(f)
 
 
 assert len(spider_dev) == len(natsql_dev)
@@ -20,5 +24,7 @@ for se, ne in zip(spider_train, natsql_train):
     se["sql"] = ne["sql"]
 
 
-json.dump(spider_dev, open("NatSQLv1_6/dev.json", "w"), indent=2)
-json.dump(spider_train, open("NatSQLv1_6/train_spider.json", "w"), indent=2)
+with open("NatSQLv1_6/dev.json", "w") as f:
+    json.dump(spider_dev, f, indent=2)
+with open("NatSQLv1_6/train_spider.json", "w") as f:
+    json.dump(spider_train, f, indent=2)

@@ -3,12 +3,16 @@
 import os
 import threading
 import time
+from collections.abc import Awaitable, Callable
+from typing import Any
 
 import psutil
 from loguru import logger
 
 
-def _monitor_memory(interval: float, stop_event: threading.Event, mem_usage: list):
+def _monitor_memory(
+    interval: float, stop_event: threading.Event, mem_usage: list[float]
+) -> None:
     process = psutil.Process(os.getpid())
     while not stop_event.is_set():
         rss = process.memory_info().rss / (1024 * 1024)
@@ -17,7 +21,9 @@ def _monitor_memory(interval: float, stop_event: threading.Event, mem_usage: lis
         time.sleep(interval)
 
 
-async def track_memory_async(coro, *args, interval: float = 1, **kwargs):
+async def track_memory_async(
+    coro: Callable[..., Awaitable[Any]], *args: Any, interval: float = 1, **kwargs: Any
+) -> tuple[Any, float, float]:
     """
     Track memory usage during coroutine execution.
 
@@ -37,7 +43,7 @@ async def track_memory_async(coro, *args, interval: float = 1, **kwargs):
     tuple
         (result, average_memory_mb, peak_memory_mb)
     """
-    mem_usage = []
+    mem_usage: list[float] = []
     stop_event = threading.Event()
     monitor_thread = threading.Thread(
         target=_monitor_memory, args=(interval, stop_event, mem_usage)

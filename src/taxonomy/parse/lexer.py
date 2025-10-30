@@ -7,6 +7,7 @@ and cannot be changed to lowercase (ruff: noqa: N802).
 """
 
 import re
+from typing import Any
 
 from ply import lex
 
@@ -89,7 +90,7 @@ tokens = [
 ] + list(reserved.values())
 
 
-def t_NUMBER(t):  # noqa: N802
+def t_NUMBER(t: Any) -> Any:  # noqa: N802
     r"""Match numeric literals (integers and floats)."""
     if t.value.isdigit():
         t.value = int(t.value)
@@ -107,19 +108,19 @@ t_ORR = r"\|\|"  # noqa: N816
 t_MINUS = r"-"  # noqa: N816
 
 
-def t_TYPE_NAME(t):  # noqa: N802
+def t_TYPE_NAME(t: Any) -> Any:  # noqa: N802
     r"""Match SQL type names (integer, varchar, datetime, etc.)."""
     t.value = t.value.lower()
     return t
 
 
-def t_DATE_LITERAL(t):  # noqa: N802
+def t_DATE_LITERAL(t: Any) -> Any:  # noqa: N802
     r"""Match date literals in YYYY-MM-DD format."""
     return t
 
 
 # r'\'[^\']*\'|\"[^\"]*\"'
-def t_STRING(t):  # noqa: N802
+def t_STRING(t: Any) -> Any:  # noqa: N802
     r"""Match string literals enclosed in quotes."""
     val = str(t.value)
     val = val.replace('"', "")
@@ -131,17 +132,17 @@ def t_STRING(t):  # noqa: N802
     return t
 
 
-def t_ARITH_OP(t):  # noqa: N802
+def t_ARITH_OP(t: Any) -> Any:  # noqa: N802
     r"""Match arithmetic operators (+, /, %, ^)."""
     return t
 
 
-def t_COMP_OP(t):  # noqa: N802
+def t_COMP_OP(t: Any) -> Any:  # noqa: N802
     r"""Match comparison operators (=, !=, <, >, <=, >=, <>)."""
     return t
 
 
-def t_ID(t):  # noqa: N802
+def t_ID(t: Any) -> Any:  # noqa: N802
     r"""Match identifiers and reserved keywords."""
     if t.value.lower() in reserved:
         t.value = t.value.lower()
@@ -157,12 +158,12 @@ t_ignore = " "  # noqa: N816
 
 
 # Error handling rule
-def t_error(t):
+def t_error(t: Any) -> None:
     """Handle lexer errors by skipping illegal characters."""
     # print("Illegal character '%s'" % t.value[0])
     t.lexer.skip(1)
 
 
-def get_lexer():
+def get_lexer() -> Any:
     """Create and return a lexer instance with case-insensitive matching."""
     return lex.lex(reflags=re.IGNORECASE)

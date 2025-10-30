@@ -2,18 +2,20 @@
 
 import json
 import os
+from collections.abc import Callable
+from typing import Any
 
 from src.pipe.processor.list_transformer import JsonListTransformer
 
 
-START = int(os.environ.get("START", 0))
-LIMIT = int(os.environ.get("LIMIT", 10))
+START = int(os.environ.get("START", "0"))
+LIMIT = int(os.environ.get("LIMIT", "10"))
 
 
 class LimitJson(JsonListTransformer):
     """Limit JSON list to subset based on START and LIMIT environment variables."""
 
-    async def run(self, input_file):
+    async def run(self, input_file: str) -> str:
         """
         Limit input list to subset.
 
@@ -42,7 +44,7 @@ class LimitJson(JsonListTransformer):
             f.write(json.dumps(out_rows, indent=4))
         return output_file
 
-    async def _process_row(self, row):
+    async def _process_row(self, row: Any) -> Any:
         return row
 
 
@@ -56,11 +58,11 @@ class FilterList(JsonListTransformer):
         Function to test each row, default returns all rows
     """
 
-    def __init__(self, predicate=lambda r: r):
+    def __init__(self, predicate: Callable[[Any], Any] = lambda r: r) -> None:
         super().__init__()
         self.predicate = predicate
 
-    async def run(self, input_file):
+    async def run(self, input_file: str) -> str:
         """
         Filter input file based on predicate.
 
@@ -88,5 +90,5 @@ class FilterList(JsonListTransformer):
             f.write(json.dumps(out_data, indent=4))
         return output_file
 
-    async def _process_row(self, row):
+    async def _process_row(self, row: Any) -> Any:
         return row

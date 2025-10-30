@@ -1,8 +1,10 @@
 """Combined schema and value linking."""
 
+from typing import Any
+
 from loguru import logger
 
-from src.pipe.abl_prompts.schema_value_link import SCHEMA_VALUE_LINK_PROMPT_V1
+from src.pipe.able_prompts.schema_value_link import SCHEMA_VALUE_LINK_PROMPT_V1
 from src.pipe.detect_values_prompts.prompt_processor import PromptProcessor
 from src.pipe.llm_util import extract_object
 
@@ -10,14 +12,14 @@ from src.pipe.llm_util import extract_object
 class LinkSchemaAndValue(PromptProcessor):
     """Link question terms to both schema items and values."""
 
-    def _process_output(self, row, output):
+    def _process_output(self, row: dict[str, Any], output: str) -> dict[str, Any]:
         schema_links = extract_object(output)
         if schema_links is None:
             schema_links = {}
         question = row["question"]
         schema_items = row["schema_items"]
-        refined_links = {}
-        if isinstance(schema_links, list) or isinstance(schema_links, str):
+        refined_links: dict[str, Any] = {}
+        if isinstance(schema_links, (list, str)):
             logger.error(f"Invalid schema links: {schema_links}")
             refined_links = {}
 
@@ -28,9 +30,12 @@ class LinkSchemaAndValue(PromptProcessor):
                 )
                 continue
             orig_schema_item = schema_item
-            if "VALUE:" in schema_item:
-                schema_item = schema_item.replace("VALUE:", "COLUMN:")
-            if schema_item.lower() not in [i.lower() for i in schema_items]:
+            normalized_item = (
+                schema_item.replace("VALUE:", "COLUMN:")
+                if "VALUE:" in schema_item
+                else schema_item
+            )
+            if normalized_item.lower() not in [i.lower() for i in schema_items]:
                 logger.error(
                     f"Invalid schema link {question_term} -> {orig_schema_item}, schema item not exists"
                 )
@@ -38,7 +43,7 @@ class LinkSchemaAndValue(PromptProcessor):
             refined_links[question_term] = orig_schema_item
         return refined_links
 
-    def _get_prompt(self, row):
+    def _get_prompt(self, row: dict[str, Any]) -> str:
         question = row["question"]
         schema_items = row["schema_items"]
         value_list = row["values"]

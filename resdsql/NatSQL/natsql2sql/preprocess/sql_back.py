@@ -70,12 +70,12 @@ def col_unit_back(col_unit, tables_with_alias=None):
     if name.endswith("*"):
         name = "*"
 
-    nameArray = name.split(".")
-    if len(nameArray) == 2 and tables_with_alias:
-        table_name = nameArray[0]
+    name_array = name.split(".")
+    if len(name_array) == 2 and tables_with_alias:
+        table_name = name_array[0]
         for key, value in tables_with_alias.items():
             if key != table_name and value == table_name:
-                name = key + "." + nameArray[1]
+                name = key + "." + name_array[1]
                 break
 
     col = col + name
@@ -328,7 +328,7 @@ def condition_back_based_idx(conds, tables_json):
         re_conds += " ( "
         re_conds += sql_back(conds[3], tables_json)
         re_conds += " ) "
-    elif isinstance(conds[3], tuple) or isinstance(conds[3], list):
+    elif isinstance(conds[3], (tuple, list)):
         re_conds += num_col_unit_back(conds[3], tables_json)
     else:
         re_conds += str(conds[3])
@@ -469,7 +469,7 @@ def return_all_where_col(where):
 
 def replace_the_second(sql):
     if sql.count("select ") > 1:
-        idx = sql.index("select ")
+        sql.index("select ")
 
 
 def cut_sql_to_piece(sql):

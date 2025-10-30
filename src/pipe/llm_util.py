@@ -4,7 +4,7 @@ import ast
 import json
 import os
 import re
-from typing import Tuple
+from typing import Any
 
 from loguru import logger
 from openai import AsyncClient
@@ -13,14 +13,14 @@ from openai import AsyncClient
 VLM_ARCH = os.environ.get("VLM_ARCH")
 MAX_COMPLETION_TOKENS = os.environ.get("MAX_COMPLETION_TOKENS")
 
-wrappers = {
+wrappers: dict[str, Any] = {
     "mistral": lambda prompt: f"<s>[INST] {prompt} [/INST]",
     "gemma": lambda prompt: f"<bos><start_of_turn>user\n{prompt}<end_of_turn>\n<start_of_turn>model\n",
     "llama": lambda prompt: f"<|begin_of_text|><|start_header_id|>user<|end_header_id|>\n{prompt}\n<|eot_id|><|start_header_id|>assistant<|end_header_id|>",
 }
 
 
-def wrap_prompt(prompt):
+def wrap_prompt(prompt: str) -> str:
     """
     Wrap prompt with architecture-specific formatting.
 
@@ -40,7 +40,7 @@ def wrap_prompt(prompt):
     return prompt
 
 
-async def send_prompt(prompt, model=os.getenv("OPENAI_MODEL")) -> Tuple[str, str]:
+async def send_prompt(prompt: str, model: str | None = None) -> tuple[str, str]:
     """
     Send prompt to language model and get response.
 
@@ -53,42 +53,44 @@ async def send_prompt(prompt, model=os.getenv("OPENAI_MODEL")) -> Tuple[str, str
 
     Returns
     -------
-    Tuple[str, str]
+    tuple[str, str]
         Response content and token usage
     """
-    if model == "vlm":
+    model_name = model if model is not None else os.getenv("OPENAI_MODEL")
+    if model_name == "vlm":
         prompt = wrap_prompt(prompt)
     client = AsyncClient(
         api_key=os.getenv("OPENAI_API_KEY"),
         base_url=os.getenv("OPENAI_BASE_URL"),
         organization=os.getenv("OPENAI_GROUP_ID"),
         project=os.getenv("OPENAI_PROJ_ID"),
-        timeout=int(os.getenv("OPENAI_TIMEOUT", 60)),
+        timeout=int(os.getenv("OPENAI_TIMEOUT", "60")),
     )
     logger.debug("#" * 150)
     logger.debug(f"Prompt:\n{prompt}")
+    max_tokens = int(MAX_COMPLETION_TOKENS) if MAX_COMPLETION_TOKENS else None
     response = await client.chat.completions.create(
-        model=model,
+        model=model_name,  # type: ignore[arg-type]
         messages=[
             {
                 "role": "user",
                 "content": prompt,
             },
         ],
-        max_completion_tokens=MAX_COMPLETION_TOKENS,
+        max_completion_tokens=max_tokens,
     )
     if response.choices is None:
         print(prompt)
         raise Exception(f"LM prompt failed: {response.model_extra}")
-    usage = 0
+    usage = "0"
     if response.usage:
-        usage = response.usage.total_tokens
-    content = response.choices[0].message.content
+        usage = str(response.usage.total_tokens)
+    content = response.choices[0].message.content or ""
     logger.debug(f"Response:\n*****\n{content}\n*****\n")
     return content, usage
 
 
-def extract_json(text: str):
+def extract_json(text: str) -> dict[str, Any] | None:
     """
     Extract JSON object from text with code blocks.
 
@@ -117,7 +119,7 @@ def extract_json(text: str):
         return None
 
 
-def eval_literal(text: str):
+def eval_literal(text: str) -> Any | None:
     """
     Evaluate text as Python literal.
 
@@ -138,7 +140,7 @@ def eval_literal(text: str):
         return None
 
 
-def extract_object(text: str):
+def extract_object(text: str) -> Any | None:
     """
     Extract Python object from text using JSON or literal evaluation.
 

@@ -4,32 +4,9 @@ from dataclasses import fields
 from typing import Any, Type
 
 from src.taxonomy.parse.node import (
-    BetweenExpressionNode,
-    BinOpExpressionNode,
-    CastExpressionNode,
-    ColumnNode,
     CommonTableExpressionNode,
-    ExpressionNode,
-    FromClauseNode,
-    FunctionExpressionNode,
-    GroupClauseNode,
-    JoinClauseNode,
-    JoinConstraintNode,
-    LimitNode,
     LiteralListNode,
-    LiteralNode,
-    OrderByNode,
-    OrderingTerm,
-    ResultColumnNode,
-    SelectClauseNode,
-    SelectCoreNode,
-    SelectStatementNode,
     SqlAstNode,
-    TableOrSubqueryNode,
-    TerminalNode,
-    WhereClauseNode,
-    WindowDefinitionNode,
-    WindowExpressionNode,
     WithClauseNode,
 )
 from src.taxonomy.parse.visitor.node_visitor import NodeVisitor
@@ -43,11 +20,11 @@ class CollectorVisitor(NodeVisitor):
     the results using the merge operation.
     """
 
-    def __init__(self, result_class: Type[MergeableVisitorResult]):
+    def __init__(self, result_class: Type[MergeableVisitorResult]) -> None:
         super().__init__()
         self.result_class = result_class
 
-    def visit_literal_list(self, node: LiteralListNode):
+    def visit_literal_list(self, node: LiteralListNode) -> MergeableVisitorResult:
         """
         Visit a literal list node.
 
@@ -63,7 +40,7 @@ class CollectorVisitor(NodeVisitor):
         """
         return self.visit_node(node)
 
-    def visit_with_clause(self, node: WithClauseNode):
+    def visit_with_clause(self, node: WithClauseNode) -> MergeableVisitorResult:
         """
         Visit a WITH clause node.
 
@@ -79,7 +56,9 @@ class CollectorVisitor(NodeVisitor):
         """
         return self.visit_node(node)
 
-    def visit_common_table_expression(self, node: CommonTableExpressionNode):
+    def visit_common_table_expression(
+        self, node: CommonTableExpressionNode
+    ) -> MergeableVisitorResult:
         """
         Visit a common table expression node.
 
@@ -95,7 +74,7 @@ class CollectorVisitor(NodeVisitor):
         """
         return self.visit_node(node)
 
-    def visit_window_expression(self, node: WindowExpressionNode):
+    def visit_window_expression(self, node: Any) -> MergeableVisitorResult:
         """
         Visit a window expression node.
 
@@ -111,7 +90,7 @@ class CollectorVisitor(NodeVisitor):
         """
         return self.visit_node(node)
 
-    def visit_window_definition(self, node: WindowDefinitionNode):
+    def visit_window_definition(self, node: Any) -> MergeableVisitorResult:
         """
         Visit a window definition node.
 
@@ -127,7 +106,7 @@ class CollectorVisitor(NodeVisitor):
         """
         return self.visit_node(node)
 
-    def visit_cast_expression(self, node: CastExpressionNode):
+    def visit_cast_expression(self, node: Any) -> MergeableVisitorResult:
         """
         Visit a CAST expression node.
 
@@ -143,7 +122,7 @@ class CollectorVisitor(NodeVisitor):
         """
         return self.visit_node(node)
 
-    def get_new_result_instance(self, attr: Any):
+    def get_new_result_instance(self, attr: Any) -> MergeableVisitorResult:
         """
         Create a new instance of the result class.
 
@@ -159,7 +138,7 @@ class CollectorVisitor(NodeVisitor):
         """
         return self.result_class()
 
-    def get_attrs(self, node: SqlAstNode):
+    def get_attrs(self, node: SqlAstNode) -> list[Any]:
         """
         Get all attributes from a SQL AST node.
 
@@ -174,7 +153,7 @@ class CollectorVisitor(NodeVisitor):
             List of all attributes from the node.
         """
         attrs = []
-        for f in fields(node.__class__):
+        for f in fields(node.__class__):  # type: ignore[arg-type]
             attr = node.__getattribute__(f.name)
             if type(attr) is list:
                 attrs += attr
@@ -182,7 +161,7 @@ class CollectorVisitor(NodeVisitor):
                 attrs += [attr]
         return attrs
 
-    def visit_node(self, node):
+    def visit_node(self, node: SqlAstNode) -> MergeableVisitorResult:
         """Dynamically visit all attributes of the node."""
         data = self.get_new_result_instance(node)
         attrs = self.get_attrs(node)
@@ -190,7 +169,7 @@ class CollectorVisitor(NodeVisitor):
             data += self.visit_attr(attr)
         return data
 
-    def visit_attr(self, attr):
+    def visit_attr(self, attr: Any) -> MergeableVisitorResult:
         """Visit the attribute if it is an instance of AstNode.
 
         Otherwise return an instance of result class.
@@ -199,7 +178,7 @@ class CollectorVisitor(NodeVisitor):
             return attr.accept(self)
         return self.get_new_result_instance(attr)
 
-    def visit_ordering_term(self, node: OrderingTerm):
+    def visit_ordering_term(self, node: Any) -> MergeableVisitorResult:
         """
         Visit an ordering term node.
 
@@ -215,7 +194,7 @@ class CollectorVisitor(NodeVisitor):
         """
         return self.visit_node(node)
 
-    def visit_select_statement(self, node: SelectStatementNode):
+    def visit_select_statement(self, node: Any) -> MergeableVisitorResult:
         """
         Visit a SELECT statement node.
 
@@ -231,7 +210,7 @@ class CollectorVisitor(NodeVisitor):
         """
         return self.visit_node(node)
 
-    def visit_select_core(self, node: SelectCoreNode):
+    def visit_select_core(self, node: Any) -> MergeableVisitorResult:
         """
         Visit a SELECT core node.
 
@@ -247,7 +226,7 @@ class CollectorVisitor(NodeVisitor):
         """
         return self.visit_node(node)
 
-    def visit_select_clause(self, node: SelectClauseNode):
+    def visit_select_clause(self, node: Any) -> MergeableVisitorResult:
         """
         Visit a SELECT clause node.
 
@@ -263,7 +242,7 @@ class CollectorVisitor(NodeVisitor):
         """
         return self.visit_node(node)
 
-    def visit_from_clause(self, node: FromClauseNode):
+    def visit_from_clause(self, node: Any) -> MergeableVisitorResult:
         """
         Visit a FROM clause node.
 
@@ -279,7 +258,7 @@ class CollectorVisitor(NodeVisitor):
         """
         return self.visit_node(node)
 
-    def visit_join_clause(self, node: JoinClauseNode):
+    def visit_join_clause(self, node: Any) -> MergeableVisitorResult:
         """
         Visit a JOIN clause node.
 
@@ -295,7 +274,7 @@ class CollectorVisitor(NodeVisitor):
         """
         return self.visit_node(node)
 
-    def visit_table_or_subquery(self, node: TableOrSubqueryNode):
+    def visit_table_or_subquery(self, node: Any) -> MergeableVisitorResult:
         """
         Visit a table or subquery node.
 
@@ -311,7 +290,7 @@ class CollectorVisitor(NodeVisitor):
         """
         return self.visit_node(node)
 
-    def visit_result_column(self, node: ResultColumnNode):
+    def visit_result_column(self, node: Any) -> MergeableVisitorResult:
         """
         Visit a result column node.
 
@@ -327,7 +306,7 @@ class CollectorVisitor(NodeVisitor):
         """
         return self.visit_node(node)
 
-    def visit_column(self, node: ColumnNode):
+    def visit_column(self, node: Any) -> MergeableVisitorResult:
         """
         Visit a column node.
 
@@ -343,7 +322,7 @@ class CollectorVisitor(NodeVisitor):
         """
         return self.visit_node(node)
 
-    def visit_where_clause(self, node: WhereClauseNode):
+    def visit_where_clause(self, node: Any) -> MergeableVisitorResult:
         """
         Visit a WHERE clause node.
 
@@ -359,7 +338,7 @@ class CollectorVisitor(NodeVisitor):
         """
         return self.visit_node(node)
 
-    def visit_group_clause(self, node: GroupClauseNode):
+    def visit_group_clause(self, node: Any) -> MergeableVisitorResult:
         """
         Visit a GROUP BY clause node.
 
@@ -375,7 +354,7 @@ class CollectorVisitor(NodeVisitor):
         """
         return self.visit_node(node)
 
-    def visit_between_expression(self, node: BetweenExpressionNode):
+    def visit_between_expression(self, node: Any) -> MergeableVisitorResult:
         """
         Visit a BETWEEN expression node.
 
@@ -391,7 +370,7 @@ class CollectorVisitor(NodeVisitor):
         """
         return self.visit_node(node)
 
-    def visit_order_by(self, node: OrderByNode):
+    def visit_order_by(self, node: Any) -> MergeableVisitorResult:
         """
         Visit an ORDER BY node.
 
@@ -407,7 +386,7 @@ class CollectorVisitor(NodeVisitor):
         """
         return self.visit_node(node)
 
-    def visit_limit(self, node: LimitNode):
+    def visit_limit(self, node: Any) -> MergeableVisitorResult:
         """
         Visit a LIMIT node.
 
@@ -423,7 +402,7 @@ class CollectorVisitor(NodeVisitor):
         """
         return self.visit_node(node)
 
-    def visit_join_constraint(self, node: JoinConstraintNode):
+    def visit_join_constraint(self, node: Any) -> MergeableVisitorResult:
         """
         Visit a JOIN constraint node.
 
@@ -439,7 +418,7 @@ class CollectorVisitor(NodeVisitor):
         """
         return self.visit_node(node)
 
-    def visit_function_expression(self, node: FunctionExpressionNode):
+    def visit_function_expression(self, node: Any) -> MergeableVisitorResult:
         """
         Visit a function expression node.
 
@@ -455,7 +434,7 @@ class CollectorVisitor(NodeVisitor):
         """
         return self.visit_node(node)
 
-    def visit_bin_op_expression(self, node: BinOpExpressionNode):
+    def visit_bin_op_expression(self, node: Any) -> MergeableVisitorResult:
         """
         Visit a binary operation expression node.
 
@@ -471,7 +450,7 @@ class CollectorVisitor(NodeVisitor):
         """
         return self.visit_node(node)
 
-    def visit_terminal(self, node: TerminalNode):
+    def visit_terminal(self, node: Any) -> MergeableVisitorResult:
         """
         Visit a terminal node.
 
@@ -487,7 +466,7 @@ class CollectorVisitor(NodeVisitor):
         """
         return self.visit_node(node)
 
-    def visit_expression(self, node: ExpressionNode):
+    def visit_expression(self, node: Any) -> MergeableVisitorResult:
         """
         Visit an expression node.
 
@@ -503,7 +482,7 @@ class CollectorVisitor(NodeVisitor):
         """
         return self.visit_node(node)
 
-    def visit_literal(self, node: LiteralNode):
+    def visit_literal(self, node: Any) -> MergeableVisitorResult:
         """
         Visit a literal node.
 

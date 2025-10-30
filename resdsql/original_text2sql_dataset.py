@@ -7,7 +7,8 @@ output_dataset_path = "./data/preprocessed_data/resdsql_train_spider_wo_both.jso
 # input_dataset_path = "./data/preprocessed_data/preprocessed_dev.json"
 # output_dataset_path = "./data/preprocessed_data/resdsql_dev_wo_both.json"
 
-dataset = json.load(open(input_dataset_path, "r"))
+with open(input_dataset_path, "r") as f:
+    dataset = json.load(f)
 output_dataset = []
 
 for data in dataset:

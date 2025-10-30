@@ -38,7 +38,7 @@ class QuestionSQL:
                     "QuestionSQL Length Exception"
                 )
                 j = 0
-                for i, tok in enumerate(self.question.split(" ")):
+                for _i, tok in enumerate(self.question.split(" ")):
                     if tok != self.question_tokens[j].text and tok.startswith(
                         self.question_tokens[j].text
                     ):
@@ -274,13 +274,13 @@ class SubQuestion:
         idx = 0
         for nst_i, nst in enumerate(new_sequence_tag):
             sub_sequence_idx = []
-            for t_i, t in enumerate(nst):
+            for t_i, _t in enumerate(nst):
                 sub_sequence_idx.append(idx)
                 self.idx2sub_id.append([nst_i, t_i])
                 idx += 1
             self.original_idx.append(sub_sequence_idx)
         self.offset = []
-        for j, idxs in enumerate(self.original_idx):
+        for _j, idxs in enumerate(self.original_idx):
             self.offset.append(idxs[0])
         self.question_or = question_or
         if not question_or:
@@ -728,18 +728,18 @@ class SubQuestion:
             return question_dep
 
         def delete_question_dep(idx, question_dep):
-            for j, dep in enumerate(question_dep["data"]):
+            for j, _dep in enumerate(question_dep["data"]):
                 if j == idx:
                     question_dep = prepare_to_delete_node(idx, question_dep)
                     del question_dep["data"][idx]
                     break
-            for j, dep in enumerate(question_dep["data"]):
+            for _j, dep in enumerate(question_dep["data"]):
                 for i, d in enumerate(dep):
                     if d["idx"] == idx:
                         del dep[i]
                         break
-            for j, dep in enumerate(question_dep["data"]):
-                for i, d in enumerate(dep):
+            for _j, dep in enumerate(question_dep["data"]):
+                for _i, d in enumerate(dep):
                     if d["idx"] > idx:
                         d["idx"] -= 1
             return question_dep

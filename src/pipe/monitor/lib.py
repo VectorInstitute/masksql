@@ -1,6 +1,5 @@
 """Monitoring and logging utilities."""
 
-import datetime
 import math
 import subprocess
 from datetime import datetime
@@ -24,7 +23,7 @@ class TimeLogger:
         self.idx = idx
 
     @staticmethod
-    def start(idx: str):
+    def start(idx: str) -> "TimeLogger":
         """
         Start timing an operation.
 
@@ -41,7 +40,7 @@ class TimeLogger:
         # logger.info(f"started", idx=f"{idx}", start=True)
         return TimeLogger(idx)
 
-    def lap(self):
+    def lap(self) -> None:
         """Record lap time for operation."""
         pass
         # logger.info(f"finished", idx=f"{self.idx}", finish=True)
@@ -52,11 +51,11 @@ class Timer:
 
     start_time: datetime
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.start_time = datetime.now()
 
     @staticmethod
-    def start():
+    def start() -> "Timer":
         """
         Start a new timer.
 
@@ -95,10 +94,9 @@ def confidence_interval(column: pd.Series) -> str:
     """
     if not pd.api.types.is_numeric_dtype(column):
         return "NA"
-    CONFIDENCE = 0.95
-    Z = 1.65
-    SE = column.std() / math.sqrt(column.size)
-    err_margin = Z * SE
+    z = 1.65
+    se = column.std() / math.sqrt(column.size)
+    err_margin = z * se
     mean = column.mean()
     interval_start = mean - err_margin
     interval_end = mean + err_margin
@@ -113,7 +111,7 @@ def confidence_interval(column: pd.Series) -> str:
     # return f"({interval_start}, {interval_end})"
 
 
-def execute_command(command: str):
+def execute_command(command: str) -> None:
     """
     Execute shell command and capture output.
 

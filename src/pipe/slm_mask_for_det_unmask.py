@@ -1,5 +1,7 @@
 """Deterministic unmasking for small language models."""
 
+from typing import Any
+
 from src.pipe.detect_values_prompts.prompt_processor import PromptProcessor
 from src.pipe.slm_mask_prompts.mask_and_schema_link_v2 import (
     SLM_MASK_AND_LINK_PROMPT_V2,
@@ -9,10 +11,10 @@ from src.pipe.slm_mask_prompts.mask_and_schema_link_v2 import (
 class SlmMaskWithSymbolTable(PromptProcessor):
     """Generate masked questions with symbol table for deterministic unmasking."""
 
-    def _process_output(self, row, output):
+    def _process_output(self, row: dict[str, Any], output: str) -> dict[str, str]:
         return {"question": output}
 
-    def _get_prompt(self, row):
+    def _get_prompt(self, row: dict[str, Any]) -> str:
         question = row["question"]
         schema = row["schema"]
         symbol_table = row["symbolic"]["to_symbol"]

@@ -219,7 +219,7 @@ def decode_natsqls(
                 # Note: execute_sql will be success for empty string
                 assert len(pred_sql) > 0, "pred sql is empty!"
 
-                results = execute_sql(cursor, pred_sql)
+                execute_sql(cursor, pred_sql)
                 cursor.close()
                 cursor.connection.close()
                 # if the current sql has no execution error, we record and return it
@@ -272,7 +272,7 @@ def decode_sqls(
                 # Note: execute_sql will be success for empty string
                 assert len(pred_sql) > 0, "pred sql is empty!"
 
-                results = execute_sql(cursor, pred_sql)
+                execute_sql(cursor, pred_sql)
                 # if the current sql has no execution error, we record and return it
                 pred_executable_sql = pred_sql
                 cursor.close()

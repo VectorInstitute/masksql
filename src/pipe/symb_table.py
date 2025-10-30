@@ -1,5 +1,7 @@
 """Symbol table for tracking symbolic representations."""
 
+from typing import Any
+
 from src.pipe.processor.list_transformer import JsonListTransformer
 from src.pipe.schema_repo import DatabaseSchema, DatabaseSchemaRepo
 
@@ -16,11 +18,11 @@ class AddSymbolTable(JsonListTransformer):
         Path to the database schema definitions file
     """
 
-    def __init__(self, tables_path):
+    def __init__(self, tables_path: str) -> None:
         super().__init__(True)
         self.schema_repo = DatabaseSchemaRepo(tables_path)
 
-    def table_symbol(self, idx):
+    def table_symbol(self, idx: int) -> str:
         """
         Generate a table symbol.
 
@@ -36,7 +38,7 @@ class AddSymbolTable(JsonListTransformer):
         """
         return f"[T{idx}]"
 
-    def col_symbol(self, idx):
+    def col_symbol(self, idx: int) -> str:
         """
         Generate a column symbol.
 
@@ -52,7 +54,7 @@ class AddSymbolTable(JsonListTransformer):
         """
         return f"[C{idx}]"
 
-    async def _process_row(self, row):
+    async def _process_row(self, row: dict[str, Any]) -> dict[str, Any]:
         schema = DatabaseSchema.from_yaml(row["schema"])
         tid = 1
         cid = 1
@@ -85,11 +87,11 @@ class AddValueSymbolTable(JsonListTransformer):
         Path to the database schema definitions file
     """
 
-    def __init__(self, tables_path):
+    def __init__(self, tables_path: str) -> None:
         super().__init__(True)
         self.schema_repo = DatabaseSchemaRepo(tables_path)
 
-    async def _process_row(self, row):
+    async def _process_row(self, row: dict[str, Any]) -> dict[str, Any]:
         vid = 1
         value_links = row["value_links"]
         symbol_table = row["symbolic"]["to_symbol"]

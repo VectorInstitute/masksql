@@ -1,7 +1,8 @@
 """Data printing utilities."""
 
 from abc import ABC
-from typing import Dict
+from collections.abc import Callable
+from typing import Any
 
 from src.pipe.processor.list_processor import JsonListProcessor
 
@@ -9,7 +10,7 @@ from src.pipe.processor.list_processor import JsonListProcessor
 class DataPrinter(JsonListProcessor, ABC):
     """Base class for processors that print data without modifying files."""
 
-    async def run(self, input_file):
+    async def run(self, input_file: str) -> str:
         """
         Process input file and return same path.
 
@@ -31,7 +32,7 @@ class DataPrinter(JsonListProcessor, ABC):
 class CustomPrinter(DataPrinter):
     """Print questions and their masked versions."""
 
-    async def _process_row(self, row: Dict) -> Dict:
+    async def _process_row(self, row: Any) -> Any:
         print("-" * 10)
         print("Question:", row["question"])
         print("Masked:", row["symbolic"]["question"])
@@ -50,10 +51,10 @@ class LambdaPrinter(DataPrinter):
         Function to print each row
     """
 
-    def __init__(self, printer):
+    def __init__(self, printer: Callable[[Any], None]) -> None:
         super().__init__()
         self.printer = printer
 
-    async def _process_row(self, row: Dict) -> Dict:
+    async def _process_row(self, row: Any) -> Any:
         self.printer(row)
         return row

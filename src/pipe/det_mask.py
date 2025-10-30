@@ -1,6 +1,6 @@
 """Deterministic masking of terms in questions."""
 
-from typing import Dict, List, Union
+from typing import Any
 
 from loguru import logger
 
@@ -17,20 +17,20 @@ class AddSymbolicQuestion(JsonListTransformer):
     generation.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__(force=True)
 
     def get_symbol(
-        self, schema_items: Union[List[str], str], symbol_table: Dict[str, str]
+        self, schema_items: list[str] | str, symbol_table: dict[str, str]
     ) -> str:
         """
         Get symbolic representation for schema items.
 
         Parameters
         ----------
-        schema_items : Union[List[str], str]
+        schema_items : list[str] | str
             Schema item(s) to look up in the symbol table
-        symbol_table : Dict[str, str]
+        symbol_table : dict[str, str]
             Mapping from schema items to their symbols
 
         Returns
@@ -40,20 +40,20 @@ class AddSymbolicQuestion(JsonListTransformer):
         """
         if not isinstance(schema_items, list):
             schema_items = [schema_items]
-        symbols = []
+        symbols: list[str | None] = []
         for schema_item in schema_items:
             schema_item_parts = schema_item.split(":")
-            schema_item = schema_item_parts[1]
-            symbol = symbol_table.get(schema_item)
+            schema_item_name = schema_item_parts[1]
+            symbol = symbol_table.get(schema_item_name)
             symbols.append(symbol)
-        return ",".join(symbols)
+        return ",".join(str(s) for s in symbols if s is not None)
 
     def symbolize_term(
         self,
         question: str,
         question_term: str,
         schema_items: str,
-        symbol_table: Dict[str, str],
+        symbol_table: dict[str, str],
     ) -> str:
         """
         Replace a schema term in the question with its symbolic representation.
@@ -82,9 +82,9 @@ class AddSymbolicQuestion(JsonListTransformer):
         question: str,
         question_term: str,
         column_ref: str,
-        updated_schema_links: Dict[str, str],
-        filtered_value_links: Dict[str, str],
-        symbol_table: Dict[str, str],
+        updated_schema_links: dict[str, str],
+        filtered_value_links: dict[str, str],
+        symbol_table: dict[str, str],
     ) -> str:
         """
         Replace a value in the question with a symbolic representation.
@@ -124,8 +124,8 @@ class AddSymbolicQuestion(JsonListTransformer):
         return f"{symbolic_question}; {evidence}"
 
     def add_tables_of_columns(
-        self, schema_links: Dict[str, str], filtered_schema_links: Dict[str, str]
-    ):
+        self, schema_links: dict[str, str], filtered_schema_links: dict[str, str]
+    ) -> dict[str, str]:
         """
         Add table references for columns that are used in the schema links.
 
@@ -147,28 +147,30 @@ class AddSymbolicQuestion(JsonListTransformer):
             if schema_items is None:
                 logger.error(f"Invalid schema item: {schema_items}")
                 continue
-            if not isinstance(schema_items, list):
-                schema_items = [schema_items]
-            for schema_item in schema_items:
+            items = (
+                [schema_items] if not isinstance(schema_items, list) else schema_items
+            )
+            for schema_item in items:
                 if schema_item.startswith("COLUMN"):
                     col_ref = schema_item.split(":")[1]
                     table_name = col_ref.split(".")[0]
                     tables.add(table_name)
 
         for question_term, schema_items in schema_links.items():
-            if not isinstance(schema_items, list):
-                schema_items = [schema_items]
-            for schema_item in schema_items:
+            items = (
+                [schema_items] if not isinstance(schema_items, list) else schema_items
+            )
+            for schema_item in items:
                 if schema_item.startswith("TABLE"):
-                    assert len(schema_items) == 1
+                    assert len(items) == 1
                     table_name = schema_item.split(":")[1]
                     if table_name in tables:
                         updated_schema_links[question_term] = schema_item
         return updated_schema_links
 
-    async def _process_row(self, row):
-        self.vid = 1
-        self.value_dict = {}
+    async def _process_row(self, row: dict[str, Any]) -> dict[str, Any]:
+        self.vid: int = 1
+        self.value_dict: dict[str, str] = {}
         filtered_schema_links = row["filtered_schema_links"]
         schema_links = row["schema_links"]
         question = row["question"]
@@ -184,13 +186,11 @@ class AddSymbolicQuestion(JsonListTransformer):
         value_links = row["value_links"]
         filtered_value_links = row["filtered_value_links"]
 
-        if isinstance(value_links, list) or isinstance(value_links, str):
+        if isinstance(value_links, (list, str)):
             logger.error(f"Invalid value links: {value_links}")
             value_links = {}
 
-        if isinstance(filtered_value_links, list) or isinstance(
-            filtered_value_links, str
-        ):
+        if isinstance(filtered_value_links, (list, str)):
             logger.error(f"Invalid value links: {filtered_value_links}")
             filtered_value_links = {}
 

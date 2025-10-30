@@ -1,5 +1,7 @@
 """Schema linking from questions to database schemas."""
 
+from typing import Any
+
 from loguru import logger
 
 from src.pipe.detect_values_prompts.prompt_processor import PromptProcessor
@@ -10,19 +12,14 @@ from src.pipe.schema_link_prompts.v4 import SCHEMA_LINK_PROMPT_V4
 class LinkSchema(PromptProcessor):
     """Link natural language question terms to database schema items."""
 
-    def _process_output(self, row, output):
+    def _process_output(self, row: dict[str, Any], output: str) -> dict[str, Any]:
         schema_links = extract_object(output)
         if schema_links is None:
             schema_links = {}
         question = row["question"]
         schema_items = row["schema_items"]
         refined_links = {}
-        if (
-            isinstance(schema_links, list)
-            or isinstance(schema_links, set)
-            or isinstance(schema_links, str)
-            or isinstance(schema_links, tuple)
-        ):
+        if isinstance(schema_links, (list, set, str, tuple)):
             logger.error(f"Invalid schema links: {schema_links}")
             schema_links = {}
 
@@ -40,7 +37,7 @@ class LinkSchema(PromptProcessor):
             refined_links[question_term] = schema_item
         return refined_links
 
-    def _get_prompt(self, row):
+    def _get_prompt(self, row: dict[str, Any]) -> str:
         question = row["question"]
         schema_items = row["schema_items"]
         value_list = row["values"]

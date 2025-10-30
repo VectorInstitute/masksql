@@ -34,13 +34,15 @@ if __name__ == "__main__":
         natsql2sql_args.not_infer_group = True
 
     # 2. Prepare data
-    tables = json.load(open(args.table_file, "r"))
+    with open(args.table_file, "r") as f:
+        tables = json.load(f)
     table_dict = {}
     for t in tables:
         table_dict[t["db_id"]] = t
-    sqls = json.load(open(args.natsql_file, "r"))
+    with open(args.natsql_file, "r") as f:
+        sqls = json.load(f)
 
-    for i, sql in enumerate(sqls):
+    for _i, sql in enumerate(sqls):
         if "pattern_tok" in sql:
             sq = SubQuestion(
                 sql["question"],

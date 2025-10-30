@@ -1,7 +1,6 @@
 """Repository for loading and managing database schemas."""
 
 import json
-from typing import Dict, Union
 
 import yaml
 
@@ -30,13 +29,13 @@ class DatabaseSchema:
 
     Attributes
     ----------
-    tables : Dict[str, Dict[str, Union[str, Dict[str, Union[str, bool]]]]]
+    tables : dict[str, dict[str, str | dict[str, str | bool]]]
         Mapping of table names to column definitions
     """
 
-    tables: Dict[str, Dict[str, Union[str, Dict[str, Union[str, bool]]]]]
+    tables: dict[str, dict[str, str | dict[str, str | bool]]]
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.tables = {}
 
     def to_yaml(self) -> str:
@@ -51,7 +50,7 @@ class DatabaseSchema:
         return yaml.dump(self.tables)
 
     @staticmethod
-    def from_yaml(yaml_str: str):
+    def from_yaml(yaml_str: str) -> "DatabaseSchema":
         """
         Create schema from YAML string.
 
@@ -86,9 +85,9 @@ class DatabaseSchemaRepo:
         Mapping of database IDs to schemas
     """
 
-    dbs: Dict[str, DatabaseSchema]
+    dbs: dict[str, DatabaseSchema]
 
-    def __init__(self, tables_json_path: str):
+    def __init__(self, tables_json_path: str) -> None:
         self.dbs = {}
         with open(tables_json_path) as file:
             data = json.load(file)
@@ -141,9 +140,7 @@ class DatabaseSchemaRepo:
                             "type": col_type,
                             "foreign_key": fk_ref,
                         }
-                    else:
-                        schema.tables[src_table_name][src_col_name]["foreign_key"] = (
-                            fk_ref
-                        )
+                    elif isinstance(col_type, dict):
+                        col_type["foreign_key"] = fk_ref
 
                 self.dbs[db["db_id"]] = schema

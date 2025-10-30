@@ -1,5 +1,7 @@
 """Filter schema links based on relevance."""
 
+from typing import Any
+
 from src.pipe.detect_values_prompts.prompt_processor import PromptProcessor
 from src.pipe.llm_util import extract_object
 from src.pipe.schema_filter_prompts.v2 import FILTER_SCHEMA_LINKS_PROMPT_V2
@@ -16,13 +18,13 @@ class FilterSchemaLinks(PromptProcessor):
     terms to schema items) are relevant to specific concepts.
     """
 
-    def _process_output(self, row, output):
+    def _process_output(self, row: dict[str, Any], output: str) -> dict[str, Any]:
         obj = extract_object(output)
         if obj is None:
             return {}
         return obj
 
-    def _get_prompt(self, row):
+    def _get_prompt(self, row: dict[str, Any]) -> str:
         schema_links = row["schema_links"]
         question = row["question"]
         return FILTER_SCHEMA_LINKS_PROMPT_V2.format(

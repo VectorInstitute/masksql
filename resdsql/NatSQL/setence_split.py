@@ -297,10 +297,6 @@ def question_repair_select_part(sql, token_list, schema):
     ):
         replace_old = []
         replace_new = []
-        select, where, group, order = (None, None, None, None)
-        sentence_num = len(sentences)
-        re_value = []
-        key_word = []
         for sentence, table_match, list_idx in zip(sentences, table_matchs, list_idxs):
             (
                 availble_sent,
@@ -361,7 +357,7 @@ def final_cut(
     sum_ = sum([tl[1] for tl in token_list])
     and_should_cut = False
     if sum_ == 0 and " and " in question:
-        for tl, db, i in zip(
+        for tl, _db, i in zip(
             reversed(token_list), reversed(db_match), range(len(db_match) - 1, -1, -1)
         ):
             if tl[0].text == "than":
@@ -407,7 +403,7 @@ def final_cut(
                     token_list[j][1] = 1
                 and_should_cut = False
     if not keep_original_question:
-        for tl, db, i in zip(
+        for tl, _db, i in zip(
             reversed(token_list), reversed(db_match), range(len(db_match) - 1, -1, -1)
         ):
             if tl[0].text == "and" and (  # prevent and cut the col to two separate column
@@ -448,7 +444,7 @@ def final_cut(
 def generate_full_db_match(token_list, col_match, sql, schema):
     question_toks = [tok[0] for tok in token_list]
     re_list = []
-    for start_idx, tok in enumerate(token_list):
+    for start_idx, _tok in enumerate(token_list):
         if (
             start_idx == 0
             or (
@@ -488,8 +484,10 @@ def preprocess_sql(
     2. calc table match
     3. sentence cut
     """
-    sqls = json.load(open(sql_path, "r"))
-    table_json = json.load(open(table_path, "r"))
+    with open(sql_path, "r") as f:
+        sqls = json.load(f)
+    with open(table_path, "r") as f:
+        table_json = json.load(f)
     table_dict = {}
     full_word = {}
     all_schema = {}
@@ -514,8 +512,6 @@ def preprocess_sql(
         table_dict[table["db_id"]] = table
         if not ONE_ID:
             all_schema[table["db_id"]] = Schema_Token(_tokenizer, None, table, None)
-
-    fast_db_match_json = None
 
     if not keep_original_question:
         for i, sql in enumerate(sqls):
@@ -572,7 +568,6 @@ def preprocess_sql(
                 and not split_final[1].isalpha()
             ):
                 sql["question"] = sql["question"][0:-1] + " " + sql["question"][-1]
-    sqls2 = []
     for i, sql in enumerate(sqls):
         if ONE_ID and i != ONE_ID:
             continue
@@ -806,7 +801,8 @@ def construct_hyper_param():
 
 if __name__ == "__main__":
     args = construct_hyper_param()
-    all_word = pickle.load(open("data/20k-original.pkl", "rb"))
+    with open("data/20k-original.pkl", "rb") as f:
+        all_word = pickle.load(f)
     sqls = preprocess_sql(
         sql_path=args.in_file,
         table_path=args.table_file,
@@ -815,5 +811,6 @@ if __name__ == "__main__":
         use_pattern_generate_col=args.use_pattern_generate_col,
     )
     if not ONE_ID:
-        json.dump(sqls, open(args.out_file, "w"), indent=2)
+        with open(args.out_file, "w") as f:
+            json.dump(sqls, f, indent=2)
         pass

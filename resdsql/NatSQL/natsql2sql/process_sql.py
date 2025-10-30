@@ -8,13 +8,13 @@
 #   3. only one intersect/union/except
 #
 # val: number(float)/string(str)/sql(dict)
-# col_unit: (agg_id, col_id, isDistinct(bool))
+# col_unit: (agg_id, col_id, is_distinct(bool))
 # val_unit: (unit_op, col_unit1, col_unit2)
 # table_unit: (table_type, col_unit/sql)
 # cond_unit: (not_op, op_id, val_unit, val1, val2)
 # condition: [cond_unit1, 'and'/'or', cond_unit2, ...]
 # sql {
-#   'select': (isDistinct(bool), [(agg_id, val_unit), (agg_id, val_unit), ...])
+#   'select': (is_distinct(bool), [(agg_id, val_unit), (agg_id, val_unit), ...])
 #   'from': {'table_units': [table_unit1, table_unit2, ...], 'conds': condition}
 #   'where': condition
 #   'groupBy': [col_unit1, col_unit2, ...]
@@ -92,20 +92,20 @@ class Schema:
         return self._idMap
 
     def _map(self, schema):
-        idMap = {"*": "__all__"}
+        id_map = {"*": "__all__"}
         id = 1
         for key, vals in schema.items():
             for val in vals:
-                idMap[key.lower() + "." + val.lower()] = (
+                id_map[key.lower() + "." + val.lower()] = (
                     "__" + key.lower() + "." + val.lower() + "__"
                 )
                 id += 1
 
         for key in schema:
-            idMap[key.lower()] = "__" + key.lower() + "__"
+            id_map[key.lower()] = "__" + key.lower() + "__"
             id += 1
 
-        return idMap
+        return id_map
 
 
 def get_schema(db, table_json=None):
@@ -257,10 +257,10 @@ def parse_col_unit(toks, start_idx, tables_with_alias, schema, default_tables=No
     """
     idx = start_idx
     len_ = len(toks)
-    isBlock = False
-    isDistinct = False
+    is_block = False
+    is_distinct = False
     if toks[idx] == "(":
-        isBlock = True
+        is_block = True
         idx += 1
 
     if toks[idx] in AGG_OPS:
@@ -270,31 +270,31 @@ def parse_col_unit(toks, start_idx, tables_with_alias, schema, default_tables=No
         idx += 1
         if toks[idx] == "distinct":
             idx += 1
-            isDistinct = True
+            is_distinct = True
         idx, col_id = parse_col(toks, idx, tables_with_alias, schema, default_tables)
         assert idx < len_ and toks[idx] == ")"
         idx += 1
-        return idx, (agg_id, col_id, isDistinct)
+        return idx, (agg_id, col_id, is_distinct)
 
     if toks[idx] == "distinct":
         idx += 1
-        isDistinct = True
+        is_distinct = True
     agg_id = AGG_OPS.index("none")
     idx, col_id = parse_col(toks, idx, tables_with_alias, schema, default_tables)
 
-    if isBlock:
+    if is_block:
         assert toks[idx] == ")"
         idx += 1  # skip ')'
 
-    return idx, (agg_id, col_id, isDistinct)
+    return idx, (agg_id, col_id, is_distinct)
 
 
 def parse_val_unit(toks, start_idx, tables_with_alias, schema, default_tables=None):
     idx = start_idx
     len_ = len(toks)
-    isBlock = False
+    is_block = False
     if toks[idx] == "(":
-        isBlock = True
+        is_block = True
         idx += 1
 
     col_unit1 = None
@@ -311,7 +311,7 @@ def parse_val_unit(toks, start_idx, tables_with_alias, schema, default_tables=No
             toks, idx, tables_with_alias, schema, default_tables
         )
 
-    if isBlock:
+    if is_block:
         assert toks[idx] == ")"
         idx += 1  # skip ')'
 
@@ -338,9 +338,9 @@ def parse_value(toks, start_idx, tables_with_alias, schema, default_tables=None)
     idx = start_idx
     len_ = len(toks)
 
-    isBlock = False
+    is_block = False
     if toks[idx] == "(":
-        isBlock = True
+        is_block = True
         idx += 1
 
     if toks[idx] == "select":
@@ -369,7 +369,7 @@ def parse_value(toks, start_idx, tables_with_alias, schema, default_tables=None)
             )
             idx = end_idx
 
-    if isBlock:
+    if is_block:
         assert toks[idx] == ")"
         idx += 1
 
@@ -435,10 +435,10 @@ def parse_select(toks, start_idx, tables_with_alias, schema, default_tables=None
 
     assert toks[idx] == "select", "'select' not found"
     idx += 1
-    isDistinct = False
+    is_distinct = False
     if idx < len_ and toks[idx] == "distinct":
         idx += 1
-        isDistinct = True
+        is_distinct = True
     val_units = []
 
     while idx < len_ and toks[idx] not in CLAUSE_KEYWORDS:
@@ -453,7 +453,7 @@ def parse_select(toks, start_idx, tables_with_alias, schema, default_tables=None
         if idx < len_ and toks[idx] == ",":
             idx += 1  # skip ','
 
-    return idx, (isDistinct, val_units)
+    return idx, (is_distinct, val_units)
 
 
 def parse_from(toks, start_idx, tables_with_alias, schema):
@@ -469,9 +469,9 @@ def parse_from(toks, start_idx, tables_with_alias, schema):
     conds = []
 
     while idx < len_:
-        isBlock = False
+        is_block = False
         if toks[idx] == "(":
-            isBlock = True
+            is_block = True
             idx += 1
 
         if toks[idx] == "select":
@@ -494,7 +494,7 @@ def parse_from(toks, start_idx, tables_with_alias, schema):
                 conds.append("and")
             conds.extend(this_conds)
 
-        if isBlock:
+        if is_block:
             assert toks[idx] == ")"
             idx += 1
         if idx < len_ and (toks[idx] in CLAUSE_KEYWORDS or toks[idx] in (")", ";")):
@@ -601,13 +601,13 @@ def parse_sql(toks, start_idx, tables_with_alias, schema, mapped_entities_fn=Non
 
     if mapped_entities_fn is not None:
         mapped_entities = mapped_entities_fn()
-    isBlock = False  # indicate whether this is a block of sql/sub-sql
+    is_block = False  # indicate whether this is a block of sql/sub-sql
     len_ = len(toks)
     idx = start_idx
 
     sql = {}
     if toks[idx] == "(":
-        isBlock = True
+        is_block = True
         idx += 1
 
     # parse from clause in order to get default tables
@@ -644,7 +644,7 @@ def parse_sql(toks, start_idx, tables_with_alias, schema, mapped_entities_fn=Non
     sql["limit"] = limit_val
 
     idx = skip_semicolon(toks, idx)
-    if isBlock:
+    if is_block:
         assert toks[idx] == ")"
         idx += 1  # skip ')'
     idx = skip_semicolon(toks, idx)
@@ -655,8 +655,8 @@ def parse_sql(toks, start_idx, tables_with_alias, schema, mapped_entities_fn=Non
     if idx < len_ and toks[idx] in SQL_OPS:
         sql_op = toks[idx]
         idx += 1
-        idx, IUE_sql = parse_sql(toks, idx, tables_with_alias, schema)
-        sql[sql_op] = IUE_sql
+        idx, iue_sql = parse_sql(toks, idx, tables_with_alias, schema)
+        sql[sql_op] = iue_sql
 
     if mapped_entities_fn is not None:
         return idx, sql, mapped_entities

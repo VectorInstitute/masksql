@@ -1,9 +1,10 @@
 """JSON file reading and writing utilities."""
 
 import json
+from typing import Any
 
 
-def read_json(path):
+def read_json(path: str) -> Any:
     """
     Read and parse a JSON file.
 
@@ -21,7 +22,7 @@ def read_json(path):
         return json.load(f)
 
 
-def write_json(path, data):
+def write_json(path: str, data: Any) -> None:
     """
     Write data to a JSON file with indentation.
 

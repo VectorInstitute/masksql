@@ -1,6 +1,6 @@
 """Tree node implementation for diagram visualization of SQL AST."""
 
-from typing import List, Optional
+from typing import List, Optional, Self
 
 from graphviz import Digraph
 
@@ -33,18 +33,18 @@ class DiagramTreeNode(MergeableVisitorResult):
         self.children = []
         self.shape = shape
 
-    def merge(self, other):
+    def merge(self, other: Self) -> Self:
         """Merge another node by adding it as a child."""
         return self.add_child(other)
 
-    def add_child(self, child: "DiagramTreeNode"):
+    def add_child(self, child: "DiagramTreeNode") -> Self:
         """Add a child node to this node and set its parent reference."""
         if child is not None:
             child.parent = self
             self.children.append(child)
         return self
 
-    def add_to_graph(self, graph: Digraph):
+    def add_to_graph(self, graph: Digraph) -> None:
         """Recursively add this node and its children to the graph."""
         graph.node(self.id(), self.name, shape=self.shape)
         if self.parent:
@@ -65,6 +65,6 @@ class DiagramTreeNode(MergeableVisitorResult):
             return 1
         return max([c.get_height() + 1 for c in self.children])
 
-    def id(self):
+    def id(self) -> str:
         """Return the unique identifier for this node."""
         return str(id(self))

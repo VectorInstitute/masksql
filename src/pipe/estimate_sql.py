@@ -1,8 +1,9 @@
 """SQL query estimation and scoring."""
 
 import re
+from typing import Any
 
-from RESDSQL.pipeline_stage import PipelineStage
+from src.pipe.detect_values_prompts.prompt_processor import PromptProcessor
 
 
 PROMPT = """
@@ -33,7 +34,7 @@ DB Schema: {schema}
 N = 3
 
 
-class EstimateSQL(PipelineStage):
+class EstimateSQL(PromptProcessor):
     """
     Estimate SQL queries from natural language questions.
 
@@ -41,12 +42,14 @@ class EstimateSQL(PipelineStage):
     and database schemas.
     """
 
-    def process_output(self, output):
+    def _process_output(self, row: dict[str, Any], output: str) -> str:
         """
         Extract SQL query from LLM output.
 
         Parameters
         ----------
+        row : dict
+            Data row (unused in this implementation)
         output : str
             Raw LLM output containing SQL in markdown code blocks
 
@@ -63,7 +66,7 @@ class EstimateSQL(PipelineStage):
             final_answer = final_answer[3:]
         return final_answer
 
-    def get_prompt(self, row):
+    def _get_prompt(self, row: dict[str, Any]) -> str:
         """
         Generate prompt for SQL estimation.
 

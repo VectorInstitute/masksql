@@ -2,14 +2,21 @@
 
 import asyncio
 import os
+from collections.abc import Awaitable, Callable, Iterable
+from typing import TypeVar
 
 from tqdm.asyncio import tqdm
 
 
-ASYNC_BATCH = int(os.environ.get("ASYNC_BATCH", 1))
+ASYNC_BATCH = int(os.environ.get("ASYNC_BATCH", "1"))
+
+T = TypeVar("T")
+R = TypeVar("R")
 
 
-async def apply_async(fun, items, desc=""):
+async def apply_async(
+    fun: Callable[[T], Awaitable[R]], items: Iterable[T], desc: str = ""
+) -> list[R]:
     """
     Apply async function to items with rate limiting and progress tracking.
 
@@ -29,9 +36,10 @@ async def apply_async(fun, items, desc=""):
     """
     semaphore = asyncio.Semaphore(ASYNC_BATCH)
 
-    async def sem_task(item):
+    async def sem_task(item: T) -> R:
         async with semaphore:
             return await fun(item)
 
-    tasks = [asyncio.create_task(sem_task(item)) for item in items]
-    return await tqdm.gather(*tasks, total=len(items), desc=desc)
+    items_list = list(items)
+    tasks = [asyncio.create_task(sem_task(item)) for item in items_list]
+    return await tqdm.gather(*tasks, total=len(items_list), desc=desc)

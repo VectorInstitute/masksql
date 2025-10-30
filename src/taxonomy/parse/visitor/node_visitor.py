@@ -1,6 +1,7 @@
 """Abstract base class for visiting SQL AST nodes."""
 
 from abc import ABC, abstractmethod
+from typing import Any
 
 from src.taxonomy.parse.node import (
     BetweenExpressionNode,
@@ -36,7 +37,7 @@ class NodeVisitor(ABC):
     """Abstract base class for visiting SQL AST nodes."""
 
     @abstractmethod
-    def visit_select_statement(self, node: SelectStatementNode):
+    def visit_select_statement(self, node: SelectStatementNode) -> Any:
         """
         Visit a SELECT statement node.
 
@@ -48,7 +49,7 @@ class NodeVisitor(ABC):
         pass
 
     @abstractmethod
-    def visit_select_core(self, node: SelectCoreNode):
+    def visit_select_core(self, node: SelectCoreNode) -> Any:
         """
         Visit a SELECT core node.
 
@@ -60,7 +61,7 @@ class NodeVisitor(ABC):
         pass
 
     @abstractmethod
-    def visit_select_clause(self, node: SelectClauseNode):
+    def visit_select_clause(self, node: SelectClauseNode) -> Any:
         """
         Visit a SELECT clause node.
 
@@ -72,7 +73,7 @@ class NodeVisitor(ABC):
         pass
 
     @abstractmethod
-    def visit_group_clause(self, node: GroupClauseNode):
+    def visit_group_clause(self, node: GroupClauseNode) -> Any:
         """
         Visit a GROUP BY clause node.
 
@@ -84,7 +85,7 @@ class NodeVisitor(ABC):
         pass
 
     @abstractmethod
-    def visit_from_clause(self, node: FromClauseNode):
+    def visit_from_clause(self, node: FromClauseNode) -> Any:
         """
         Visit a FROM clause node.
 
@@ -96,7 +97,7 @@ class NodeVisitor(ABC):
         pass
 
     @abstractmethod
-    def visit_where_clause(self, node: WhereClauseNode):
+    def visit_where_clause(self, node: WhereClauseNode) -> Any:
         """
         Visit a WHERE clause node.
 
@@ -108,7 +109,7 @@ class NodeVisitor(ABC):
         pass
 
     @abstractmethod
-    def visit_between_expression(self, node: BetweenExpressionNode):
+    def visit_between_expression(self, node: BetweenExpressionNode) -> Any:
         """
         Visit a BETWEEN expression node.
 
@@ -120,7 +121,7 @@ class NodeVisitor(ABC):
         pass
 
     @abstractmethod
-    def visit_order_by(self, node: OrderByNode):
+    def visit_order_by(self, node: OrderByNode) -> Any:
         """
         Visit an ORDER BY node.
 
@@ -132,7 +133,7 @@ class NodeVisitor(ABC):
         pass
 
     @abstractmethod
-    def visit_ordering_term(self, node: OrderingTerm):
+    def visit_ordering_term(self, node: OrderingTerm) -> Any:
         """
         Visit an ordering term node.
 
@@ -144,7 +145,7 @@ class NodeVisitor(ABC):
         pass
 
     @abstractmethod
-    def visit_limit(self, node: LimitNode):
+    def visit_limit(self, node: LimitNode) -> Any:
         """
         Visit a LIMIT node.
 
@@ -156,7 +157,7 @@ class NodeVisitor(ABC):
         pass
 
     @abstractmethod
-    def visit_join_clause(self, node: JoinClauseNode):
+    def visit_join_clause(self, node: JoinClauseNode) -> Any:
         """
         Visit a JOIN clause node.
 
@@ -168,7 +169,7 @@ class NodeVisitor(ABC):
         pass
 
     @abstractmethod
-    def visit_join_constraint(self, node: JoinConstraintNode):
+    def visit_join_constraint(self, node: JoinConstraintNode) -> Any:
         """
         Visit a JOIN constraint node.
 
@@ -180,7 +181,7 @@ class NodeVisitor(ABC):
         pass
 
     @abstractmethod
-    def visit_table_or_subquery(self, node: TableOrSubqueryNode):
+    def visit_table_or_subquery(self, node: TableOrSubqueryNode) -> Any:
         """
         Visit a table or subquery node.
 
@@ -192,7 +193,7 @@ class NodeVisitor(ABC):
         pass
 
     @abstractmethod
-    def visit_result_column(self, node: ResultColumnNode):
+    def visit_result_column(self, node: ResultColumnNode) -> Any:
         """
         Visit a result column node.
 
@@ -204,7 +205,7 @@ class NodeVisitor(ABC):
         pass
 
     @abstractmethod
-    def visit_column(self, node: ColumnNode):
+    def visit_column(self, node: ColumnNode) -> Any:
         """
         Visit a column node.
 
@@ -216,7 +217,7 @@ class NodeVisitor(ABC):
         pass
 
     @abstractmethod
-    def visit_function_expression(self, node: FunctionExpressionNode):
+    def visit_function_expression(self, node: FunctionExpressionNode) -> Any:
         """
         Visit a function expression node.
 
@@ -228,7 +229,7 @@ class NodeVisitor(ABC):
         pass
 
     @abstractmethod
-    def visit_bin_op_expression(self, node: BinOpExpressionNode):
+    def visit_bin_op_expression(self, node: BinOpExpressionNode) -> Any:
         """
         Visit a binary operation expression node.
 
@@ -240,7 +241,7 @@ class NodeVisitor(ABC):
         pass
 
     @abstractmethod
-    def visit_terminal(self, node: TerminalNode):
+    def visit_terminal(self, node: TerminalNode) -> Any:
         """
         Visit a terminal node.
 
@@ -252,7 +253,7 @@ class NodeVisitor(ABC):
         pass
 
     @abstractmethod
-    def visit_expression(self, node: ExpressionNode):
+    def visit_expression(self, node: ExpressionNode) -> Any:
         """
         Visit an expression node.
 
@@ -264,7 +265,7 @@ class NodeVisitor(ABC):
         pass
 
     @abstractmethod
-    def visit_literal(self, node: LiteralNode):
+    def visit_literal(self, node: LiteralNode) -> Any:
         """
         Visit a literal node.
 
@@ -276,7 +277,7 @@ class NodeVisitor(ABC):
         pass
 
     @abstractmethod
-    def visit_cast_expression(self, node: CastExpressionNode):
+    def visit_cast_expression(self, node: CastExpressionNode) -> Any:
         """
         Visit a CAST expression node.
 
@@ -288,7 +289,7 @@ class NodeVisitor(ABC):
         pass
 
     @abstractmethod
-    def visit_window_expression(self, node: WindowExpressionNode):
+    def visit_window_expression(self, node: WindowExpressionNode) -> Any:
         """
         Visit a window expression node.
 
@@ -300,7 +301,7 @@ class NodeVisitor(ABC):
         pass
 
     @abstractmethod
-    def visit_window_definition(self, node: WindowDefinitionNode):
+    def visit_window_definition(self, node: WindowDefinitionNode) -> Any:
         """
         Visit a window definition node.
 
@@ -312,7 +313,7 @@ class NodeVisitor(ABC):
         pass
 
     @abstractmethod
-    def visit_literal_list(self, node: LiteralListNode):
+    def visit_literal_list(self, node: LiteralListNode) -> Any:
         """
         Visit a literal list node.
 
@@ -324,7 +325,7 @@ class NodeVisitor(ABC):
         pass
 
     @abstractmethod
-    def visit_with_clause(self, node: WithClauseNode):
+    def visit_with_clause(self, node: WithClauseNode) -> Any:
         """
         Visit a WITH clause node.
 
@@ -336,7 +337,7 @@ class NodeVisitor(ABC):
         pass
 
     @abstractmethod
-    def visit_common_table_expression(self, node: CommonTableExpressionNode):
+    def visit_common_table_expression(self, node: CommonTableExpressionNode) -> Any:
         """
         Visit a common table expression node.
 

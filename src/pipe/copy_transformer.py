@@ -2,6 +2,7 @@
 
 import json
 import os
+from typing import Any
 
 from src.pipe.processor.list_transformer import JsonListTransformer
 
@@ -18,12 +19,12 @@ class CopyTransformer(JsonListTransformer):
         Destination field path.
     """
 
-    def __init__(self, src, dst):
+    def __init__(self, src: str, dst: str) -> None:
         super().__init__(force=True)
         self.src = src
         self.dst = dst
 
-    async def _process_row(self, row):
+    async def _process_row(self, row: dict[str, Any]) -> dict[str, Any]:
         src_value = self.get_prop(row, self.src)
         self.set_prop(row, self.dst, src_value)
         return row
@@ -39,11 +40,11 @@ class DeleteProp(JsonListTransformer):
         Property name to delete.
     """
 
-    def __init__(self, prop):
+    def __init__(self, prop: str) -> None:
         super().__init__(force=True)
         self.prop = prop
 
-    async def _process_row(self, row):
+    async def _process_row(self, row: dict[str, Any]) -> dict[str, Any]:
         del row[self.prop]
         return row
 
@@ -60,12 +61,12 @@ class CopyFromPrevStage(JsonListTransformer):
         Source field to copy.
     """
 
-    def __init__(self, stage, src):
+    def __init__(self, stage: str, src: str) -> None:
         super().__init__(force=True)
         self.stage = stage
         self.src = src
 
-    def get_prev_stage(self, input_file):
+    def get_prev_stage(self, input_file: str) -> list[dict[str, Any]]:
         """
         Load data from previous pipeline stage.
 
@@ -83,7 +84,7 @@ class CopyFromPrevStage(JsonListTransformer):
         prev_stage_file_path = os.path.join(dir_path, f"{self.stage}.json")
         return super()._get_input_data(prev_stage_file_path)
 
-    async def run(self, input_file):
+    async def run(self, input_file: str) -> str:
         """
         Run the transformer and copy values from previous stage.
 
@@ -113,7 +114,7 @@ class CopyFromPrevStage(JsonListTransformer):
             f.write(json.dumps(updated_rows, indent=4))
         return output_file
 
-    async def _process_row(self, row):
+    async def _process_row(self, row: dict[str, Any]) -> dict[str, Any]:
         return row
 
 
@@ -124,10 +125,10 @@ class AddGoldValues(JsonListTransformer):
     Extracts keys from gold_value_links and stores them in a 'values' field.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__(force=True)
 
-    async def _process_row(self, row):
+    async def _process_row(self, row: dict[str, Any]) -> dict[str, Any]:
         value_links = row["gold_value_links"]
         keys = list(value_links.keys())
         row["values"] = keys

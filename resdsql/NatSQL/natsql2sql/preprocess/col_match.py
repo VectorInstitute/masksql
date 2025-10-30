@@ -358,7 +358,7 @@ def col_match_main(tables, ts, schema, table_match, select_type=False, all_table
                         )
                     )
                 ):
-                    for col in col_all[3]:
+                    for _col in col_all[3]:
                         if (
                             ts.tokens[i - 1].text == "of"
                             and schema.column_tokens_table_idx[match[i - 2][0][0]]
@@ -380,7 +380,7 @@ def col_match_main(tables, ts, schema, table_match, select_type=False, all_table
                     and schema.column_tokens_table_idx[match[i + 1][0][0]]
                     in table_match[i]
                 ):
-                    for col in col_all[3]:
+                    for _col in col_all[3]:
                         if (
                             schema.column_tokens_table_idx[match[i + 1][0][0]]
                             not in table_match[i]

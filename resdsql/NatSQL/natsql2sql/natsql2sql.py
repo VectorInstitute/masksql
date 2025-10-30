@@ -41,6 +41,13 @@ SQL_SUBSUB = 3  # sub-sub sql, based on 'sub'
 
 
 def natsql_version():
+    """Get the NatSQL version.
+
+    Returns
+    -------
+    str
+        Version string of NatSQL.
+    """
     return "1.6.1"
 
 
@@ -85,6 +92,20 @@ globe_join_on_label_count = 0
 
 
 def reversed_link_back_col(col_id, table_json):
+    """Find the reversed link back column ID.
+
+    Parameters
+    ----------
+    col_id : int
+        Column ID to start searching from.
+    table_json : dict
+        Table metadata containing link_back information.
+
+    Returns
+    -------
+    int
+        The linked column ID, or 0 if not found.
+    """
     for lb in range(col_id, len(table_json["link_back"])):
         if table_json["link_back"][lb][1] == col_id:
             return table_json["link_back"][lb][0]
@@ -203,10 +224,8 @@ def condition_str(column):
 
 
 def get_where_column(sql_dict, table_list, start_index, sql_type, table_json, args):
-    AND_OR_TYPE = 1
-    SUB_SQL_TYPE = 2
-    SUB_SUB_SQL_TYPE = 3
-    TOP_SQL_TYPE = AND_OR_TYPE
+    and_or_type = 1
+    sub_sql_type = 2
 
     break_idx = -1
     next_type = None
@@ -227,7 +246,7 @@ def get_where_column(sql_dict, table_list, start_index, sql_type, table_json, ar
             isinstance(column, str) and column.lower() in SPECIAL_COND_OPS
         ):  # 'except', 'intersect', 'union', 'sub'
             if column == "sub":
-                last_column_type = SUB_SQL_TYPE
+                last_column_type = sub_sql_type
                 break_idx, next_type = (
                     (idx + 1, SQL_SUBSUB)
                     if (idx > start_index and not next_type)
@@ -246,7 +265,7 @@ def get_where_column(sql_dict, table_list, start_index, sql_type, table_json, ar
                 )
                 break
         elif isinstance(column, str) and column.lower() in AND_OR_OPS:  # 'and', 'or'
-            last_column_type = AND_OR_TYPE
+            last_column_type = and_or_type
             if sql_str.endswith("and "):
                 sql_str = sql_str[:-4]
             elif sql_str.endswith("or "):
@@ -528,7 +547,7 @@ def get_table_network(
             other_table = (
                 table_idx_list[1] if pk[1] == table_idx_list[0] else table_idx_list[0]
             )
-            for i, o_col, col in zip(
+            for i, _o_col, col in zip(
                 range(len(table_json["column_names_original"])),
                 table_json["column_names_original"],
                 table_json["column_names"],
@@ -633,7 +652,7 @@ def get_table_network(
                 )  # (table_json['table_names_original'].index(t))
 
         from_table_net = []
-        for idx, network in enumerate(table_json["network"]):
+        for _idx, network in enumerate(table_json["network"]):
             if len(network[1]) == len(table_index_list) or (
                 len(network[1]) > len(table_index_list) and len(table_index_list) > 1
             ):
@@ -649,7 +668,7 @@ def get_table_network(
                 ):
                     from_table_net.append(copy.deepcopy(network))
         if not from_table_net:
-            for idx, network in enumerate(table_json["network"]):
+            for _idx, network in enumerate(table_json["network"]):
                 if len(network[1]) == len(table_index_list) or (
                     len(network[1]) > len(table_index_list)
                     and len(table_index_list) > 1
@@ -1212,15 +1231,6 @@ def maybe_order_by(
             if args.keep_top_order_by and sql_type_now == SQL_TOP:
                 return ""
 
-            order_by_sql = (
-                " ORDER BY "
-                + sql_dict["where"][idx][2][1][1]
-                + (
-                    " DESC LIMIT 1 "
-                    if sql_dict["where"][idx][3][0] == 1
-                    else " ASC LIMIT 1 "
-                )
-            )
     return ""
 
 
@@ -1271,7 +1281,7 @@ def primary_keys(table_json, table_id, pk_only=False):
             return key
     if pk_only and table_json["primary_keys"]:
         return -1
-    for key, col in enumerate(table_json["column_names"]):
+    for key, _col in enumerate(table_json["column_names"]):
         if table_json["column_names"][key][0] == table_id:
             col_n = table_json["column_names"][key][1].lower().strip()
             col_n = col_n.replace(
@@ -2263,7 +2273,7 @@ def extract_select_columns(sub_sql):
     sub_sql_tokens = sub_sql.split(" ")
     see_select = False
     re_columns = ""
-    for i, tok in enumerate(sub_sql_tokens):
+    for _i, tok in enumerate(sub_sql_tokens):
         if see_select:
             if "." not in tok or "(" in tok:
                 break
@@ -2355,7 +2365,7 @@ def fk_replace_IUE(
                             + " "
                             + table_json["column_names"][i][1]
                         ).lower()
-                        for j, col in enumerate(table_json["column_names"]):
+                        for _j, col in enumerate(table_json["column_names"]):
                             if col[0] == table_json["column_names"][col_idx2][0] and (
                                 col[1].lower() == pure_col_name
                                 or table_json["column_names"][i][1].lower()
@@ -2385,7 +2395,7 @@ def search_bcol(sq, table, where, sql_dict, where_i):
         if where[2][1][1] not in table["tc_fast"]
         else table["tc_fast"].index(where[2][1][1])
     )
-    for (i_t, type_), pts in zip(enumerate(sq.sub_sequence_type), sq.pattern_tok):
+    for (i_t, _), pts in zip(enumerate(sq.sub_sequence_type), sq.pattern_tok):
         if "BCOL" in pts:
             for j, pt in enumerate(pts):
                 if pt == "BCOL":
@@ -2914,7 +2924,7 @@ def analyse_num(
 
     num_count = 0
     success = False
-    for (i_t, type_), pts in zip(enumerate(sq.sub_sequence_type), sq.pattern_tok):
+    for (i_t, _), pts in zip(enumerate(sq.sub_sequence_type), sq.pattern_tok):
         if sq_sub_idx >= 0 and sq_sub_idx != i_t:
             continue
         there_is_available_pattern = False
@@ -2967,7 +2977,7 @@ def fill_values(sql_dict, sq, table_json):
     used_value = []
 
     if sql_dict["limit"]:
-        for (i, type_), pts in zip(enumerate(sq.sub_sequence_type), sq.pattern_tok):
+        for (i, _), pts in zip(enumerate(sq.sub_sequence_type), sq.pattern_tok):
             if "NUM" in pts and ("GR_JJS" in pts or "SM_JJS" in pts or "top" in pts):
                 num_idx, num = get_num_for_limit(pts, sq, sql_dict, i, table_json)
                 if num and type(num) == int:
@@ -2976,7 +2986,7 @@ def fill_values(sql_dict, sq, table_json):
         if sql_dict["limit"] == 1:
             num_in_select = False
             there_is_agg = False
-            for (i, type_), pts in zip(enumerate(sq.sub_sequence_type), sq.pattern_tok):
+            for (_i, type_), pts in zip(enumerate(sq.sub_sequence_type), sq.pattern_tok):
                 if type_ <= 1 and "NUM" in pts:
                     num_in_select = True
                 if "GR_JJS" in pts or "SM_JJS" in pts:
@@ -3522,7 +3532,7 @@ def join2subquery(
     for t in select_table_list:
         t_id_list.append(table_json["table_orig_low"].index(t))
     insert_idx = 0
-    for i, w in enumerate(sql_dict["where"]):
+    for _i, w in enumerate(sql_dict["where"]):
         if (
             type(w) == list
             and w[2][1][1].lower() in table_json["tc_fast"]
@@ -3564,7 +3574,6 @@ def join2subquery(
             and table_json["column_names"][fks[1]][0] not in bridge_table
             and group_col_idx not in fks
         ):
-            table_idx = table_json["column_names"][fks[1]][0]
             sql_dict["where"].insert(insert_idx, "and")
             sql_dict["where"].insert(
                 insert_idx,
@@ -3586,7 +3595,6 @@ def join2subquery(
             and table_json["column_names"][fks[0]][0] not in bridge_table
             and group_col_idx not in fks
         ):
-            table_idx = table_json["column_names"][fks[0]][0]
             sql_dict["where"].insert(insert_idx, "and")
             sql_dict["where"].insert(
                 insert_idx,
@@ -3622,7 +3630,7 @@ def groupby2subquery(
     else:
         pass
     insert_idx = 0
-    for i, w in enumerate(sql_dict["where"]):
+    for _i, w in enumerate(sql_dict["where"]):
         if type(w) == list and not w[2][1][0]:
             insert_idx += 2
         elif type(w) == list:
@@ -3793,10 +3801,10 @@ def search_all_join_on(
     all_from.append(from_table_netss)
 
     if sql_dict["groupBy"]:  # V1.1:
-        groupby_list = [col_unit_back(gBy) for gBy in sql_dict["groupBy"]]
+        groupby_list = [col_unit_back(g_by) for g_by in sql_dict["groupBy"]]
         groupby_top = " group by " + ", ".join(groupby_list)
-        for gBy in sql_dict["groupBy"]:
-            table_list.append(gBy[1].split(".")[0])
+        for g_by in sql_dict["groupBy"]:
+            table_list.append(g_by[1].split(".")[0])
         table_list = list(set(table_list))
         if break_idx == SQL_TOP:
             add_top_group = False

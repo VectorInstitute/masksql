@@ -139,7 +139,7 @@ async def get_schema_link(entry: ResdSQLOutput) -> str:
     client = AsyncClient(
         organization=os.getenv("OPENAI_GROUP_ID"),
         project=os.getenv("OPENAI_PROJ_ID"),
-        timeout=int(os.getenv("OPENAI_TIMEOUT", 60)),
+        timeout=int(os.getenv("OPENAI_TIMEOUT", "60")),
     )
     msg = PROMPT.format(entry.question, entry.tc_original)
     with open("out/prompts.txt", "a") as f:

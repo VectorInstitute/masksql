@@ -192,7 +192,6 @@ STOP_WORDS = {
 
 def one_group_in_ahead(all_tokens, token, father_idx, offset):
     next_token = [token]
-    valid_len = 0
     start = False
     break_check = True
     while True:
@@ -305,7 +304,6 @@ def check_behind_children_len(token):
 
 def prep_table_break(token, table_match):
     next_token = [c for c in token.children]
-    valid_len = 0
     table_num = set()
     there_is_break = False
     while True:
@@ -316,7 +314,7 @@ def prep_table_break(token, table_match):
         del next_token[0]
         if tok_now.text not in STOP_WORDS and not table_match[tok_now.i]:
             return False
-        for i, child in enumerate(children):
+        for _i, child in enumerate(children):
             if table_match[child.i]:
                 table_num.add(table_match[child.i][0][0])
             if len(table_num) > 1:
@@ -482,7 +480,6 @@ def merge_punctuation_2(sentence, sent_data):
 
 
 def sentence_cut(sentence, table_match, offset, sent_idx, sent_num):
-    tokens = [token for token in sentence]
     root = [token for token in sentence if token.head == token]
     if len(root) > 1:
         return None
@@ -1071,7 +1068,6 @@ def final_correct_special_pattern(token_list):
 
 
 def sentence_dump(sentence, sent_data):
-    tokens = [token for token in sentence]
     root = [token for token in sentence if token.head == token]
     if len(root) > 1:
         return None
@@ -1192,13 +1188,12 @@ def sentence_cut_analyze(
                         return True
         return False
 
-    others = []
     previous_col_match = []
     skip_once = False
     conditional_skip = False
     previous_db_match = {}
     select_tables = []
-    for sentence, table_match, list_idx, type_ in zip(
+    for _sentence, _table_match, list_idx, type_ in zip(
         sentences, table_matchs, range(len(table_matchs)), sub_q.sub_sequence_type
     ):
         if type_ == 0:
@@ -1208,7 +1203,7 @@ def sentence_cut_analyze(
         else:
             break
     pattern_for_return = []
-    for sentence, table_match, list_idx, type_ in zip(
+    for _sentence, table_match, list_idx, type_ in zip(
         sentences, table_matchs, range(len(table_matchs)), sub_q.sub_sequence_type
     ):
         tables = look_for_table_idx(sub_q, list_idx, 0, schema)
@@ -1948,7 +1943,6 @@ def add_col_analyze(
                                 )
         return None, None, None
 
-    others = []
     previous_col_match = []
     new_insert_idxs = []
     offset = 0
@@ -2390,7 +2384,7 @@ def easy_cut(token_list, table_match, col_match):
                     break
             if match:
                 offset = 0
-                for j, p in enumerate(pattern):
+                for _j, p in enumerate(pattern):
                     if p != "*":
                         break
                     offset += 1
@@ -2470,7 +2464,6 @@ def select_split(token_list, col_match_list, db_match):
         return token_list
 
     def there_are_condition_values():
-        type_start = token_list[i][1]
         for j in range(i + 1, len(token_list)):
             if token_list[j][1] != token_list[j - 1][1]:
                 break
@@ -3062,7 +3055,6 @@ def db_correction(token_list, col_match, sql, schema):
                 question_toks[sii] = SToken(text=db_tok)
 
     question_toks = [tok[0] for tok in token_list]
-    all_db_str = []
     db_ = DBEngine.new_db(schema)
     offset = 0
 
@@ -3273,7 +3265,7 @@ def db_correction(token_list, col_match, sql, schema):
                     k_space = key.count(" ")
                     c_space = c.count(" ")
                     if k_space < c_space:
-                        for z in range(c_space - k_space):
+                        for _z in range(c_space - k_space):
                             token_list.insert(start_idx + 1, [])
                             sql["db_match"].insert(start_idx + 1, [])
                             sql["question_tag"].insert(
@@ -3287,7 +3279,7 @@ def db_correction(token_list, col_match, sql, schema):
                             col_match.insert(start_idx + 1, [])
                             question_toks.insert(start_idx + 1, [])
                     elif k_space > c_space:
-                        for z in range(k_space - c_space):
+                        for _z in range(k_space - c_space):
                             del token_list[start_idx + 1]
                             del sql["db_match"][start_idx + 1]
                             del sql["question_tag"][start_idx + 1]
@@ -3591,7 +3583,7 @@ def db_continue_correction(token_list, sql, schema):
             tbs.append(schema.column_names_original[c][0])
         return set(tbs)
 
-    for (start_idx, tok), db_m in zip(enumerate(token_list), sql["db_match"]):
+    for (start_idx, tok), _db_m in zip(enumerate(token_list), sql["db_match"]):
         offset = 0
         if (
             start_idx > 1
@@ -3687,7 +3679,7 @@ def others_analyze(
     others = []
     pattern_unknow = []
     others_token_pattern = []
-    for sentence, table_match, list_idx in zip(sentences, table_matchs, list_idxs):
+    for _sentence, table_match, list_idx in zip(sentences, table_matchs, list_idxs):
         tables = look_for_table_idx(sub_q, list_idx, 1, schema)
         ts = TokenString(None, sub_q.question_tokens[list_idx])
         pattern_unknow.append(
@@ -3759,7 +3751,7 @@ def combine_none_subquestion(token_list, sql, schema, sentence_num, col_match):
     others_list, others_table, others_list_idx, others_db_idx = sq.sentence_combine(
         combine_type=1, type_offset=1
     )
-    for (i, cm), oi in zip(enumerate(sq.col_match), sq.original_idx):
+    for (i, _cm), oi in zip(enumerate(sq.col_match), sq.original_idx):
         sq.col_match[i] = [col_match[idx] for idx in oi]
     others, _, select_token_pattern = others_analyze(
         select_list,

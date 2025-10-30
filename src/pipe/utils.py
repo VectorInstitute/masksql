@@ -124,11 +124,11 @@ class Timer:
 
     start_time: datetime
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.start_time = datetime.now()
 
     @staticmethod
-    def start():
+    def start() -> "Timer":
         """
         Create and start a new timer.
 

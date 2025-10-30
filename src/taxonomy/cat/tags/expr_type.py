@@ -1,5 +1,7 @@
 """SQL expression type tags."""
 
+from typing import cast
+
 from src.taxonomy.cat.tag_collector import TagCollector
 from src.taxonomy.cat.tag_collector_result import TagCollectorResult
 from src.taxonomy.cat.tags.sql_tag import OrderedTag
@@ -17,9 +19,11 @@ class ExprType(OrderedTag):
     class Collector(TagCollector):
         """Collector for SQL expression types."""
 
-        def visit_bin_op_expression(self, node: BinOpExpressionNode):
+        def visit_bin_op_expression(
+            self, node: BinOpExpressionNode
+        ) -> TagCollectorResult:
             """Visit a binary operation expression node."""
-            tags = super().visit_bin_op_expression(node)
+            tags = cast(TagCollectorResult, super().visit_bin_op_expression(node))
             if node.is_arith_expr():
                 return tags + TagCollectorResult(ExprType.ArithExpr)
             if (isinstance(node.left, str) or not node.left.has_sub_expr()) and (
@@ -28,7 +32,9 @@ class ExprType(OrderedTag):
                 return tags + TagCollectorResult(ExprType.SingleBinExpr)
             return tags + TagCollectorResult(ExprType.ComplexExpr)
 
-        def visit_between_expression(self, node: BetweenExpressionNode):
+        def visit_between_expression(
+            self, node: BetweenExpressionNode
+        ) -> TagCollectorResult:
             """Visit a BETWEEN expression node."""
-            tags = super().visit_between_expression(node)
+            tags = cast(TagCollectorResult, super().visit_between_expression(node))
             return tags + TagCollectorResult(ExprType.ComplexExpr)

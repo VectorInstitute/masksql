@@ -1,5 +1,7 @@
 """SLM (Small Language Model) SQL generation module."""
 
+from typing import Any
+
 from src.pipe.detect_values_prompts.prompt_processor import PromptProcessor
 from src.pipe.gen_sql import extract_sql
 from src.pipe.slm_sql_prompt.v1 import GENERATE_SQL_PROMPT_V1
@@ -12,12 +14,12 @@ class SlmSQL(PromptProcessor):
     to generate SQL queries using a small language model.
     """
 
-    def _process_output(self, row, output):
+    def _process_output(self, row: dict[str, Any], output: str) -> str:
         """Process the LLM output to extract SQL.
 
         Parameters
         ----------
-        row : dict
+        row : dict[str, Any]
             The input row data.
         output : str
             The raw output from the language model.
@@ -29,12 +31,12 @@ class SlmSQL(PromptProcessor):
         """
         return extract_sql(output)
 
-    def _get_prompt(self, row):
+    def _get_prompt(self, row: dict[str, Any]) -> str:
         """Generate the prompt for SQL generation.
 
         Parameters
         ----------
-        row : dict
+        row : dict[str, Any]
             The input row containing 'question' and 'schema'.
 
         Returns
