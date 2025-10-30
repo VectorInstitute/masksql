@@ -21,3 +21,4 @@ archive
 .env.bak
 __MACOSX
 *.zip
+.coverage
