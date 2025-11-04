@@ -9,7 +9,7 @@ filelock==3.16.1
 fsspec==2025.3.0
 google-auth==2.40.3
 google-auth-oauthlib==0.4.6
-grpcio==1.51.3
+grpcio==1.53.2
 hf-xet==1.1.9
 huggingface-hub==0.34.4
 idna==3.10
