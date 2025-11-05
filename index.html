@@ -461,15 +461,6 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#3-clean-intermediate-results-optional" class="md-nav__link">
-    <span class="md-ellipsis">
-      3. Clean Intermediate Results (Optional)
-    </span>
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -659,15 +650,6 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#3-clean-intermediate-results-optional" class="md-nav__link">
-    <span class="md-ellipsis">
-      3. Clean Intermediate Results (Optional)
-    </span>
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -711,6 +693,12 @@
 
 
 <h1 id="masksql">MaskSQL<a class="headerlink" href="#masksql" title="Permanent link">&para;</a></h1>
+<hr />
+<p><a href="https://github.com/VectorInstitute/masksql/actions/workflows/code_checks.yml"><img alt="code checks" src="https://github.com/VectorInstitute/masksql/actions/workflows/code_checks.yml/badge.svg" /></a>
+<a href="https://github.com/VectorInstitute/masksql/actions/workflows/unit_tests.yml"><img alt="unit tests" src="https://github.com/VectorInstitute/masksql/actions/workflows/unit_tests.yml/badge.svg" /></a>
+<a href="https://github.com/VectorInstitute/masksql/actions/workflows/docs.yml"><img alt="docs" src="https://github.com/VectorInstitute/masksql/actions/workflows/docs.yml/badge.svg" /></a>
+<a href="https://codecov.io/github/VectorInstitute/masksql"><img alt="codecov" src="https://codecov.io/github/VectorInstitute/masksql/graph/badge.svg?token=83MYFZ3UPA" /></a>
+<img alt="GitHub License" src="https://img.shields.io/github/license/VectorInstitute/masksql" /></p>
 <p>MaskSQL is a privacy-preserving framework for LLM-based text-to-SQL that uses schema masking and progressive unmasking to protect sensitive database information while maintaining high query accuracy.</p>
 <h2 id="table-of-contents">Table of Contents<a class="headerlink" href="#table-of-contents" title="Permanent link">&para;</a></h2>
 <ul>
@@ -759,9 +747,8 @@
 <p>Execute the MaskSQL pipeline:</p>
 <div class="language-sh highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>python3<span class="w"> </span>main.py<span class="w"> </span>--resd
 </span></code></pre></div>
-<h3 id="3-clean-intermediate-results-optional">3. Clean Intermediate Results (Optional)<a class="headerlink" href="#3-clean-intermediate-results-optional" title="Permanent link">&para;</a></h3>
-<p>MaskSQL saves intermediate results for reuse. To run from scratch:</p>
-<div class="language-sh highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>./clean.sh<span class="w"> </span>data
+<p>or to clean previous outputs and rerun:</p>
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>python3<span class="w"> </span>main.py<span class="w"> </span>--resd<span class="w"> </span>--clean
 </span></code></pre></div>
 <h2 id="documentation">Documentation<a class="headerlink" href="#documentation" title="Permanent link">&para;</a></h2>
 <ul>
