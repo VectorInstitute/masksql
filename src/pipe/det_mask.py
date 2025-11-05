@@ -1,11 +1,13 @@
 """Deterministic masking of terms in questions."""
 
+import logging
 from typing import Any
-
-from loguru import logger
 
 from src.pipe.processor.list_transformer import JsonListTransformer
 from src.pipe.utils import replace_str
+
+
+logger = logging.getLogger(__name__)
 
 
 class AddSymbolicQuestion(JsonListTransformer):
@@ -211,8 +213,8 @@ class AddSymbolicQuestion(JsonListTransformer):
                 masked_terms.append(question_term)
                 masked += 1
             except Exception as e:
-                logger.error(
-                    f"Failed to mask {question_term}:{schema_item}, error={e} "
+                logger.warning(
+                    f"[yellow]⚠  Mask failed[/yellow] [dim]{question_term}[/dim] → {e}"
                 )
 
         for question_term in sorted_schema_terms:
@@ -224,8 +226,8 @@ class AddSymbolicQuestion(JsonListTransformer):
                 masked_terms.append(question_term)
                 masked += 1
             except Exception as e:
-                logger.error(
-                    f"Failed to mask {question_term}:{schema_items}, error={e} "
+                logger.warning(
+                    f"[yellow]⚠  Mask failed[/yellow] [dim]{question_term}[/dim] → {e}"
                 )
         row["symbolic"].update(
             {
