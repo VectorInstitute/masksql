@@ -3,10 +3,9 @@
 import re
 from typing import Any
 
-from loguru import logger
-
 from src.pipe.detect_values_prompts.prompt_processor import PromptProcessor
 from src.pipe.sql_gen_prompts.masked_v3 import MASKED_GEN_SQL_PROMPT_V3
+from src.utils.logging import logger
 
 
 DATA_DIR = "data"

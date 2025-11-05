@@ -2,11 +2,10 @@
 
 from typing import Any
 
-from loguru import logger
-
 from src.pipe.detect_values_prompts.prompt_processor import PromptProcessor
 from src.pipe.gen_sql import extract_sql
 from src.pipe.sql_repair_prompts.v3 import REPAIR_SQL_PROMPT_V3
+from src.utils.logging import logger
 
 
 class RepairSQL(PromptProcessor):

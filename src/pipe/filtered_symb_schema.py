@@ -2,10 +2,9 @@
 
 from typing import Any
 
-from loguru import logger
-
 from src.pipe.processor.list_transformer import JsonListTransformer
 from src.pipe.schema_repo import DatabaseSchema, DatabaseSchemaRepo
+from src.utils.logging import logger
 
 
 class AddFilteredSymbolicSchema(JsonListTransformer):

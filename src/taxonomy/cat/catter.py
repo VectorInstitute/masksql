@@ -1,12 +1,11 @@
 """SQL statement categorization interface."""
 
-from loguru import logger
-
 from src.taxonomy.cat.categorizer import Categorizer
 from src.taxonomy.cat.statement_category import StatementCategory
 from src.taxonomy.cat.sub_category import SubCategory
 from src.taxonomy.cat.tag_extractor import TagExtractor
 from src.taxonomy.parse.parser import SqlParser
+from src.utils.logging import logger
 
 
 class Catter:

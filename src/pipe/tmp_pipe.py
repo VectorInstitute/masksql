@@ -1,11 +1,7 @@
 """Temporary pipeline processing utilities."""
 
 import asyncio
-import contextlib
 import os
-import sys
-
-from loguru import logger
 
 from src.pipe.add_schema import AddFilteredSchema
 from src.pipe.add_symb_schema import AddSymbolicSchema
@@ -26,6 +22,7 @@ from src.pipe.repair_symb_sql import RepairSymbolicSQLRaw
 from src.pipe.slm_mask import SlmMask, SlmUnmask
 from src.pipe.symb_table import AddSymbolTable
 from src.pipe.wrong_exec_acc import ExecuteConcreteSql
+from src.utils.logging import configure_logging
 
 
 LLM_MODEL = os.getenv("LLM_MODEL", "openai/gpt-4")
@@ -78,15 +75,7 @@ slm_mask = [
 
 async def main() -> None:
     """Run the temporary pipeline for testing."""
-    with contextlib.suppress(Exception):
-        logger.remove(0)
-    logger.add(
-        sys.stderr,
-        level=LOG_LEVEL,
-        colorize=True,
-        enqueue=True,
-        format="<green>{time:HH:mm:ss}[{process.id}] | </green><level> {level}: {message}</level>",
-    )
+    configure_logging()
 
     pipeline = Pipeline(mask_pipe)
     # pipeline = Pipeline(slm_mask)

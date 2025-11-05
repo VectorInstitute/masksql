@@ -44,7 +44,7 @@ class Results(JsonListTransformer):
         # Add each metric to the table
         for metric, value in stats.items():
             formatted_value = f"{value:.6f}" if isinstance(value, float) else str(value)
-            results_table.add_row(metric, formatted_value)
+            results_table.add_row(str(metric), formatted_value)
 
         console.print(results_table)
         console.print(f"\n[dim]Total samples processed: {self.count}[/dim]\n")

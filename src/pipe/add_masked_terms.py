@@ -2,11 +2,10 @@
 
 from typing import Any
 
-from loguru import logger
-
 from src.pipe.attack_prompts.add_masked_terms import ADD_MASKED_TERMS_PROMPT_V1
 from src.pipe.detect_values_prompts.prompt_processor import PromptProcessor
 from src.pipe.llm_util import extract_object
+from src.utils.logging import logger
 
 
 class AddMaskedTerms(PromptProcessor):

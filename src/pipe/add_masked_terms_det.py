@@ -2,10 +2,9 @@
 
 from typing import Any
 
-from loguru import logger
-
 from src.pipe.processor.list_transformer import JsonListTransformer
 from src.pipe.utils import replace_str
+from src.utils.logging import logger
 
 
 class AddMaskedTermsDeterministic(JsonListTransformer):

@@ -3,7 +3,7 @@
 import re
 from datetime import datetime
 
-from loguru import logger
+from src.utils.logging import logger
 
 
 def replace_str(text: str, src: str, dst: str) -> str:

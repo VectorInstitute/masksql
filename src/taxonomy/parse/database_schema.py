@@ -3,7 +3,7 @@
 from difflib import SequenceMatcher
 from typing import Dict, FrozenSet, List, Set, Tuple
 
-from loguru import logger
+from src.utils.logging import logger
 
 
 def str_similarity(s1: str, s2: str) -> float:
