@@ -4,9 +4,9 @@
 from dataclasses import replace
 from typing import Any
 
-from src.utils.logging import logger
 from ply import yacc
 
+from src.utils.logging import logger
 from src.utils.strings import shrink_whitespaces
 
 from .lexer import get_lexer

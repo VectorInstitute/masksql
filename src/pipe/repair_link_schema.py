@@ -2,11 +2,10 @@
 
 from typing import Any
 
-from src.utils.logging import logger
-
 from src.pipe.detect_values_prompts.prompt_processor import PromptProcessor
 from src.pipe.llm_util import extract_object
 from src.pipe.schema_link_prompts.repair import REPAIR_SCHEMA_LINK_PROMPT_V1
+from src.utils.logging import logger
 
 
 class RepairSchemaLinks(PromptProcessor):

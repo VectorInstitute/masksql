@@ -1,11 +1,7 @@
 """Main pipeline execution script."""
 
 import asyncio
-import contextlib
 import os
-import sys
-
-from src.utils.logging import logger
 
 from src.pipe.add_schema import AddFilteredSchema
 from src.pipe.add_symb_schema import AddSymbolicSchema
@@ -31,6 +27,7 @@ from src.pipe.symb_table import AddSymbolTable
 from src.pipe.unmask import AddConcreteSql
 from src.pipe.value_links import LinkValues
 from src.pipe.wrong_exec_acc import ExecuteConcreteSql
+from src.utils.logging import configure_logging
 
 
 LLM_MODEL: str | None = os.getenv("LLM_MODEL")
@@ -105,15 +102,7 @@ slm_mask: list[JsonListProcessor] = [
 
 async def main() -> None:
     """Execute main pipeline processing."""
-    with contextlib.suppress(Exception):
-        logger.remove(0)
-    logger.add(
-        sys.stderr,
-        level=LOG_LEVEL,
-        colorize=True,
-        enqueue=True,
-        format="<green>{time:HH:mm:ss}[{process.id}] | </green><level> {level}: {message}</level>",
-    )
+    configure_logging()
 
     pipeline = Pipeline(mask_pipe)
     # pipeline = Pipeline(slm_mask)

@@ -5,11 +5,10 @@ from abc import abstractmethod
 from json import JSONDecodeError
 from typing import Any
 
-from src.utils.logging import logger
-
 from src.pipe.llm_util import send_prompt
 from src.pipe.processor.list_transformer import JsonListTransformer
 from src.pipe.utils import Timer
+from src.utils.logging import logger
 
 
 class PromptProcessor(JsonListTransformer):
