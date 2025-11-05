@@ -1,6 +1,6 @@
 """SQL statement categorization interface."""
 
-from loguru import logger
+from src.utils.logging import logger
 
 from src.taxonomy.cat.categorizer import Categorizer
 from src.taxonomy.cat.statement_category import StatementCategory

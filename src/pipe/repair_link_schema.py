@@ -2,7 +2,7 @@
 
 from typing import Any
 
-from loguru import logger
+from src.utils.logging import logger
 
 from src.pipe.detect_values_prompts.prompt_processor import PromptProcessor
 from src.pipe.llm_util import extract_object

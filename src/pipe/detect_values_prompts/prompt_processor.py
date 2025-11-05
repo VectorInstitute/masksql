@@ -5,7 +5,7 @@ from abc import abstractmethod
 from json import JSONDecodeError
 from typing import Any
 
-from loguru import logger
+from src.utils.logging import logger
 
 from src.pipe.llm_util import send_prompt
 from src.pipe.processor.list_transformer import JsonListTransformer

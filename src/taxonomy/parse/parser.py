@@ -4,7 +4,7 @@
 from dataclasses import replace
 from typing import Any
 
-from loguru import logger
+from src.utils.logging import logger
 from ply import yacc
 
 from src.utils.strings import shrink_whitespaces

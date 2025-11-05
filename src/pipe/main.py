@@ -5,7 +5,7 @@ import contextlib
 import os
 import sys
 
-from loguru import logger
+from src.utils.logging import logger
 
 from src.pipe.add_schema import AddFilteredSchema
 from src.pipe.add_symb_schema import AddSymbolicSchema
