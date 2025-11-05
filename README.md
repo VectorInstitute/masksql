@@ -1,5 +1,13 @@
 # MaskSQL
 
+----------------------------------------------------------------------------------------
+
+[![code checks](https://github.com/VectorInstitute/masksql/actions/workflows/code_checks.yml/badge.svg)](https://github.com/VectorInstitute/masksql/actions/workflows/code_checks.yml)
+[![unit tests](https://github.com/VectorInstitute/masksql/actions/workflows/unit_tests.yml/badge.svg)](https://github.com/VectorInstitute/masksql/actions/workflows/unit_tests.yml)
+[![docs](https://github.com/VectorInstitute/masksql/actions/workflows/docs.yml/badge.svg)](https://github.com/VectorInstitute/masksql/actions/workflows/docs.yml)
+[![codecov](https://codecov.io/github/VectorInstitute/masksql/graph/badge.svg?token=83MYFZ3UPA)](https://codecov.io/github/VectorInstitute/masksql)
+![GitHub License](https://img.shields.io/github/license/VectorInstitute/masksql)
+
 MaskSQL is a privacy-preserving framework for LLM-based text-to-SQL that uses schema masking and progressive unmasking to protect sensitive database information while maintaining high query accuracy.
 
 ## Table of Contents
