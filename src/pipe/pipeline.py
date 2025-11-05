@@ -5,6 +5,12 @@ from typing import Any
 from src.pipe.monitor.lib import Timer
 from src.pipe.monitor.mem import track_memory_async
 from src.pipe.processor.list_processor import JsonListProcessor
+from src.utils.logging import (
+    log_pipeline_summary,
+    log_stage_complete,
+    log_stage_start,
+    reset_stage_timings,
+)
 
 
 class Pipeline:
@@ -24,10 +30,18 @@ class Pipeline:
         tmp_file: Any = input_file
         timer: Timer = Timer()
         timer.start()
+        last_lap_time = 0.0
+
         for stage in self.stages:
-            print(f"Starting Stage: {stage.name}")
+            log_stage_start(stage.name)
             tmp_file = await stage.run(tmp_file)
-            print(f"Done Stage: {stage.name}, time={timer.lap()}")
+
+            # Get cumulative time and calculate stage time
+            cumulative_time = timer.lap()
+            stage_time = cumulative_time - last_lap_time
+            last_lap_time = cumulative_time
+
+            log_stage_complete(stage.name, stage_time)
         return tmp_file
 
     async def run(self, input_file: str) -> tuple[Any, float, float]:
@@ -44,12 +58,22 @@ class Pipeline:
         tuple[Any, float, float]
             Tuple of (result, average_memory_mb, peak_memory_mb)
         """
+        # Reset timing tracker for new pipeline run
+        reset_stage_timings()
+
         timer: Timer = Timer.start()
         result, avg_mem, peak_mem = await track_memory_async(
             self.__run_internal, input_file
         )
-        timer.lap()
-        # logger.info(f"TOTAL PRED TIME: {total_time}")
-        # logger.info(f"AVG MEM: {avg_mem}")
-        # logger.info(f"PEAK MEM: {peak_mem}")
+        total_time = timer.lap()
+
+        # Extract results if available
+        results_dict = None
+        if isinstance(result, list) and len(result) > 0 and isinstance(result[0], dict):
+            # Check if there's a summary in the result
+            pass  # Results will be handled by the Results stage itself
+
+        # Log comprehensive summary
+        log_pipeline_summary(total_time, avg_mem, peak_mem, results_dict)
+
         return result, avg_mem, peak_mem

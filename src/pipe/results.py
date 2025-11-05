@@ -3,8 +3,10 @@
 from typing import Any
 
 import pandas as pd
+from rich.table import Table
 
 from src.pipe.processor.list_transformer import JsonListTransformer
+from src.utils.logging import console
 
 
 class Results(JsonListTransformer):
@@ -26,12 +28,26 @@ class Results(JsonListTransformer):
 
     def _post_run(self) -> None:
         df = pd.DataFrame(self.stat_rows)
-        print(df.mean())
-        # print("Count: ", self.count)
-        # if len(self.recall_scores) > 0:
-        #     print(len(self.recall_scores))
-        #     print(len(self.recall_scores))
-        #     print(sum(self.recall_scores) / len(self.recall_scores))
+        stats = df.mean()
+
+        # Create results table
+        console.print("\n")
+        results_table = Table(
+            title="[bold cyan]Evaluation Results[/bold cyan]",
+            show_header=True,
+            header_style="bold magenta",
+            border_style="green",
+        )
+        results_table.add_column("Metric", style="cyan", width=20)
+        results_table.add_column("Value", style="yellow", justify="right", width=15)
+
+        # Add each metric to the table
+        for metric, value in stats.items():
+            formatted_value = f"{value:.6f}" if isinstance(value, float) else str(value)
+            results_table.add_row(metric, formatted_value)
+
+        console.print(results_table)
+        console.print(f"\n[dim]Total samples processed: {self.count}[/dim]\n")
 
     async def _process_row(self, row: dict[str, Any]) -> dict[str, Any]:
         stat = {}

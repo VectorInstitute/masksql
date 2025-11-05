@@ -33,13 +33,24 @@ def extract_sql(output: str) -> str:
         sql = output
     elif "```sql" in output:
         res = re.findall(r"```sql([\s\S]*?)```", output)
-        sql = res[0]
+        if res:
+            sql = res[0]
+        else:
+            logger.error(
+                f"Failed to extract sql from output with ```sql marker: {output}"
+            )
     elif "```" in output:
         res = re.findall(r"```([\s\S]*?)```", output)
-        sql = res[0]
+        if res:
+            sql = res[0]
+        else:
+            logger.error(f"Failed to extract sql from output with ``` marker: {output}")
     elif "`" in output:
         res = re.findall(r"`([\s\S]*?)`", output)
-        sql = res[0]
+        if res:
+            sql = res[0]
+        else:
+            logger.error(f"Failed to extract sql from output with ` marker: {output}")
     else:
         logger.error(f"Failed to extract sql from output: {output}")
     sql = sql.strip()

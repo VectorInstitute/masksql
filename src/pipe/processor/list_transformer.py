@@ -1,12 +1,14 @@
 """List transformation base classes."""
 
 import json
+import logging
 import os
 from abc import ABC
 
-from loguru import logger
-
 from src.pipe.processor.list_processor import JsonListProcessor
+
+
+logger = logging.getLogger(__name__)
 
 
 FORCE = int(os.environ.get("FORCE", "0")) > 0
@@ -61,7 +63,7 @@ class JsonListTransformer(JsonListProcessor, ABC):
         output_file = self.get_output_file(input_file)
 
         if not self.force and os.path.exists(output_file):
-            logger.debug(f"File exists: {output_file}, skipping.")
+            logger.debug(f"[dim]⏭  Skipping[/dim] {os.path.basename(output_file)}")
             return output_file
 
         updated_rows = await super().run(input_file)
