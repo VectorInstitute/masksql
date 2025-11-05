@@ -2,6 +2,8 @@
 
 import argparse
 import asyncio
+import logging
+from pathlib import Path
 
 from config import MaskSqlConfig
 from src.pipe.add_schema import AddFilteredSchema
@@ -28,6 +30,55 @@ from src.pipe.symb_table import AddSymbolTable
 from src.pipe.unmask import AddConcreteSql
 from src.pipe.value_links import LinkValues
 from src.utils.logging import configure_logging
+
+
+logger = logging.getLogger(__name__)
+
+
+def clean_data_directory(data_dir: str) -> None:
+    """Clean intermediate files from the data directory.
+
+    Removes files matching the pattern [0-9]*_* but excludes files starting with 1_*.
+    This is used to clean up intermediate pipeline output files while preserving
+    the initial input files.
+
+    Parameters
+    ----------
+    data_dir : str
+        Path to the data directory to clean.
+    """
+    data_path = Path(data_dir)
+
+    if not data_path.exists():
+        logger.error(f"Data directory does not exist: {data_dir}")
+        return
+
+    if not data_path.is_dir():
+        logger.error(f"Path is not a directory: {data_dir}")
+        return
+
+    # Find all files matching [0-9]*_* pattern
+    files_to_delete = []
+    for file_path in data_path.iterdir():
+        if file_path.is_file():
+            name = file_path.name
+            # Check if filename starts with a digit and contains underscore
+            if name[0].isdigit() and "_" in name and not name.startswith("1_"):
+                files_to_delete.append(file_path)
+
+    if not files_to_delete:
+        logger.info(f"No files to clean in {data_dir}")
+        return
+
+    logger.info(f"Cleaning {len(files_to_delete)} files from {data_dir}")
+    for file_path in files_to_delete:
+        try:
+            file_path.unlink()
+            logger.debug(f"Deleted: {file_path.name}")
+        except Exception as e:
+            logger.error(f"Failed to delete {file_path.name}: {e}")
+
+    logger.info("Cleanup complete")
 
 
 def create_pipeline_stages(conf: MaskSqlConfig) -> list[JsonListProcessor]:
@@ -77,21 +128,27 @@ def create_pipeline_stages(conf: MaskSqlConfig) -> list[JsonListProcessor]:
 
 async def main() -> None:
     """Run the MaskSQL main pipeline."""
-    # Printing entire DB schema items
-    # with open("data/tables.json") as tables:
-    #     tables = json.load(tables)
-    #     count = 0
-    #     for row in tables:
-    #         for item in row["table_names"]:
-    #             count+=1
-    #     print("these are the rows we are investigating!", count)
     parser = argparse.ArgumentParser(description="MaskSQL")
     parser.add_argument(
         "--data", type=str, required=False, help="Data directory", default="data"
     )
     parser.add_argument("--resd", action="store_true", dest="resd", help="Use RESDSQL")
+    parser.add_argument(
+        "--clean",
+        action="store_true",
+        help="Clean intermediate files from data directory",
+    )
     args = parser.parse_args()
     configure_logging()
+
+    # Handle clean operation
+    if args.clean:
+        clean_data_directory(args.data)
+        # If no pipeline operation requested (only cleaning), exit
+        if not args.resd:
+            return
+
+    # Run pipeline
     conf = MaskSqlConfig(args.data, args.resd, "full")
     pipeline_stages = create_pipeline_stages(conf)
     pipeline = Pipeline(pipeline_stages)

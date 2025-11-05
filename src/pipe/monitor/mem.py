@@ -1,5 +1,6 @@
 """Memory usage monitoring utilities."""
 
+import logging
 import os
 import threading
 import time
@@ -7,17 +8,23 @@ from collections.abc import Awaitable, Callable
 from typing import Any
 
 import psutil
-from loguru import logger
+
+
+logger = logging.getLogger(__name__)
 
 
 def _monitor_memory(
     interval: float, stop_event: threading.Event, mem_usage: list[float]
 ) -> None:
     process = psutil.Process(os.getpid())
+    sample_count = 0
     while not stop_event.is_set():
         rss = process.memory_info().rss / (1024 * 1024)
-        logger.debug(f"Monitoring memory: {rss}")
         mem_usage.append(rss)
+        # Only log every 10th sample to reduce verbosity
+        sample_count += 1
+        if sample_count % 10 == 0:
+            logger.debug(f"[yellow]Memory[/yellow]: {rss:.1f} MB")
         time.sleep(interval)
 
 
