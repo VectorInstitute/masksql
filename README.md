@@ -82,12 +82,10 @@ Execute the MaskSQL pipeline:
 python3 main.py --resd
 ```
 
-### 3. Clean Intermediate Results (Optional)
-
-MaskSQL saves intermediate results for reuse. To run from scratch:
+or to clean previous outputs and rerun:
 
 ```sh
-./clean.sh data
+python3 main.py --resd --clean
 ```
 
 ## Documentation
