@@ -144,9 +144,6 @@ async def main() -> None:
     # Handle clean operation
     if args.clean:
         clean_data_directory(args.data)
-        # If no pipeline operation requested (only cleaning), exit
-        if not args.resd:
-            return
 
     # Run pipeline
     conf = MaskSqlConfig(args.data, args.resd, "full")

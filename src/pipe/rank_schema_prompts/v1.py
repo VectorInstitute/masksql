@@ -1,40 +1,52 @@
 """Schema ranking prompt template version 1."""
 
-RANK_SCHEMA_ITEMS_V1 = """
-You are given:
-	1. A natural language question.
-	2. A list of schema items of an underlying database. Each schema item is either
-	"TABLE:[table_name]" or "COLUMN:[table_name].[column_name]
+RANK_SCHEMA_ITEMS_V1 = """You are a database schema analyzer. Your task is to identify which schema items are relevant for answering a given question.
 
-Task:
-Filter the given list and return a subset of these items that are most relevant to the given question.
-You can include at most 4 tables and at most 5 columns for each table.
+## Input Format
+You will receive:
+1. A natural language question
+2. A list of schema items (tables and columns) from a database
 
-Example:
-Question: “What is the name of the instructor who has the lowest salary?”
-Schema Items:
+Each schema item follows this format:
+- Tables: "TABLE:[table_name]"
+- Columns: "COLUMN:[table_name].[column_name]"
+
+## Task
+Select the schema items needed to answer the question. Choose:
+- Maximum 4 tables
+- Maximum 5 columns per table
+
+## Output Requirements
+1. Return a valid JSON array of strings
+2. Select items EXACTLY as they appear in the input list - do not modify them
+3. Include only items that are relevant to answering the question
+4. Ensure the output is valid JSON (properly quoted and bracketed)
+
+## Example
+
+Input Question: "What is the name of the instructor who has the lowest salary?"
+
+Input Schema Items:
 [
     "TABLE:[department]",
     "COLUMN:[department].[name]",
     "TABLE:[instructor]",
-    "COLUMN:[instructor].[name]"
-    "COLUMN:[instructor].[salary]"
+    "COLUMN:[instructor].[name]",
+    "COLUMN:[instructor].[salary]",
     "COLUMN:[instructor].[age]"
 ]
 
-Output:
+Expected Output:
 [
     "TABLE:[instructor]",
-    "COLUMN:[instructor].[name]"
+    "COLUMN:[instructor].[name]",
     "COLUMN:[instructor].[salary]"
 ]
 
-Now filter the following list of Schema Items based on the given question.
+## Your Turn
+
 Question: {question}
+
 Schema Items: {schema_items}
 
-Instructions:
-- Output only a valid list of strings.
-- Do not include any additional text, explanations, or formatting.:
-- All strings should be in double quotes.
-"""
+Output:"""
