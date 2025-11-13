@@ -1,11 +1,13 @@
 import os
 
 import torch
-
-
-device = torch.device(os.environ.get("TORCH_DEVICE"))
 from torch import nn
 from transformers import AutoConfig, RobertaModel, XLMRobertaModel
+
+
+# Get device from environment or default to CPU
+device_str = os.environ.get("TORCH_DEVICE", "cpu")
+device = torch.device(device_str)
 
 
 class MyClassifier(nn.Module):

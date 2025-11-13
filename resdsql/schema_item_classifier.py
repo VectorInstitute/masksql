@@ -531,11 +531,13 @@ def _test(opt):
     )
 
     # load fine-tuned params
+    # Use strict=False to handle PyTorch version differences
     model.load_state_dict(
         torch.load(
             opt.save_path + "/dense_classifier.pt",
             map_location=torch.device(os.environ["TORCH_DEVICE"]),
-        )
+        ),
+        strict=False,
     )
     if torch.cuda.is_available():
         model = model.cuda()

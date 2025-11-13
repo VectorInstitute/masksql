@@ -3,6 +3,7 @@
 import argparse
 import asyncio
 import logging
+import os
 from pathlib import Path
 
 from config import MaskSqlConfig
@@ -25,6 +26,7 @@ from src.pipe.repair_sql import RepairSQL
 from src.pipe.repair_symb_sql import RepairSymbolicSQL
 from src.pipe.resdsql import AddResd
 from src.pipe.results import Results
+from src.pipe.run_resdsql import RunResdsql
 from src.pipe.slm_sql import SlmSQL
 from src.pipe.symb_table import AddSymbolTable
 from src.pipe.unmask import AddConcreteSql
@@ -95,7 +97,19 @@ def create_pipeline_stages(conf: MaskSqlConfig) -> list[JsonListProcessor]:
         List of pipeline stage objects to execute.
     """
     if conf.resd:
-        rank_schema = [AddResd(conf.resd_path), RankSchemaResd(conf.tables_path)]
+        # Get device from environment or default to cpu
+        device = os.environ.get("TORCH_DEVICE", "cpu")
+        rank_schema = [
+            RunResdsql(
+                conf.tables_path,
+                conf.input_path,
+                conf.db_path,
+                conf.resd_path,
+                device=device,
+            ),
+            AddResd(conf.resd_path),
+            RankSchemaResd(conf.tables_path),
+        ]
     else:
         rank_schema = [
             RankSchemaItems("schema_items", conf.tables_path, model=conf.slm)
