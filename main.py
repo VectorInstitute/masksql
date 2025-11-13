@@ -101,7 +101,6 @@ def create_pipeline_stages(conf: MaskSqlConfig) -> list[JsonListProcessor]:
     rank_schema = [
         RunResdsql(
             conf.tables_path,
-            conf.input_path,
             conf.db_path,
             conf.resd_path,
             device=device,

@@ -21,12 +21,13 @@ class RunResdsql(JsonListTransformer):
     4. Text2SQL data generation
     5. Question ID alignment
 
+    The input dataset is automatically taken from the previous pipeline stage
+    (e.g., the output of LimitJson).
+
     Parameters
     ----------
     tables_path : str
         Path to tables JSON file
-    input_path : str
-        Path to input dataset JSON file
     db_path : str
         Path to databases directory
     output_path : str
@@ -38,20 +39,37 @@ class RunResdsql(JsonListTransformer):
     def __init__(
         self,
         tables_path: str,
-        input_path: str,
         db_path: str,
         output_path: str,
         device: str = "cpu",
     ) -> None:
         super().__init__(force=False)
         self.tables_path = Path(tables_path).absolute()
-        self.input_path = Path(input_path).absolute()
         self.db_path = Path(db_path).absolute()
         self.output_path = Path(output_path).absolute()
         self.device = device
         self.resd_dir = self.output_path.parent / "resd"
         self.resdsql_dir = Path("resdsql").absolute()
         self.python_exe = sys.executable
+        self.pipeline_input_path: Path | None = None
+
+    async def run(self, input_file: str) -> str:
+        """
+        Override run to capture the input file from the pipeline.
+
+        Parameters
+        ----------
+        input_file : str
+            Path to input file from previous pipeline stage (e.g., LimitJson output)
+
+        Returns
+        -------
+        str
+            Path to output file
+        """
+        # Store the actual input from the pipeline (e.g., 2_LimitJson.json)
+        self.pipeline_input_path = Path(input_file).absolute()
+        return await super().run(input_file)
 
     def _run_step(self, step_name: str, script: str, args: list[str]) -> None:
         """
@@ -128,7 +146,7 @@ class RunResdsql(JsonListTransformer):
                 "--table_path",
                 str(self.tables_path),
                 "--input_dataset_path",
-                str(self.input_path),
+                str(self.pipeline_input_path),
                 "--output_dataset_path",
                 str(self.resd_dir / "preprocessed_test.json"),
                 "--db_path",
@@ -201,7 +219,7 @@ class RunResdsql(JsonListTransformer):
             "add_qid.py",
             [
                 "--src",
-                str(self.input_path),
+                str(self.pipeline_input_path),
                 "--dst",
                 str(self.resd_dir / "resd_output_orig.json"),
                 "--out",
