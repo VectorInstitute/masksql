@@ -300,7 +300,20 @@ def get_spacy_tokenizer():
     import spacy
     from spacy.symbols import LEMMA, ORTH
 
-    nlp = spacy.load("en_core_web_sm")
+    # Try to load model, download if not available
+    try:
+        nlp = spacy.load("en_core_web_sm")
+    except OSError:
+        # Model not found, download it
+        import subprocess
+        import sys
+
+        print("Downloading spacy en_core_web_sm model...")
+        subprocess.run(
+            [sys.executable, "-m", "spacy", "download", "en_core_web_sm"],
+            check=True,
+        )
+        nlp = spacy.load("en_core_web_sm")
 
     # Convert to list for compatibility with spacy 3.x
     suffixes = list(nlp.Defaults.suffixes) + [
