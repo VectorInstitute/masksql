@@ -5,6 +5,7 @@ from abc import abstractmethod
 from json import JSONDecodeError
 from typing import Any
 
+from src.config import OpenAIConfig
 from src.pipe.llm_util import send_prompt
 from src.pipe.processor.list_transformer import JsonListTransformer
 from src.pipe.utils import Timer
@@ -32,13 +33,15 @@ class PromptProcessor(JsonListTransformer):
     """
 
     def __init__(
-        self,
-        prop_name: str,
-        model: str = os.environ["DEFAULT_MODEL"],
-        force: bool = False,
-        include_stats: bool = True,
+            self,
+            prop_name: str,
+            openai_config: OpenAIConfig,
+            model: str,
+            force: bool = False,
+            include_stats: bool = True,
     ) -> None:
         super().__init__(force)
+        self.openai_config = openai_config
         self.model = model
         self.prop_name = prop_name
         self.prompt_file = "/dev/null"
@@ -47,7 +50,7 @@ class PromptProcessor(JsonListTransformer):
 
     async def _prompt_llm(self, row: dict[str, Any], prompt: str) -> tuple[Any, str]:
         try:
-            res, toks = await send_prompt(prompt, model=self.model)
+            res, toks = await send_prompt(prompt, self.openai_config, model=self.model)
         except JSONDecodeError as e:
             logger.error(f"Sending prompt failed: {e}")
             return "", "0"

@@ -9,9 +9,10 @@ from typing import Any
 
 from openai import AsyncClient
 
+from src.config import OpenAIConfig
+
 
 logger = logging.getLogger(__name__)
-
 
 VLM_ARCH = os.environ.get("VLM_ARCH")
 MAX_COMPLETION_TOKENS = os.environ.get("MAX_COMPLETION_TOKENS")
@@ -19,7 +20,8 @@ MAX_COMPLETION_TOKENS = os.environ.get("MAX_COMPLETION_TOKENS")
 wrappers: dict[str, Any] = {
     "mistral": lambda prompt: f"<s>[INST] {prompt} [/INST]",
     "gemma": lambda prompt: f"<bos><start_of_turn>user\n{prompt}<end_of_turn>\n<start_of_turn>model\n",
-    "llama": lambda prompt: f"<|begin_of_text|><|start_header_id|>user<|end_header_id|>\n{prompt}\n<|eot_id|><|start_header_id|>assistant<|end_header_id|>",
+    "llama": lambda
+        prompt: f"<|begin_of_text|><|start_header_id|>user<|end_header_id|>\n{prompt}\n<|eot_id|><|start_header_id|>assistant<|end_header_id|>",
 }
 
 
@@ -43,7 +45,7 @@ def wrap_prompt(prompt: str) -> str:
     return prompt
 
 
-async def send_prompt(prompt: str, model: str | None = None) -> tuple[str, str]:
+async def send_prompt(prompt: str, openai_config: OpenAIConfig, model: str) -> tuple[str, str]:
     """
     Send prompt to language model and get response.
 
@@ -59,33 +61,31 @@ async def send_prompt(prompt: str, model: str | None = None) -> tuple[str, str]:
     tuple[str, str]
         Response content and token usage
     """
-    model_name = model if model is not None else os.getenv("OPENAI_MODEL")
-    if model_name == "vlm":
+    if model == "vlm":
         prompt = wrap_prompt(prompt)
     client = AsyncClient(
         api_key=os.getenv("OPENAI_API_KEY"),
-        base_url=os.getenv("OPENAI_BASE_URL"),
+        base_url=openai_config.base_url,
         organization=os.getenv("OPENAI_GROUP_ID"),
         project=os.getenv("OPENAI_PROJ_ID"),
-        timeout=int(os.getenv("OPENAI_TIMEOUT", "60")),
+        timeout=openai_config.timeout,
     )
 
     # Concise logging with rich markup
     logger.debug(
-        f"[cyan]LLM Request[/cyan] → [bold]{model_name}[/bold] "
+        f"[cyan]LLM Request[/cyan] → [bold]{model}[/bold] "
         f"([dim]{len(prompt)} chars[/dim])"
     )
 
-    max_tokens = int(MAX_COMPLETION_TOKENS) if MAX_COMPLETION_TOKENS else None
     response = await client.chat.completions.create(
-        model=model_name,  # type: ignore[arg-type]
+        model=model,
         messages=[
             {
                 "role": "user",
                 "content": prompt,
             },
         ],
-        max_completion_tokens=max_tokens,
+        max_completion_tokens=openai_config.max_completion_tokens,
     )
     if response.choices is None:
         print(prompt)

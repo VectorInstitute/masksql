@@ -5,17 +5,26 @@ project for managing paths, models, and runtime settings.
 """
 
 import os
-from dataclasses import dataclass
+from dataclasses import field
 
+import yaml
 from dotenv import load_dotenv
+from pydantic import BaseModel
 
 
 # Load environment variables at module import time
 load_dotenv()
 
 
-@dataclass
-class MaskSqlConfig:
+class OpenAIConfig(BaseModel):
+    """OpenAI API client configurations."""
+
+    base_url: str = "https://openrouter.ai/api/v1"
+    timeout: int = 30
+    max_completion_tokens: int = 300
+
+
+class MaskSqlConfig(BaseModel):
     """Configuration settings for MaskSQL execution.
 
     Attributes
@@ -35,12 +44,20 @@ class MaskSqlConfig:
     data_dir: str
     resd: bool
     policy: str
-    slm: str = os.environ["SLM_MODEL"]
-    llm: str = os.environ["LLM_MODEL"]
+    slm: str
+    llm: str
+    openai: OpenAIConfig = field(default_factory=OpenAIConfig)
     __input_file: str = "1_input.json"
     __db_dir: str = "databases"
     __tables_file: str = "tables.json"
     __resd_file: str = "resd_output.json"
+
+    @staticmethod
+    def from_yaml(path: str = "conf.yaml"):
+        """Load configurations from a YAML file."""
+        with open(path, "r") as conf_file:
+            conf_data = yaml.safe_load(conf_file)
+            return MaskSqlConfig.model_validate(conf_data)
 
     def get_abs_path(self, rel_path: str) -> str:
         """Convert a relative path to an absolute path within the data directory.
