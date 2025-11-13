@@ -53,7 +53,7 @@ class MaskSqlConfig(BaseModel):
     __resd_file: str = "resd_output.json"
 
     @staticmethod
-    def from_yaml(path: str = "conf.yaml"):
+    def from_yaml(path: str = "conf.yaml") -> "MaskSqlConfig":
         """Load configurations from a YAML file."""
         with open(path, "r") as conf_file:
             conf_data = yaml.safe_load(conf_file)

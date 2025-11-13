@@ -1,0 +1,4 @@
+[files]
+extend-exclude = [
+    "tests/e2e/test_data/cassettes/*",
+]

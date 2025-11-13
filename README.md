@@ -84,7 +84,7 @@ MaskSQL requires RESDSQL for initial schema filtering. Follow the [RESDSQL setup
 Execute the MaskSQL pipeline:
 
 ```sh
-python3 main.py 
+python3 main.py
 ```
 
 or to clean previous outputs and rerun:

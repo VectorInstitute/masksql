@@ -31,6 +31,7 @@ from src.pipe.unmask import AddConcreteSql
 from src.pipe.value_links import LinkValues
 from src.utils.logging import configure_logging
 
+
 logger = logging.getLogger(__name__)
 
 
@@ -97,7 +98,9 @@ def create_pipeline_stages(conf: MaskSqlConfig) -> list[JsonListProcessor]:
         rank_schema = [AddResd(conf.resd_path), RankSchemaResd(conf.tables_path)]
     else:
         rank_schema = [
-            RankSchemaItems("schema_items", conf.tables_path, model=conf.slm)
+            RankSchemaItems(
+                "schema_items", conf.tables_path, conf.openai, model=conf.slm
+            )
         ]
     return [
         LimitJson(),
@@ -134,9 +137,7 @@ async def main() -> None:
         help="Clean intermediate files from data directory",
     )
     parser.add_argument(
-        "-c", "--config",
-        default="configs/conf.yaml",
-        help="Path to config file"
+        "-c", "--config", default="configs/conf.yaml", help="Path to config file"
     )
     args = parser.parse_args()
     configure_logging()

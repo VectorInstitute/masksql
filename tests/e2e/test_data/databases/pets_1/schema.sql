@@ -65,4 +65,3 @@ insert into Has_Pet values ( 1002, 2003 );
 insert into Pets values ( 2001, 'cat', 3, 12);
 insert into Pets values ( 2002, 'dog', 2, 13.4);
 insert into Pets values ( 2003, 'dog', 1, 9.3);
-

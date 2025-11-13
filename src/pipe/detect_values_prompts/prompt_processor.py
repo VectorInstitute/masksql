@@ -33,12 +33,12 @@ class PromptProcessor(JsonListTransformer):
     """
 
     def __init__(
-            self,
-            prop_name: str,
-            openai_config: OpenAIConfig,
-            model: str,
-            force: bool = False,
-            include_stats: bool = True,
+        self,
+        prop_name: str,
+        openai_config: OpenAIConfig,
+        model: str,
+        force: bool = False,
+        include_stats: bool = True,
     ) -> None:
         super().__init__(force)
         self.openai_config = openai_config

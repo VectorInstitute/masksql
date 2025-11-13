@@ -1,1 +1,0 @@
-"""SQL statement categorization package."""

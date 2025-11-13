@@ -8,4 +8,3 @@ openai:
   base_url: "https://openrouter.ai/api/v1"
   timeout: 30
   max_completion_tokens: 300
-

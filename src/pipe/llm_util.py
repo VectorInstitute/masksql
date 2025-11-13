@@ -20,8 +20,7 @@ MAX_COMPLETION_TOKENS = os.environ.get("MAX_COMPLETION_TOKENS")
 wrappers: dict[str, Any] = {
     "mistral": lambda prompt: f"<s>[INST] {prompt} [/INST]",
     "gemma": lambda prompt: f"<bos><start_of_turn>user\n{prompt}<end_of_turn>\n<start_of_turn>model\n",
-    "llama": lambda
-        prompt: f"<|begin_of_text|><|start_header_id|>user<|end_header_id|>\n{prompt}\n<|eot_id|><|start_header_id|>assistant<|end_header_id|>",
+    "llama": lambda prompt: f"<|begin_of_text|><|start_header_id|>user<|end_header_id|>\n{prompt}\n<|eot_id|><|start_header_id|>assistant<|end_header_id|>",
 }
 
 
@@ -45,7 +44,9 @@ def wrap_prompt(prompt: str) -> str:
     return prompt
 
 
-async def send_prompt(prompt: str, openai_config: OpenAIConfig, model: str) -> tuple[str, str]:
+async def send_prompt(
+    prompt: str, openai_config: OpenAIConfig, model: str
+) -> tuple[str, str]:
     """
     Send prompt to language model and get response.
 
