@@ -22,8 +22,6 @@ class MaskSqlConfig:
     ----------
     data_dir : str
         Base directory for data files.
-    resd : bool
-        Whether to use RESD mode.
     policy : str
         Policy configuration for execution.
     slm : str
@@ -33,7 +31,6 @@ class MaskSqlConfig:
     """
 
     data_dir: str
-    resd: bool
     policy: str
     slm: str = os.environ["SLM_MODEL"]
     llm: str = os.environ["LLM_MODEL"]

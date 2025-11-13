@@ -21,7 +21,6 @@ from src.pipe.pipeline import Pipeline
 from src.pipe.processor.limit_list import LimitJson
 from src.pipe.processor.list_processor import JsonListProcessor
 from src.pipe.rank_schema import RankSchemaResd
-from src.pipe.rank_schema_llm import RankSchemaItems
 from src.pipe.repair_sql import RepairSQL
 from src.pipe.repair_symb_sql import RepairSymbolicSQL
 from src.pipe.resdsql import AddResd
@@ -96,24 +95,20 @@ def create_pipeline_stages(conf: MaskSqlConfig) -> list[JsonListProcessor]:
     list
         List of pipeline stage objects to execute.
     """
-    if conf.resd:
-        # Get device from environment or default to cpu
-        device = os.environ.get("TORCH_DEVICE", "cpu")
-        rank_schema = [
-            RunResdsql(
-                conf.tables_path,
-                conf.input_path,
-                conf.db_path,
-                conf.resd_path,
-                device=device,
-            ),
-            AddResd(conf.resd_path),
-            RankSchemaResd(conf.tables_path),
-        ]
-    else:
-        rank_schema = [
-            RankSchemaItems("schema_items", conf.tables_path, model=conf.slm)
-        ]
+    # Always use RESDSQL for schema ranking
+    # RunResdsql will skip if output already exists (unless force=True)
+    device = os.environ.get("TORCH_DEVICE", "cpu")
+    rank_schema = [
+        RunResdsql(
+            conf.tables_path,
+            conf.input_path,
+            conf.db_path,
+            conf.resd_path,
+            device=device,
+        ),
+        AddResd(conf.resd_path),
+        RankSchemaResd(conf.tables_path),
+    ]
     return [
         LimitJson(),
         *rank_schema,
@@ -146,7 +141,6 @@ async def main() -> None:
     parser.add_argument(
         "--data", type=str, required=False, help="Data directory", default="data"
     )
-    parser.add_argument("--resd", action="store_true", dest="resd", help="Use RESDSQL")
     parser.add_argument(
         "--clean",
         action="store_true",
@@ -158,12 +152,9 @@ async def main() -> None:
     # Handle clean operation
     if args.clean:
         clean_data_directory(args.data)
-        # If no pipeline operation requested (only cleaning), exit
-        if not args.resd:
-            return
 
-    # Run pipeline
-    conf = MaskSqlConfig(args.data, args.resd, "full")
+    # Run pipeline (always uses RESDSQL for schema ranking)
+    conf = MaskSqlConfig(args.data, "full")
     pipeline_stages = create_pipeline_stages(conf)
     pipeline = Pipeline(pipeline_stages)
     await pipeline.run(conf.input_path)

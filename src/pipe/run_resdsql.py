@@ -43,7 +43,7 @@ class RunResdsql(JsonListTransformer):
         output_path: str,
         device: str = "cpu",
     ) -> None:
-        super().__init__(force=True)
+        super().__init__(force=False)
         self.tables_path = Path(tables_path).absolute()
         self.input_path = Path(input_path).absolute()
         self.db_path = Path(db_path).absolute()
