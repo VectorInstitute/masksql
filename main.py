@@ -5,7 +5,7 @@ import asyncio
 import logging
 from pathlib import Path
 
-from config import MaskSqlConfig
+from src.config import MaskSqlConfig
 from src.pipe.add_schema import AddFilteredSchema
 from src.pipe.add_symb_schema import AddSymbolicSchema
 from src.pipe.attack import AddInferenceAttack
@@ -98,7 +98,9 @@ def create_pipeline_stages(conf: MaskSqlConfig) -> list[JsonListProcessor]:
         rank_schema = [AddResd(conf.resd_path), RankSchemaResd(conf.tables_path)]
     else:
         rank_schema = [
-            RankSchemaItems("schema_items", conf.tables_path, model=conf.slm)
+            RankSchemaItems(
+                "schema_items", conf.tables_path, conf.openai, model=conf.slm
+            )
         ]
     return [
         LimitJson(),
@@ -106,21 +108,21 @@ def create_pipeline_stages(conf: MaskSqlConfig) -> list[JsonListProcessor]:
         # ResdItemCount(),
         AddFilteredSchema(conf.tables_path),
         AddSymbolTable(conf.tables_path),
-        SlmSQL("slm_sql", model=conf.slm),
-        DetectValues("values", model=conf.slm),
-        LinkValues("value_links", model=conf.slm),
+        SlmSQL("slm_sql", conf.openai, model=conf.slm),
+        DetectValues("values", conf.openai, model=conf.slm),
+        LinkValues("value_links", conf.openai, model=conf.slm),
         CopyTransformer("value_links", "filtered_value_links"),
-        LinkSchema("schema_links", model=conf.slm),
+        LinkSchema("schema_links", conf.openai, model=conf.slm),
         CopyTransformer("schema_links", "filtered_schema_links"),
         AddSymbolicSchema(conf.tables_path),
         AddSymbolicQuestion(),
-        GenerateSymbolicSql("symbolic", model=conf.llm),
-        RepairSymbolicSQL("symbolic", model=conf.llm),
+        GenerateSymbolicSql("symbolic", conf.openai, model=conf.llm),
+        RepairSymbolicSQL("symbolic", conf.openai, model=conf.llm),
         AddConcreteSql(),
         ExecuteConcreteSql(conf.db_path),
-        RepairSQL("pred_sql", model=conf.slm),
+        RepairSQL("pred_sql", conf.openai, model=conf.slm),
         CalcExecAcc(conf.db_path, conf.policy),
-        AddInferenceAttack("attack", model=conf.llm),
+        AddInferenceAttack("attack", conf.openai, model=conf.llm),
         # PrintProps(['question', 'symbolic.question', 'attack'])
         Results(),
     ]
@@ -130,13 +132,12 @@ async def main() -> None:
     """Run the MaskSQL main pipeline."""
     parser = argparse.ArgumentParser(description="MaskSQL")
     parser.add_argument(
-        "--data", type=str, required=False, help="Data directory", default="data"
-    )
-    parser.add_argument("--resd", action="store_true", dest="resd", help="Use RESDSQL")
-    parser.add_argument(
         "--clean",
         action="store_true",
         help="Clean intermediate files from data directory",
+    )
+    parser.add_argument(
+        "-c", "--config", default="configs/conf.yaml", help="Path to config file"
     )
     args = parser.parse_args()
     configure_logging()
@@ -145,11 +146,9 @@ async def main() -> None:
     if args.clean:
         clean_data_directory(args.data)
         # If no pipeline operation requested (only cleaning), exit
-        if not args.resd:
-            return
 
     # Run pipeline
-    conf = MaskSqlConfig(args.data, args.resd, "full")
+    conf = MaskSqlConfig.from_yaml(args.config)
     pipeline_stages = create_pipeline_stages(conf)
     pipeline = Pipeline(pipeline_stages)
     await pipeline.run(conf.input_path)

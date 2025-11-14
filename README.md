@@ -65,10 +65,15 @@ cp .env.example .env
 **Optional:**
 - `LIMIT`: Number of dataset entries to process (e.g., `LIMIT=10`)
 - `START`: Starting index in the dataset (default: 0)
-- `SLM_MODEL`: Small language model ID (e.g., `openai/gpt-4.1`)
-- `LLM_MODEL`: Large language model ID
 
 ## Running MaskSQL
+
+### Configuration
+
+To configure the MaskSQL, uses the `configs/conf.yaml` file by default.
+You can pass in arbitrary config files using the `--config` option of
+the CLI interface.
+
 
 ### 1. Run RESDSQL (Schema Filtering)
 
@@ -79,13 +84,13 @@ MaskSQL requires RESDSQL for initial schema filtering. Follow the [RESDSQL setup
 Execute the MaskSQL pipeline:
 
 ```sh
-python3 main.py --resd
+python3 main.py
 ```
 
 or to clean previous outputs and rerun:
 
 ```sh
-python3 main.py --resd --clean
+python3 main.py --clean
 ```
 
 ## Documentation

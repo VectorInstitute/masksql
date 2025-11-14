@@ -1,0 +1,10 @@
+---
+data_dir: "data"
+resd: true
+policy: "full"
+slm: "qwen/qwen-2.5-7b-instruct"
+llm: "openai/gpt-4.1"
+openai:
+  base_url: "https://openrouter.ai/api/v1"
+  timeout: 30
+  max_completion_tokens: 300

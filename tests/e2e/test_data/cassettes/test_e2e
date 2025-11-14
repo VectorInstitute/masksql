@@ -1,0 +1,986 @@
+interactions:
+- request:
+    body: "{\"messages\":[{\"role\":\"user\",\"content\":\"\\nYou are a SQL generation
+      assistant. Given\\n(1) NL Question: a natural-language question about a dataset
+      and\\n(2) DB Schema: the database\u2019s schema expressed in YAML\\nproduce
+      a single SQL SELECT statement that answers the question.\\nWe also provided
+      the immediate generated SQL query as your reference to find the related database
+      items needed for the given question.\\nThe provided SQL query is not always
+      complete and accurate and you have to use it as a hint only.\\n\\nInput Format:\\n-
+      DB Schema: given in YAML format where top-level keys are table names; each table
+      lists its columns and their data types.\\n- Column names are case-sensitive
+      exactly as shown in the schema.\\n- Each column might be primary key or a foreign
+      key.\\n- For foreign key columns, fully qualified name of the referenced column
+      is given\\n\\nOutput Rules\\n- Table and column names specified in the database
+      schema already wrapped in brackets. You should use them with the brackets.\\nYou
+      should not remove the brackets when using them in the SQL.\\n- Each reference
+      to a table or column name should be of the form [table_name] or [table_name].[column_name].\\n-
+      Output ONLY the SQL query (no extra explanation or text).\\n- Use fully qualified
+      column names: table.column.\\n- Only reference tables/columns that exist in
+      the provided schema.\\n- Do not include any comments.\\n- For columns names
+      with spaces, wrap them in backticks, e.g. \\\"WHERE `car model` = 'bar'\\\"
+      instead of \\\"WHERE car model = 'bar'\\\".\\n\\nHere are some examples:\\n\\n-----------------------------------\\nExample
+      1:\\nNL Question: What is the release title of the single that was released
+      by Ron Hunt in 1979 that was downloaded 239 times? release title refers to groupName;
+      Ron Hunt is an artist; groupYear = 1979; releaseType = 'single'; downloaded
+      239 times refer to totalSnatched = 239;\\nDatabase Schema:\\n    torrents:\\n
+      \       groupname: text\\n        artist: text\\n        releasetype: text\\n
+      \       groupyear: number\\n        totalsnatched: number\\n    tags:\\n        tag:
+      text\\n        index: number\\n        id: number\\n\\nOUTPUT:\\nSELECT [groupName]
+      FROM [torrents] WHERE [artist] LIKE 'ron hunt & ronnie g & the sm crew' AND
+      [groupYear] = 1979 AND [releaseType] LIKE 'single' AND [totalSnatched] = 239\\n\\n\\n-----------------------------------\\nExample
+      2:\\nNL Question: How many times was the album released by blowfly in 1980 downloaded?
+      blowfly is an artist; groupYear = 1980; album refers to releaseType; downloaded
+      refers to totalSnatched;\\nDatabase Schema:\\n    torrents:\\n        groupname:
+      text\\n        artist: text\\n        releasetype: text\\n        groupyear:
+      number\\n        totalsnatched: number\\n    tags:\\n        tag: text\\n        index:
+      number\\n        id: number\\n\\nOUTPUT:\\nSELECT [totalSnatched] FROM [torrents]
+      WHERE [artist] LIKE 'blowfly' AND [groupYear] = 1980\\n\\nNow, generate a SQL
+      query for the following question and database schema:\\nInputs:\\nquestion:
+      Find the number of pets whose weight is heavier than 10.\\nschema: '[has_pet]':\\n
+      \ '[petid]':\\n    foreign_key: '[pets].[petid]'\\n    type: number\\n  '[stuid]':\\n
+      \   foreign_key: '[student].[stuid]'\\n    type: number\\n'[pets]':\\n  '[pet_age]':
+      number\\n  '[petid]':\\n    primary_key: true\\n    type: number\\n  '[pettype]':
+      text\\n  '[weight]': number\\n'[student]':\\n  '[advisor]': number\\n  '[age]':
+      number\\n  '[major]': number\\n  '[sex]': text\\n  '[stuid]':\\n    primary_key:
+      true\\n    type: number\\n\\n\"}],\"model\":\"qwen/qwen-2.5-7b-instruct\",\"max_completion_tokens\":300}"
+    headers:
+      accept:
+      - application/json
+      accept-encoding:
+      - gzip, deflate
+      authorization:
+      - Bearer sk
+      connection:
+      - keep-alive
+      content-length:
+      - '3537'
+      content-type:
+      - application/json
+      host:
+      - openrouter.ai
+      user-agent:
+      - AsyncOpenAI/Python 2.1.0
+      x-stainless-arch:
+      - arm64
+      x-stainless-async:
+      - async:asyncio
+      x-stainless-lang:
+      - python
+      x-stainless-os:
+      - MacOS
+      x-stainless-package-version:
+      - 2.1.0
+      x-stainless-read-timeout:
+      - '30'
+      x-stainless-retry-count:
+      - '0'
+      x-stainless-runtime:
+      - CPython
+      x-stainless-runtime-version:
+      - 3.11.13
+    method: POST
+    uri: https://openrouter.ai/api/v1/chat/completions
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAA+JSgAEuAAAAAP//4kIwAQAAAP//dJBLawJBEIT/ylCnBGYTNVkfcwgEURLIizzI
+        QUTG3XZ34jgzzvTGgPjfgxiTUy59qKqmv+otTAmFilzW7nU7ed7vdvtZf+PXg2V1PS7ny05rfdnk
+        XxUkQvSfpqQIhadaWw2JlS/JQmG9IXe+H1nnLM9688y4xLEpGBJ+/kEFQ6GoNZ8VfhUssfEOEkUk
+        zVRC/R2XKGpvCkpQky2sr0L08wTlGmslFsaZVM8i6eQdFBL7AAmn2XzS7B/XuJK+oFoSK0pJVwS1
+        RfSWoKBTMom124MW3jG5PenL6G40fBXDx7eH15NJIDbl9FSMnx/vxaTWaRaIp+L9ZvQ8Ej+uuH0Q
+        Jz9rR+mQD8TpN7whU9U8FVei3TqFRKRFk7Q91juQG1cdhN1uKtEciUP0q8Az9ktyCaqfD/bIx2/+
+        6hc9Cfas7V9y0N3tvgEAAP//AwDAxT1mAAIAAA==
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      CF-RAY:
+      - 99b0a91bac26ac26-YYZ
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 07 Nov 2025 23:37:49 GMT
+      Permissions-Policy:
+      - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
+        "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
+      Referrer-Policy:
+      - no-referrer, strict-origin-when-cross-origin
+      Server:
+      - cloudflare
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      X-Content-Type-Options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: "{\"messages\":[{\"role\":\"user\",\"content\":\"\\nYou are given a natural
+      language question and a list of schema items\\n(table names or fully qualified
+      column names).\\nThe question is a textual representation of some SQL query
+      a database for which we have the schema items.\\nYour goal is to find a list
+      of literal values, entities, constants, etc in the question.\\nDatabase schema
+      is given to exclude table or column names as these values.\\n\\nOutput Format:\\n-
+      Output should be a list of strings\\n- Each string should be quoted with double
+      quotes.\\n\\nHere are some Examples:\\n\\n---------------------------------\\nExample
+      1:\\nQuestion: \\\"What is the name of the instructor who located in London?\\\"\\nOutput:\\n[\\\"London\\\"]\\n\\n---------------------------------\\nExample
+      2:\\nQuestion: \\\"State the email of those who are staff of Murphy Diane whose
+      number is 1002 and living in San Francisco staff of refers to reportsTO\\\"\\nOutput:\\n[\\\"Murphy
+      Diane\\\", \\\"1002\\\", \\\"San Francisco\\\"]\\n\\n---------------------------------\\nExample
+      3:\\nQuestion: Determine the email and Code of employee who are working at United
+      State, state MA;\\nOutput:\\n[\\\"United State\\\", \\\"MA\\\"]\\n\\n---------------------------------\\nExample
+      4:\\nQuestion: \u201CShow me all reservations under the name David Johnson for
+      hotel Hilton on 12/25/2023 with booking code 8793.\u201D\\nOutput:\\n[\\\"David
+      Johnson\\\", \\\"Hilton\\\", \\\"12/25/2023\\\", \\\"8793\\\"]\\n\\nNow generate
+      the output list for the following question:\\nQuestion: Find the number of pets
+      whose weight is heavier than 10.\\nSchema: ['TABLE:[pets]', 'COLUMN:[pets].[weight]',
+      'COLUMN:[pets].[petid]', 'COLUMN:[pets].[pettype]', 'COLUMN:[pets].[pet_age]',
+      'COLUMN:[pets].[*]', 'TABLE:[student]', 'COLUMN:[student].[age]', 'COLUMN:[student].[sex]',
+      'COLUMN:[student].[major]', 'COLUMN:[student].[advisor]', 'COLUMN:[student].[stuid]',
+      'COLUMN:[student].[*]', 'TABLE:[has_pet]', 'COLUMN:[has_pet].[stuid]', 'COLUMN:[has_pet].[petid]',
+      'COLUMN:[has_pet].[*]']\\n\"}],\"model\":\"qwen/qwen-2.5-7b-instruct\",\"max_completion_tokens\":300}"
+    headers:
+      accept:
+      - application/json
+      accept-encoding:
+      - gzip, deflate
+      authorization:
+      - Bearer sk
+      connection:
+      - keep-alive
+      content-length:
+      - '2019'
+      content-type:
+      - application/json
+      host:
+      - openrouter.ai
+      user-agent:
+      - AsyncOpenAI/Python 2.1.0
+      x-stainless-arch:
+      - arm64
+      x-stainless-async:
+      - async:asyncio
+      x-stainless-lang:
+      - python
+      x-stainless-os:
+      - MacOS
+      x-stainless-package-version:
+      - 2.1.0
+      x-stainless-read-timeout:
+      - '30'
+      x-stainless-retry-count:
+      - '0'
+      x-stainless-runtime:
+      - CPython
+      x-stainless-runtime-version:
+      - 3.11.13
+    method: POST
+    uri: https://openrouter.ai/api/v1/chat/completions
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAA+JSgAEuAAAAAP//4kIwAQAAAP//QmICAAAA//90jzFvwjAQhf/Lmx0KqEmK1w4s
+        HdgBIeMciVvHZ+wLtEL571WEaLt0ueHd6bvv3eAaaLQUikVdLcvypapWxbqlDa2u63rdtG/X82v8
+        qi0UYuKLayhBY9MZb6DQc0MeGucrhadpFMtZWdTHwoUsabACBT6+kxVo2M7IzHIfPYnjAAWbyAg1
+        0L/PFWzHzlKG3t7guY2Jjxk6DN4rnFxwuTskMpkDNLJwhEIw4i50+GfrQkOf0HOFnnI2LUHfkNgT
+        NEzOLosJk6jlIBQm0+0Oi/kOeygkOg3Z+IfAne1Cew/Gca8wPJgxcR/lIPxBIUM/14sJ+uj7k5cK
+        wmL8n8NqHL8BAAD//wMAm7deX6wBAAA=
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      CF-RAY:
+      - 99b0a924d8a7ac28-YYZ
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 07 Nov 2025 23:37:50 GMT
+      Permissions-Policy:
+      - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
+        "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
+      Referrer-Policy:
+      - no-referrer, strict-origin-when-cross-origin
+      Server:
+      - cloudflare
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      X-Content-Type-Options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: "{\"messages\":[{\"role\":\"user\",\"content\":\"\\nYou are given:\\n\\tQuestion:
+      A natural language question.\\n\\tValues List: A list of n-grams in the question
+      that represent literal values, entities, constants, etc in the question.\\n
+      \   Column Names: A list of fully qualified column names of an underlying database.\\n\\nGoal\\nReturn
+      a JSON object mapping from the Value List to the single most relevant column
+      item.\\n\\nMapping Rules:\\n- Consider all 1-, 2-, and 3-word spans.\\n- Chose
+      the shortest n-gram that relates to a column.\\n- If removing a word from an
+      n-gram still points to the same column, use the shorter version.\\n- You should
+      link a value only to columns, not tables.\\n- The values of the map should be
+      selected only from the given list of column names, no value should\\nbe added
+      or changed.\\n\\nOutput Rules:\\n- Output valid JSON only: double-quoted keys
+      and values; no trailing commas.\\n- Do not add, drop, or reorder keys.\\n- Change
+      only the COLUMN: prefix to VALUE: where warranted; keep everything else unchanged.\\n-
+      If no changes, return the input JSON unchanged.\\n\\nHere are some Examples:\\n\\n---------------------------------------------\\nExample
+      1:\\nQuestion: \u201CWhat is the name of the instructor who located in London?\u201D\\nValues
+      List:\\n[ \\\"London\\\" ]\\nColumn Names:\\n[\\n    \\\"[instructor].[name]\\\",\\n
+      \   \\\"[instructor].[location]\\\"\\n]\\n\\nOutput:\\n{\\n    \\\"London\\\":
+      \\\"[instructor].[location]\\\"\\n}\\n\\n---------------------------------------------\\nExample
+      2:\\nQuestion:\\n\\\"How many different orders with a total price greater than
+      4000 are cancelled? total price = MULTIPLY(quantityOrdered, priceEach) > 4000;
+      cancelled orders refer to status = 'Cancelled';\\\",\\nValue List:\\n[\\\"Euro+
+      Shopping Channel\\\", \\\"2004\\\"]\\nColumn Names: [\\n    \\\"[customers].[customernumber]\\\",\\n
+      \   \\\"[customers].[customername]\\\",\\n    \\\"[payments].[customernumber]\\\",\\n
+      \   \\\"[payments].[checknumber]\\\",\\n    \\\"[payments].[paymentdate]\\\"\\n]\\n\\nOutput:\\n{\\n
+      \   \\\"Euro+ Shopping Channel\\\": \\\"[customers].[customername]\\\",\\n    \\\"2004\\\":
+      \\\"[payments].[paymentdate]\\\"\\n}\\n\\n---------------------------------------------\\nExample
+      3:\\nQuestion:\\n\\\"State the email of those who are staff of Murphy Diane
+      whose number is 1002 and living in San Francisco staff of refers to reportsTO;
+      San Francisco is a city;\\\",\\nValue List:\\n[ \\\"Murphy Diane\\\", \\\"1002\\\",
+      \\\"San Francisco\\\" ]\\nColumn Names: [\\n    \\\"[employees].[employeenumber]\\\",\\n
+      \   \\\"[employees].[firstname]\\\",\\n    \\\"[employees].[lastname]\\\",\\n
+      \   \\\"[employees].[email]\\\",\\n    \\\"[employees].[reportsto]\\\",\\n    \\\"[employees].[officecode]\\\",\\n
+      \   \\\"[offices].[officecode]\\\",\\n    \\\"[offices].[city]\\\"\\n]\\nOutput:\\n{\\n
+      \   \\\"Murphy Diane\\\": \\\"[employees].[reportsto]\\\",\\n    \\\"1002\\\":
+      \\\"[employees].[employeenumber]\\\",\\n    \\\"San Francisco\\\": \\\"[offices].[city]\\\"\\n}\\n\\nNow
+      generate the mapping for the following Values List and Column Names based on
+      the given question.\\nQuestion: Find the number of pets whose weight is heavier
+      than 10.\\nValues List: ['10']\\nColumn Names: ['[pets]', '[pets].[weight]',
+      '[pets].[petid]', '[pets].[pettype]', '[pets].[pet_age]', '[pets].[*]', '[student]',
+      '[student].[age]', '[student].[sex]', '[student].[major]', '[student].[advisor]',
+      '[student].[stuid]', '[student].[*]', '[has_pet]', '[has_pet].[stuid]', '[has_pet].[petid]',
+      '[has_pet].[*]']\\n\"}],\"model\":\"qwen/qwen-2.5-7b-instruct\",\"max_completion_tokens\":300}"
+    headers:
+      accept:
+      - application/json
+      accept-encoding:
+      - gzip, deflate
+      authorization:
+      - Bearer sk
+      connection:
+      - keep-alive
+      content-length:
+      - '3386'
+      content-type:
+      - application/json
+      host:
+      - openrouter.ai
+      user-agent:
+      - AsyncOpenAI/Python 2.1.0
+      x-stainless-arch:
+      - arm64
+      x-stainless-async:
+      - async:asyncio
+      x-stainless-lang:
+      - python
+      x-stainless-os:
+      - MacOS
+      x-stainless-package-version:
+      - 2.1.0
+      x-stainless-read-timeout:
+      - '30'
+      x-stainless-retry-count:
+      - '0'
+      x-stainless-runtime:
+      - CPython
+      x-stainless-runtime-version:
+      - 3.11.13
+    method: POST
+    uri: https://openrouter.ai/api/v1/chat/completions
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAA+JSgAEuAAAAAP//dJDNasMwEIRfpcxZTmMXx0YPUOihIVBKKXEIiryx1corV5Lz
+        Q/C7FxPSnHrZw+zA9zEXmBoSDXGSFossz8tFkSbZ+b18W34SvZ5XmT59LJ9fcgj03h1MTR4Sq1ZZ
+        BYHO1WQh8XMkfpxOks3ypNglhkP0g44QcLsv0hESulVxpl3XW4rGMQS0JxWphrzDBXTrjKYAub7A
+        uqb3bhcgebBWYG/YhHbrSQXHkAjR9RBgFc2Btv98Ddd0gpwLdBSCagjyAu8sQUKFYEJUPIlqx5F4
+        Mr1UPM1TIZ1XkA8V1j3FsJmtj2SaNm4qVDxCwNN+CMre7K5gw801GMeNwHAD9t51fdxG900cIItF
+        ORFvY/zl6ZNAdFHZe7NMx/EXAAD//wMAfJUOCbQBAAA=
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      CF-RAY:
+      - 99b0a92e6d23b687-YYZ
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 07 Nov 2025 23:37:51 GMT
+      Permissions-Policy:
+      - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
+        "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
+      Referrer-Policy:
+      - no-referrer, strict-origin-when-cross-origin
+      Server:
+      - cloudflare
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      X-Content-Type-Options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: "{\"messages\":[{\"role\":\"user\",\"content\":\"\\nYou are an assistant
+      that links n-grams (sub-sequences of up to 3 consecutive words)\\nof a natural-language
+      question to database schema items (tables or fully qualified columns).\\n\\nYou
+      are given:\\n- Question: a natural language question.\\n- Schema Items: a list
+      of schema items (table names or fully qualified column names).\\n- Value List:
+      a list of n-grams in the question that represent literal values, entities, constants,
+      etc in the question.\\n\\nInput Format:\\n- Each schema item is either \\\"TABLE:[table]\\\"
+      or \\\"COLUMN:[table].[column]\\\".\\n- Not all listed schema items are relevant.
+      Your goal is to identify the relevant ones.\\n\\nGoal\\nReturn a JSON object
+      mapping relevant n-grams (contiguous word sequences of length 1\u20133 taken
+      from the question text)\\nto the single most relevant schema item.\\n\\nMapping
+      Rules:\\n- You should not provide mapping for the n-grams included in the Value
+      List\\n- Consider all 1-, 2-, and 3-word spans.\\n- Include a mapping only if
+      the n-gram refers to a schema item.\\n- Prefer the most specific applicable
+      item: column beats table when the question refers to an attribute.\\n- If nothing
+      maps, return an empty JSON object.\\n- Chose the shortest n-gram that maps to
+      the schema item.\\n- If removing a word from an n-gram still points to the same
+      schema item, use the shorter version.\\n\\nOutput Rules:\\n- Output only a JSON
+      object representing the mapping.\\n- The value of each entry should only be
+      selected from the given list of Schema Items.\\n- Generating new values or using
+      different values is not allowed.\\n- You can only select values form the given
+      list of schema items.\\n- Each entry should be a key-value pair where the key
+      is an n-gram and the value is a schema item.\\n- Value of each entry can only
+      be a single string of the form \\\"COLUMN:[table].[column]\\\" or \\\"TABLE:[table]\\\".\\n-
+      Do not include any additional text, explanations, or formatting.\\n- All json
+      key and values should be in double quotes.\\n- Output should be a top-level
+      JSON object. No nested keys.\\n\\nHere are some examples:\\n\\n---------------------------------------------\\nExample
+      1:\\nQuestion:\\n\u201CWhat is the name of the instructor who has the lowest
+      salary and located in London?\u201D\\nSchema items:\\n[\\\"TABLE:[instructor]\\\",
+      \\\"COLUMN:[instructor].[name]\\\", \\\"COLUMN:[instructor].[salary]\\\", \\\"TABLE:[department]\\\",
+      \\\"COLUMN[department].[name]\\\"]\\nValue List:\\n[ \\\"London\\\" ]\\n\\nOutput:\\n{\\n
+      \   \\\"name\\\": \\\"COLUMN:[instructor].[name]\\\",\\n    \\\"salary\\\":
+      \\\"COLUMN:[instructor].[salary]\\\",\\n    \\\"instructor\\\": \\\"TABLE:[instructor]\\\"\\n}\\n\\n---------------------------------------------\\nExample
+      2:\\nQuestion:\\n\\\"Please calculate the total payment amount of customers
+      who come from the USA. USA is a country; total amount payment refers to SUM(amount);\\\",\\nSchema
+      items: [\\n    \\\"TABLE:[customers]\\\",\\n    \\\"COLUMN:[customers].[customernumber]\\\",\\n
+      \   \\\"COLUMN:[customers].[country]\\\",\\n    \\\"TABLE:[payments]\\\",\\n
+      \   \\\"COLUMN:[payments].[customernumber]\\\",\\n    \\\"COLUMN:[payments].[amount]\\\"\\n]\\nValue
+      List:\\n[ \\\"USA\\\" ]\\n\\nOutput:\\n{\\n    \\\"customers\\\": \\\"TABLE:[customers]\\\",\\n
+      \   \\\"country\\\": \\\"COLUMN:[customers].[country]\\\",\\n    \\\"amount\\\":
+      \\\"COLUMN:[payments].[amount]\\\"\\n}\\n\\n---------------------------------------------\\nExample
+      3:\\nQuestion:\\n\\\"What are the total payments of customers with no credit
+      limit in 2003? total payment refers to SUM(amount)\\\",\\nSchema Items: [\\n
+      \   \\\"TABLE:[customers]\\\",\\n    \\\"COLUMN:[customers].[customernumber]\\\",\\n
+      \   \\\"COLUMN:[customers].[creditlimit]\\\",\\n    \\\"TABLE:[payments]\\\",\\n
+      \   \\\"COLUMN:[payments].[customernumber]\\\",\\n    \\\"COLUMN:[payments].[paymentdate]\\\",\\n
+      \   \\\"COLUMN:[payments].[amount]\\\"\\n]\\nValue List:\\n[ \\\"2003\\\" ]\\n\\nOutput:\\n{\\n
+      \   \\\"payments\\\": \\\"TABLE:[payments]\\\",\\n    \\\"customers\\\": \\\"TABLE:[customers]\\\",\\n
+      \   \\\"credit limit\\\": \\\"COLUMN:[customers].[creditlimit]\\\",\\n    \\\"amount\\\":
+      \\\"COLUMN:[payments].[amount]\\\"\\n}\\n\\n\\n\\nNow generate the JSON object
+      of mapping for the following question, schema items, and value list:\\nQuestion:
+      Find the number of pets whose weight is heavier than 10.\\nSchema items: ['TABLE:[pets]',
+      'COLUMN:[pets].[weight]', 'COLUMN:[pets].[petid]', 'COLUMN:[pets].[pettype]',
+      'COLUMN:[pets].[pet_age]', 'COLUMN:[pets].[*]', 'TABLE:[student]', 'COLUMN:[student].[age]',
+      'COLUMN:[student].[sex]', 'COLUMN:[student].[major]', 'COLUMN:[student].[advisor]',
+      'COLUMN:[student].[stuid]', 'COLUMN:[student].[*]', 'TABLE:[has_pet]', 'COLUMN:[has_pet].[stuid]',
+      'COLUMN:[has_pet].[petid]', 'COLUMN:[has_pet].[*]']\\nValue List: ['10']\\n\\nIterate
+      through each key,value pair of the answer and make sure that:\\n- MAKE SURE
+      THAT EACH KEY OF THE MAPPING SHOULD BE A TERM OF THE QUESTION\\n- MAKE SURE
+      THAT EACH VALUE OF THE MAPPING SHOULD BE A VALID SCHEMA ITEM INCLUDED IN THE
+      GIVEN LIST OF SCHEMA ITEMS\\n- MAKE SURE THAT EACH KEY BE MINIMAL, IF ANY WORD
+      CAN BE DELETED WHILE THE RELATION STILL HOLDS, IT SHOULD BE REMOVED\\n\"}],\"model\":\"qwen/qwen-2.5-7b-instruct\",\"max_completion_tokens\":300}"
+    headers:
+      accept:
+      - application/json
+      accept-encoding:
+      - gzip, deflate
+      authorization:
+      - Bearer sk
+      connection:
+      - keep-alive
+      content-length:
+      - '5030'
+      content-type:
+      - application/json
+      host:
+      - openrouter.ai
+      user-agent:
+      - AsyncOpenAI/Python 2.1.0
+      x-stainless-arch:
+      - arm64
+      x-stainless-async:
+      - async:asyncio
+      x-stainless-lang:
+      - python
+      x-stainless-os:
+      - MacOS
+      x-stainless-package-version:
+      - 2.1.0
+      x-stainless-read-timeout:
+      - '30'
+      x-stainless-retry-count:
+      - '0'
+      x-stainless-runtime:
+      - CPython
+      x-stainless-runtime-version:
+      - 3.11.13
+    method: POST
+    uri: https://openrouter.ai/api/v1/chat/completions
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAA+JSgAEuAAAAAP//4kIwAQAAAP//QmICAAAA//+MkU1Lw0AQhv+KvOdNNdVauzc/
+        iqD1EwWhKWWbTJPV7WzcnVah5L9LqFUvipc5zPswMzyzhi2gURInaf+w2+sdHfa7ycnw9u7x/P7i
+        8nw26KeD0cXZ0xMU6uBXtqAAjdvKOAOFhS/IQeP1jXi3LUm300v6s8RylLDMBQp+9ky5QCOvjHRy
+        v6gdifUMhTyQESqgv5cr5JW3OUXo8RrOl3XwswjNS+cU5pZtrKaBTPQMjSi+hgIbsSua/pJaLugd
+        ek9hQTGakqDXCN4RNEyMNorh9tDcsxC3l64zbvVkeCNbVpJB72Q4vRk9Xl3rcU0SJ53xJppkUFu4
+        DTbow/HJaPhJ/gAqMitL4Z/jpDL8TzTd+xvMuIFCoPkyGrd1udFkudw0mmaisNzqqYNf1DIV/0Ic
+        odN0/6AVtP3dV9A7UhAvxv1AB92m+QAAAP//AwAxtaIDegIAAA==
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      CF-RAY:
+      - 99b0a934193ab408-YYZ
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 07 Nov 2025 23:37:53 GMT
+      Permissions-Policy:
+      - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
+        "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
+      Referrer-Policy:
+      - no-referrer, strict-origin-when-cross-origin
+      Server:
+      - cloudflare
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      X-Content-Type-Options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: "{\"messages\":[{\"role\":\"user\",\"content\":\"\\nYou are a SQL generation
+      assistant. Given\\n(1) NL Question: a natural-language question about a dataset
+      and\\n(2) DB Schema: the database\u2019s schema expressed in YAML\\nproduce
+      a single SQL SELECT statement that answers the question.\\n\\nInput Format:\\n-
+      DB Schema: given in YAML format where top-level keys are table names; each table
+      lists its columns and their data types.\\n- Column names are case-sensitive
+      exactly as shown in the schema.\\n- Each column might be primary key or a foreign
+      key.\\n- For foreign key columns, fully qualified name of the referenced column
+      is given\\n\\nOutput Rules\\n- Table and column names specified in the database
+      schema already wrapped in brackets. You should use them with the brackets.\\nYou
+      should not remove the brackets when using them in the SQL.\\n- Each reference
+      to a table or column name should be of the form [table_name] or [table_name].[column_name].\\n-
+      Output ONLY the SQL query (no extra explanation or text).\\n- Use fully qualified
+      column names: table.column.\\n- Only reference tables/columns that exist in
+      the provided schema.\\n- Do not include any comments.\\n- For columns names
+      with spaces, wrap them in backticks, e.g. \\\"WHERE `car model` = 'bar'\\\"
+      instead of \\\"WHERE car model = 'bar'\\\".\\n\\nHere are some examples:\\n\\n-----------------------------------\\n\\n####
+      Example 1\\n\\n**NL Question:**\\nList the [C3] of [T1] who work in [T2] in
+      [V1]. [V1] is a value of the column [C7].\\n\\n**DB Schema:**\\n[T1]:\\n  [C1]:
+      text\\n  [C2]:\\n    primary_key: true\\n    type: integer\\n  [C3]: text\\n
+      \ [C4]: text\\n  [C5]:\\n    foreign_key: [T2].[C8]\\n    type: text\\n[T2]:\\n
+      \ [C7]: text\\n  [C8]:\\n    primary_key: true\\n    type: text\\n\\n**Output:**\\n`SELECT
+      [T1].[C3] FROM [T1] INNER JOIN [T2] ON [T1].[C5] = [T2].[C8] WHERE [T2].[C7]
+      = [V1];`\\n\\n-----------------------------------\\n#### Example 2\\n\\n**NL
+      Question:**\\nAmong the [V1] [T1], how many of them have a [C2] of [V2]? [V1]
+      refers to [C2] = [V1].\\n\\n**DB Schema:**\\n[T1]:\\n    [C1]: text\\n    [C2]:
+      real\\n    [C3]:\\n        primary_key: true\\n        type: integer\\n\\n**Output:**\\n`SELECT
+      COUNT(*) FROM [T1] WHERE [T1].[C1] = [V1] AND [C2] = [V2]\\n\\n-----------------------------------\\n####
+      Example 3\\n**NL Question:**\\nList the [C4] and [C1] of [T2] in [V1] with [C7]
+      = [V2]. [V1] refers to the column [T2].[C5].\\n\\n**DB Schema:**\\n[T1]:\\n
+      \ [C1]: text\\n  [C2]: text\\n  [C3]:\\n    primary_key: true\\n    type: text\\n[T2]:\\n
+      \ [C4]: text\\n  [C5]: text\\n  [C6]:\\n    foreign_key: [T1].[C3]\\n    type:
+      text\\n  [C7]: integer\\n\\n**Output:**\\n`SELECT [T2].[C4], [T1].[C1] FROM
+      [T2] JOIN [T1] ON [T1].[C3] = [T2].[C6] WHERE [T2].[C5] = [V1] AND [T2].[C7]
+      = [V2]\\n\\n\\n-----------------------------------\\n\\nNow, generate a SQL
+      query for the following question and database schema:\\nInputs:\\nNL Question:
+      Find the number of [T2] whose [C6] is [C6] [C6] [V1].; [V1] is a value of the
+      column [C6]\\nDB Schema: '[T1]':\\n  '[C1]':\\n    foreign_key: '[T2].[C4]'\\n
+      \   type: number\\n  '[C2]':\\n    foreign_key: '[T3].[C11]'\\n    type: number\\n'[T2]':\\n
+      \ '[C3]': number\\n  '[C4]':\\n    primary_key: true\\n    type: number\\n  '[C5]':
+      text\\n  '[C6]': number\\n'[T3]':\\n  '[C10]': text\\n  '[C11]':\\n    primary_key:
+      true\\n    type: number\\n  '[C7]': number\\n  '[C8]': number\\n  '[C9]': number\\n\\n\"}],\"model\":\"openai/gpt-4.1\",\"max_completion_tokens\":300}"
+    headers:
+      accept:
+      - application/json
+      accept-encoding:
+      - gzip, deflate
+      authorization:
+      - Bearer sk
+      connection:
+      - keep-alive
+      content-length:
+      - '3366'
+      content-type:
+      - application/json
+      host:
+      - openrouter.ai
+      user-agent:
+      - AsyncOpenAI/Python 2.1.0
+      x-stainless-arch:
+      - arm64
+      x-stainless-async:
+      - async:asyncio
+      x-stainless-lang:
+      - python
+      x-stainless-os:
+      - MacOS
+      x-stainless-package-version:
+      - 2.1.0
+      x-stainless-read-timeout:
+      - '30'
+      x-stainless-retry-count:
+      - '0'
+      x-stainless-runtime:
+      - CPython
+      x-stainless-runtime-version:
+      - 3.11.13
+    method: POST
+    uri: https://openrouter.ai/api/v1/chat/completions
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAAwAAAP//4lKAAS4AAAAA//9skF1PAjEQRf/K5j6pKQjIh9b4gAS/opIgSshmA2V3
+        WCrdttkWYkL2vxtAwBjfJjN3cs7MGjIBR0q6VG01a43GZbN1UdJPbScf6iu1GA5no6yS3I9uwWBz
+        s5IJ5eDoWdLtRzBkJiEFDmNJC3meWl+ql6tgMNNPij044rnw5dhkVpGXRoMhzkl4SsCPSIZ4bmRM
+        DjxcQ5nU5mbqwPVSKYaZ1NLNxzkJZzQ4nDcWDFp4uaLx3+kPixIwSJ3QF3iFISPnRErga+RGETiE
+        c9J5of1GyWhPeqM7ees+dzuDoNN7fx2cnJ0Gd/3eSxAOalEwfOj2u9uyHHaaUXAThB/V6HoChpxm
+        SyfUXnjnInW6axRFxLDc421uMuvH3ixIO/BqpdZgOD7oMKjVGbzxQv2K1q/+iY4T8kIqt71tTz4s
+        VYqi+AYAAP//AwDdCm7s8gEAAA==
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      CF-RAY:
+      - 99b0a93feb582659-YYZ
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 07 Nov 2025 23:37:54 GMT
+      Permissions-Policy:
+      - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
+        "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
+      Referrer-Policy:
+      - no-referrer, strict-origin-when-cross-origin
+      Server:
+      - cloudflare
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      X-Content-Type-Options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: "{\"messages\":[{\"role\":\"user\",\"content\":\"\\nYou are an SQL database
+      expert tasked with debugging a SQL query.\\nA previous attempt to predict a
+      SQL query given a masked NL question and DB schema did not yield the correct
+      results in some cases,\\neither due to errors in execution or because the result
+      returned was empty or unexpected.\\nYour task is to analyze the masked SQL query
+      given the corresponding database schema and the NL question\\nand fix any error
+      in the query if it exists.\\nYou should then provide a corrected version of
+      the SQL query.\\nNote that there may be errors in how the NL question tokens
+      were linked and masked with the database schema elements.\\nAs a result, the
+      masked SQL query might contain inaccuracies based on these incorrect mappings,\\nand
+      part of your task is to consider these issues as well.\\n\\n**Procedure:**\\n1.
+      Review Database Schema:\\n    - Examine the database schema to understand the
+      database structure.\\n    - Database schema is given in YAML format where top-level
+      keys are table names; each table lists its columns and their data types.\\n
+      \   - Each column might be primary key or a foreign key.\\n2. Analyze Query
+      Requirements:\\n    - NL Question: Consider what information the query is supposed
+      to retrieve.\\n    - Predicted SQL Query: Review the SQL query that was previously
+      predicted and might led to error or incorrect result.\\n3. Correct the Query:\\n
+      \   - Modify the SQL query to address the identified issues, ensuring it correctly
+      fetches the requested data according to the database schema and query requirements.\\n\\n**Output
+      Format:**\\nPresent your corrected query as a single line of SQL code.\\nEnsure
+      there are no line breaks within the query.\\nDo not include any explanations,
+      comments, or extra text.\\n\\nHere are some examples:\\nThe first two example
+      had some errors and corrected version was returned.\\nThe third example had
+      no errors, so the exact same query is returned without any modification.\\n\\n-------------------------------\\nExample
+      1:\\n\\nNL Question:\\nList the [C2] of stores in the [V1] [T1] that are no
+      water area. no water area refers to Water Area = 0; [V1] is a value of\\nthe
+      column [T1].[C1].\\n\\nDatabase Schema:\\nschema:\\n '[T1]':\\n  '[C1]': text\\n
+      \ '[area]': text\\n  '[rid]':\\n    primary_key: true\\n    type: text\\n'[store]':\\n
+      \ '[C2]': text\\n  '[revenue]': integer\\n  '[rid]':\\n    foreign_key: '[T1].[rid]'\\n
+      \   type: text\\n  '[water area]': integer\\n\\nThe predicted SQL query was:\\nSELECT
+      [store].[C2] FROM [store] JOIN [T1] ON [T1].[rid] = [store].[rid] WHERE [T1].[C1]
+      = '[V1]' AND [store][water area] = 'no';\\n\\nThe corrected SQL query is:\\nSELECT
+      DISTINCT [store].[C2] FROM [store] JOIN [T1] ON [T1].[rid] = [store].[rid] WHERE
+      [T1].[C1] = '[V1]' AND [store][water area] = 0;\\n\\n-------------------------------\\nExample
+      2:\\n\\nNL Question:\\n\u201CFind the [C3] of [T1] who work in [T2] that are
+      located in [V1]. [V1] is a value of the column [C5]\\n\\nDatabase Schema:\\n'[T1]':\\n
+      \ '[C1]': text\\n  '[C2]':\\n    primary_key: true\\n    type: integer\\n  '[C3]':
+      text\\n  '[C4]':\\n    foreign_key: '[T2].[C6]'\\n    type: text\\n'[T2]':\\n
+      \ '[C5]': text\\n  '[C6]':\\n    primary_key: true\\n    type: text\\n\\nThe
+      predicted SQL query was:\\nSELECT [T1].[C3] FROM [T1] WHERE [T1].[C5] = '[V1]';\\n\\nThe
+      corrected SQL query is:\\nSELECT [T1].[C3] FROM [T1] JOIN [T2] ON [T1].[C4]
+      = [T2].[C6] WHERE [T2].[C5] = '[V1]';\\n\\n-------------------------------\\nExample
+      3:\\n\\nNL Question:\\nAmong the [V1] [T1], how many of the them has [C2] of
+      zero? [V1] is a nationality of [C1] = [V1];\\n\\nDatabase Schema:\\n'[T1]':\\n
+      \   '[C1]': text\\n    '[C2]': real\\n    '[C3]':\\n        primary_key: true\\n
+      \       type: integer\\n\\nThe predicted SQL query was:\\nSELECT COUNT(*) FROM
+      [T1] WHERE [T1].[C1] = '[V1]' AND [C2] = 0\\n\\nThe corrected SQL query is:\\nSELECT
+      COUNT(*) FROM [T1] WHERE [T1].[C1] = '[V1]' AND [C2] = 0\\n\\n======= Your task
+      =======\\n**************************\\nDatabase schema:\\n'[T1]':\\n  '[C1]':\\n
+      \   foreign_key: '[T2].[C4]'\\n    type: number\\n  '[C2]':\\n    foreign_key:
+      '[T3].[C11]'\\n    type: number\\n'[T2]':\\n  '[C3]': number\\n  '[C4]':\\n
+      \   primary_key: true\\n    type: number\\n  '[C5]': text\\n  '[C6]': number\\n'[T3]':\\n
+      \ '[C10]': text\\n  '[C11]':\\n    primary_key: true\\n    type: number\\n  '[C7]':
+      number\\n  '[C8]': number\\n  '[C9]': number\\n\\n**************************\\nThe
+      original question is:\\nNL Question: Find the number of [T2] whose [C6] is [C6]
+      [C6] [V1].; [V1] is a value of the column [C6]\\nThe predicted SQL query: SELECT
+      COUNT(*) FROM [T2] WHERE [T2].[C6] = [V1];\\n**************************\\nBased
+      on the NL question, database schema and the previously predicted SQL query,\\nanalyze
+      the query and question and fix the SQL query if needed.\\n\"}],\"model\":\"openai/gpt-4.1\",\"max_completion_tokens\":300}"
+    headers:
+      accept:
+      - application/json
+      accept-encoding:
+      - gzip, deflate
+      authorization:
+      - Bearer sk
+      connection:
+      - keep-alive
+      content-length:
+      - '4778'
+      content-type:
+      - application/json
+      host:
+      - openrouter.ai
+      user-agent:
+      - AsyncOpenAI/Python 2.1.0
+      x-stainless-arch:
+      - arm64
+      x-stainless-async:
+      - async:asyncio
+      x-stainless-lang:
+      - python
+      x-stainless-os:
+      - MacOS
+      x-stainless-package-version:
+      - 2.1.0
+      x-stainless-read-timeout:
+      - '30'
+      x-stainless-retry-count:
+      - '0'
+      x-stainless-runtime:
+      - CPython
+      x-stainless-runtime-version:
+      - 3.11.13
+    method: POST
+    uri: https://openrouter.ai/api/v1/chat/completions
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAAwAAAP//4lKAAS4AAAAA///iQjABAAAA//9CYgIAAAD//2yQXUtCQRCG/8rhvapY
+        zXP8ioUuyg8KKkHNCBFZz47HtXV3ObtaIOe/h5oa0d0w8w7PM7OFkuDIyJTiZiOp128azVpJ9uLB
+        Rn6+j9qDylLct5td3wSDy+1GScrB0XNk7h7BsLKSNDisIyPUdeZCqVaOwWBnS0oDONKFCOXUrpym
+        oKwBQ5qTCCTBz0iGdGFVSh58vIW2mcvtzIObtdYMc2WUX0xzEt4acPhgHRiMCGpD07/THxZJMCgj
+        6Qu8wrAi70VG4FvkVhM4hPfKB2HCTsmaQGanO+g8dVrDqNV7fRleXF1G3X7vORoPk0n09tDpd/Zl
+        edxqTKLbaDyKJ2DIab72Qh9tDyLKZIdGUUwY1ke2y+3KhWmwH2Q8eFytVBnO3zkNkoQh2CD0r2hS
+        /yc6lRSE0n5/2JF8WqoURfENAAD//wMA0RVX2gUCAAA=
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      CF-RAY:
+      - 99b0a9446c98f80a-YYZ
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 07 Nov 2025 23:37:54 GMT
+      Permissions-Policy:
+      - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
+        "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
+      Referrer-Policy:
+      - no-referrer, strict-origin-when-cross-origin
+      Server:
+      - cloudflare
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      X-Content-Type-Options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"messages":[{"role":"user","content":"\nYou are an SQL database expert
+      tasked with correcting a SQL query.\nA previous attempt to run a query did not
+      yield the correct results,\neither due to errors in execution or because the
+      result returned was empty or unexpected.\nYour role is to analyze the error
+      based on the provided database schema and the details\nof the failed execution,
+      and then provide a corrected version of the SQL query.\n\n**Procedure:**\n1.
+      Review Database Schema:\n    - Examine the database schema to understand the
+      database structure.\n    - Iterate through the each column and table name in
+      the schema to make sure that it is correct.\n    - Some table or column names
+      may have white space, you should not change these and use a different name.\n    -
+      Database schema is given in YAML format where top-level keys are table names;
+      each table lists its columns and their data types.\n    - Column names are case-sensitive
+      exactly as shown in the schema.\n    - Each column might be primary key or a
+      foreign key.\n    - For foreign key columns, fully qualified name of the referenced
+      column is given\n2. Analyze Query Requirements:\n    - Original Question: Consider
+      what information the query is supposed to retrieve.\n    - Executed SQL Query:
+      Review the SQL query that was previously executed and led to an error or incorrect
+      result.\n    - Execution Result: Analyze the outcome of the executed query to
+      identify why it failed (e.g., syntax errors, incorrect column references, logical
+      mistakes).\n3. Correct the Query:\n    - Modify the SQL query to address the
+      identified issues, ensuring it correctly fetches the requested data according
+      to the database schema and query requirements.\n    - For columns names with
+      spaces, wrap them in backticks, e.g. \"WHERE `car model` = ''bar''\" instead
+      of \"WHERE car model = ''bar''\".\n\n**Output Format:**\nPresent your corrected
+      query as a single line of SQL code.\nEnsure there are no line breaks within
+      the query.\nDo not include any explanations, comments, or extra text.\n\nHere
+      are some examples:\n\n-------------------------------\nExample 1:\n\nQuestion:\n
+      State the email of those who are staff of Murphy Diane whose number is 1002
+      and living in San Francisco staff of refers to reportsTO; San Francisco is a
+      city;\n\nDatabase Schema:\n''[employees]'':\n  ''[email]'': text\n  ''[employeenumber]'':\n    primary_key:
+      true\n    type: integer\n  ''[firstname]'': text\n  ''[lastname]'': text\n  ''[officecode]'':\n    foreign_key:
+      ''[offices].[officecode]''\n    type: text\n  ''[reportsto]'':\n    foreign_key:
+      ''[employees].[employeenumber]''\n    type: integer\n''[offices]'':\n  ''[city]'':
+      text\n  ''[officecode]'':\n    primary_key: true\n    type: text\n\nThe SQL
+      query executed was:\nSELECT [employees].[email] FROM [employees] INNER JOIN
+      [offices] ON [employees].[officecode] = [offices].[officecode] WHERE [employees].[reportsto]
+      = Murphy Diane AND [employees].[employeenumber] = 1002 AND [offices].[city]
+      = San Francisco\n\nThe execution result:\nnear \"Diane\": syntax error\n\nOutput:\nSELECT
+      T1.[email] FROM employees AS T1 JOIN offices AS T2 ON T1.[officecode] = T2.[officecode]
+      WHERE T1.[reportsto] = 1002 AND T2.[city] = ''San Francisco''\n\n-------------------------------\nExample
+      2:\nQuestion:\nAmong the German customers, how many of the them has credit limit
+      of zero? German is a nationality of country = ''Germany''; CREDITLIMIT = 0\n\nDatabase
+      Schema:\n''[customers]'':\n    ''[country]'': text\n    ''[creditlimit]'': real\n    ''[customernumber]'':\n        primary_key:
+      true\n        type: integer\n\nThe SQL query executed was:\nSELECT COUNT(*)
+      FROM [customers] WHERE [customers].[country] = ''German'' AND [creditlimit]
+      = 0\n\nOutput:\nSELECT COUNT(*) FROM [customers] WHERE [customers].[country]
+      = ''Germany'' AND [creditlimit] = 0\n\nThe execution result:\n[]\n\n-------------------------------\nExample
+      3:\nQuestion:\nList the store located cities with regions in no water area of
+      California state. cities refer to City Name; no water area refers to Water Area
+      = 0;\n\nDatabase Schema:\nschema:\n ''[regions]'':\n  ''[region]'': text\n  ''[state]'':
+      text\n  ''[statecode]'':\n    primary_key: true\n    type: text\n''[store locations]'':\n  ''[city
+      name]'': text\n  ''[state]'': text\n  ''[statecode]'':\n    foreign_key: ''[regions].[statecode]''\n    type:
+      text\n  ''[water area]'': integer\nThe SQL query executed was:\nSELECT T1.[city
+      name], T2.[region] FROM store_locations AS T1 JOIN regions AS T2 ON T1.[statecode]
+      = T2.[statecode] WHERE T2.[state] = ''California'' AND T1.[water area] = 0\n\nOutput:\nSELECT
+      T1.[city name], T2.[region] FROM [Store Locations] AS T1 JOIN regions AS T2
+      ON T1.[statecode] = T2.[statecode] WHERE T2.[state] = ''California'' AND T1.[water
+      area] = 0\n\nThe execution result:\nno such table: store_locations\n\n=======
+      Your task =======\n**************************\nDatabase schema:\n''[has_pet]'':\n  ''[petid]'':\n    foreign_key:
+      ''[pets].[petid]''\n    type: number\n  ''[stuid]'':\n    foreign_key: ''[student].[stuid]''\n    type:
+      number\n''[pets]'':\n  ''[pet_age]'': number\n  ''[petid]'':\n    primary_key:
+      true\n    type: number\n  ''[pettype]'': text\n  ''[weight]'': number\n''[student]'':\n  ''[advisor]'':
+      number\n  ''[age]'': number\n  ''[major]'': number\n  ''[sex]'': text\n  ''[stuid]'':\n    primary_key:
+      true\n    type: number\n\n**************************\nThe original question
+      is:\nQuestion: Find the number of pets whose weight is heavier than 10.\nThe
+      SQL query executed was: SELECT COUNT(*) FROM [pets] WHERE [pets].[weight] =
+      10\nThe execution result: Execution Result: [[0]], Execution Error: \n**************************\nBased
+      on the question, table schema and the previous query, analyze the result try
+      to fix the query.\n"}],"model":"qwen/qwen-2.5-7b-instruct","max_completion_tokens":300}'
+    headers:
+      accept:
+      - application/json
+      accept-encoding:
+      - gzip, deflate
+      authorization:
+      - Bearer sk
+      connection:
+      - keep-alive
+      content-length:
+      - '5763'
+      content-type:
+      - application/json
+      host:
+      - openrouter.ai
+      user-agent:
+      - AsyncOpenAI/Python 2.1.0
+      x-stainless-arch:
+      - arm64
+      x-stainless-async:
+      - async:asyncio
+      x-stainless-lang:
+      - python
+      x-stainless-os:
+      - MacOS
+      x-stainless-package-version:
+      - 2.1.0
+      x-stainless-read-timeout:
+      - '30'
+      x-stainless-retry-count:
+      - '0'
+      x-stainless-runtime:
+      - CPython
+      x-stainless-runtime-version:
+      - 3.11.13
+    method: POST
+    uri: https://openrouter.ai/api/v1/chat/completions
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAA+JSgAEuAAAAAP//4kIwAQAAAP//QmICAAAA//9CYgIAAAD//0JiAgAAAP//dNBB
+        TwIxEAXgv7J5JzVdBJRd6MELQTFRMIAxhhBSusNupbRrW8BA9r8bgoSTl0nmvcN8mQNUBo6cTNxI
+        k2ar1U7SJP5sj5ed54E1Itvu90n/adWRYCid3aqMHDjeCqEFGNY2Iw2O7x2Z2+OIm7VWnC5iZXxw
+        GxnAYBdfJAM4ZCFCTdp1qSkoa8AgHYlAGfjlOIMsrJLkwacHaJuXzi48uNlozbBURvli7kh4a8Dh
+        gy3BYERQW5r/0yqT0Q94nWFN3oucwA9wVhM4hPfKB2GOUGlNIHOUjnsvve4k6g7fB5Orm+vocTR8
+        jaYlBT+LPvq9Ue9vqU13pPIizKKHqFEHg6Plxgt95p4kyuSnoKpmDJuzoHR2XYZ5sCsyHrxx1+4c
+        Def3XIo2Q7BB6EtyX0+r6hcAAP//AwDlPwmT8wEAAA==
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      CF-RAY:
+      - 99b0a94f3b33ac96-YYZ
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 07 Nov 2025 23:37:58 GMT
+      Permissions-Policy:
+      - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
+        "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
+      Referrer-Policy:
+      - no-referrer, strict-origin-when-cross-origin
+      Server:
+      - cloudflare
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      X-Content-Type-Options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: "{\"messages\":[{\"role\":\"user\",\"content\":\"\\nYour goal is to guess
+      the words in a masked text. Given\\n(1) NL text: a natural-language text explaining
+      instruction to extract information from\\na database\\n(2) DB Schema: the database\u2019s
+      schema expressed in YAML\\nguess the original each masked symbol exists in the
+      text.\\nMasked symbols are wrapped in brackets.\\n\\nInput Format:\\n- DB Schema:
+      given in YAML format where top-level keys are table names; each table lists
+      its columns and their data types.\\n- Each column might be primary key or a
+      foreign key.\\n- For foreign key columns, fully qualified name of the referenced
+      column is given\\n\\nOutput Rules\\n- C1,C2,... are symbols used to mask column
+      names.\\n- T1,T2,... are symbols used to mask table names.\\n- V1,V2,... are
+      symbols used to mask literal values.\\n- Output ONLY the unmasked text.\\n-
+      The output should contain all of the unmasked tokens in the text, no portion
+      of text should be omitted\\n- Do not include any comments.\\n- For columns names
+      with spaces, wrap them in backticks, e.g. \\\"WHERE `car model` = 'bar'\\\"
+      instead of \\\"WHERE car model = 'bar'\\\".\\n\\nHere are some examples:\\n\\n-----------------------------------\\nExample
+      1:\\nNL Text: What is the [T1].[C1] of [T1] who have a [T2] with [T2].[C4] higher
+      than [V1]? [V1] is a value of [T2].[C4]\\nDatabase Schema:\\n    [T1]:\\n        [C1]:
+      text\\n        [C2]: text\\n    [T2]:\\n        [C3]: text\\n        [C4]: number\\n\\nOUTPUT:\\nWhat
+      is the name of people who have a car with horse power higher than 1000? 1000
+      is a value of horse power\\n\\nNow, unmask the following text considering the
+      following DB schema\\nInputs:\\nNL Text: Find the number of [T2] whose [C6]
+      is [C6] [C6] [V1].; [V1] is a value of the column [C6]\\nDB Schema: '[T1]':\\n
+      \ '[C1]':\\n    foreign_key: '[T2].[C4]'\\n    type: number\\n  '[C2]':\\n    foreign_key:
+      '[T3].[C11]'\\n    type: number\\n'[T2]':\\n  '[C3]': number\\n  '[C4]':\\n
+      \   primary_key: true\\n    type: number\\n  '[C5]': text\\n  '[C6]': number\\n'[T3]':\\n
+      \ '[C10]': text\\n  '[C11]':\\n    primary_key: true\\n    type: number\\n  '[C7]':
+      number\\n  '[C8]': number\\n  '[C9]': number\\n\\n\"}],\"model\":\"openai/gpt-4.1\",\"max_completion_tokens\":300}"
+    headers:
+      accept:
+      - application/json
+      accept-encoding:
+      - gzip, deflate
+      authorization:
+      - Bearer sk
+      connection:
+      - keep-alive
+      content-length:
+      - '2174'
+      content-type:
+      - application/json
+      host:
+      - openrouter.ai
+      user-agent:
+      - AsyncOpenAI/Python 2.1.0
+      x-stainless-arch:
+      - arm64
+      x-stainless-async:
+      - async:asyncio
+      x-stainless-lang:
+      - python
+      x-stainless-os:
+      - MacOS
+      x-stainless-package-version:
+      - 2.1.0
+      x-stainless-read-timeout:
+      - '30'
+      x-stainless-retry-count:
+      - '0'
+      x-stainless-runtime:
+      - CPython
+      x-stainless-runtime-version:
+      - 3.11.13
+    method: POST
+    uri: https://openrouter.ai/api/v1/chat/completions
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAAwAAAP//4lKAAS4AAAAA//9sUNFKw0AQ/JUwz9ealrbW80kQq4j4pCIi5Zpsk9PL
+        7nF3qULJv0usqSA+7TK7OzM7e9gSGhXxaHK6mM7ny8XpcnR3vVxdPvpbuXl4fDLPM3pb3UDBB9nZ
+        kgI07j3xRY81UpKDhnhiY08qn0az8QQKsnmjIkGjqE0aF9J4R8kKQ6EIZBKV0L+SCkUttqAI/bKH
+        k8oH2URobp1T2Fq2sV4HMlEYGjGJhwKbZHe0/jv90aISCpZL+oTOFRqK0VQEvUcQR9AwMdqYDKfe
+        knAi7u1eWS6zVFPGbbOhkMk2K0yI2UctkbLGOjIVZTYe26FO8jzPzw+ln5tsZ1xLPUFPV4hrGx62
+        oRBo20bjhh8P9i1XB6DrXhXawbEP0vi0TvJOHKHnZ2cKv5Ee8elcIUky7ogsprN/NtclJWNd/A5j
+        0D3e5F3XfQEAAP//AwCFAxZGIwIAAA==
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      CF-RAY:
+      - 99b0a95effb536cf-YYZ
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 07 Nov 2025 23:37:59 GMT
+      Permissions-Policy:
+      - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
+        "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
+      Referrer-Policy:
+      - no-referrer, strict-origin-when-cross-origin
+      Server:
+      - cloudflare
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      X-Content-Type-Options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+version: 1
