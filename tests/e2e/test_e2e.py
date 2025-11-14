@@ -10,7 +10,6 @@ from src.config import MaskSqlConfig
 
 os.environ["START"] = "0"
 os.environ["LIMIT"] = "1"
-os.environ["FORCE"] = "1"
 os.environ["OPENAI_API_KEY"] = ""
 
 import pytest
