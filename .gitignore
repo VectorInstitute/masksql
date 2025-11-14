@@ -23,3 +23,6 @@ archive
 __MACOSX
 *.zip
 .coverage
+
+# Ignore numbered pipeline stage outputs in e2e test data
+tests/e2e/test_data/[0-9]*_*.json
