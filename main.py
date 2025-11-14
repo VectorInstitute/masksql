@@ -157,12 +157,14 @@ async def main() -> None:
     args = parser.parse_args()
     configure_logging()
 
-    # Run pipeline (always uses RESDSQL for schema ranking)
+    # Load configuration
     conf = MaskSqlConfig.from_yaml(args.config)
 
     # Handle clean operation
     if args.clean:
         clean_data_directory(conf.data_dir)
+
+    # Create and run pipeline
     pipeline_stages = create_pipeline_stages(conf)
     pipeline = Pipeline(pipeline_stages)
     await pipeline.run(conf.input_path)
