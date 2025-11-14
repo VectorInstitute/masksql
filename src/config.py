@@ -37,13 +37,15 @@ class MaskSqlConfig(BaseModel):
         Small language model identifier (from SLM_MODEL env var).
     llm : str
         Large language model identifier (from LLM_MODEL env var).
+    resd : bool
+        Flag to enable or disable RESD.
     """
 
     data_dir: str
     policy: str
     slm: str
     llm: str
-    resd: bool = True
+    resd: bool
     openai: OpenAIConfig = field(default_factory=OpenAIConfig)
     __input_file: str = "1_input.json"
     __db_dir: str = "databases"
