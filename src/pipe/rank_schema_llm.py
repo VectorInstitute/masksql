@@ -2,6 +2,7 @@
 
 from typing import Any
 
+from src.config import OpenAIConfig
 from src.pipe.detect_values_prompts.prompt_processor import PromptProcessor
 from src.pipe.llm_util import extract_object
 from src.pipe.rank_schema_prompts.v1 import RANK_SCHEMA_ITEMS_V1
@@ -16,14 +17,18 @@ class RankSchemaItems(PromptProcessor):
     ----------
     prop_name : str
         Property name for output
+    openai_config: OpenAIConfig
+        OpenAI client configuration
     tables_path : str
         Path to tables JSON file
     model : str
         Model identifier to use
     """
 
-    def __init__(self, prop_name: str, tables_path: str, model: str) -> None:
-        super().__init__(prop_name, model=model)
+    def __init__(
+        self, prop_name: str, tables_path: str, openai_config: OpenAIConfig, model: str
+    ) -> None:
+        super().__init__(prop_name, openai_config=openai_config, model=model)
         self.schema_repo = DatabaseSchemaRepo(tables_path)
 
     def _process_output(self, row: dict[str, Any], output: str) -> Any:
