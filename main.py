@@ -96,19 +96,27 @@ def create_pipeline_stages(conf: MaskSqlConfig) -> list[JsonListProcessor]:
     list
         List of pipeline stage objects to execute.
     """
-    # Always use RESDSQL for schema ranking
-    # RunResdsql will skip if output already exists (unless force=True)
-    device = os.environ.get("TORCH_DEVICE", "cpu")
-    rank_schema = [
-        RunResdsql(
-            conf.tables_path,
-            conf.db_path,
-            conf.resd_path,
-            device=device,
-        ),
-        AddResd(conf.resd_path),
-        RankSchemaResd(conf.tables_path),
-    ]
+    if conf.resd:
+        # Use RESDSQL for schema ranking
+        # RunResdsql will skip if output already exists (unless force=True)
+        device = os.environ.get("TORCH_DEVICE", "cpu")
+        rank_schema = [
+            RunResdsql(
+                conf.tables_path,
+                conf.db_path,
+                conf.resd_path,
+                device=device,
+            ),
+            AddResd(conf.resd_path),
+            RankSchemaResd(conf.tables_path),
+        ]
+    else:
+        # Use LLM-based schema ranking
+        rank_schema = [
+            RankSchemaItems(
+                "schema_items", conf.tables_path, conf.openai, model=conf.slm
+            )
+        ]
     return [
         LimitJson(),
         *rank_schema,
