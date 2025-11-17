@@ -18,7 +18,13 @@ class AddResd(JsonListTransformer):
 
     def __init__(self, resd_path: str) -> None:
         super().__init__()
-        self.resd: Any = read_json(resd_path)
+        self.resd_path = resd_path
+        self.resd: Any = None
+
+    def _pre_run(self) -> None:
+        """Load RESDSQL predictions before processing rows."""
+        if self.resd is None:
+            self.resd = read_json(self.resd_path)
 
     async def _process_row(self, row: dict[str, Any]) -> dict[str, Any]:
         for r in self.resd:

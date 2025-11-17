@@ -1,0 +1,170 @@
+[
+    {
+        "column_names": [
+            [
+                -1,
+                "*"
+            ],
+            [
+                0,
+                "student id"
+            ],
+            [
+                0,
+                "last name"
+            ],
+            [
+                0,
+                "first name"
+            ],
+            [
+                0,
+                "age"
+            ],
+            [
+                0,
+                "sex"
+            ],
+            [
+                0,
+                "major"
+            ],
+            [
+                0,
+                "advisor"
+            ],
+            [
+                0,
+                "city code"
+            ],
+            [
+                1,
+                "student id"
+            ],
+            [
+                1,
+                "pet id"
+            ],
+            [
+                2,
+                "pet id"
+            ],
+            [
+                2,
+                "pet type"
+            ],
+            [
+                2,
+                "pet age"
+            ],
+            [
+                2,
+                "weight"
+            ]
+        ],
+        "column_names_original": [
+            [
+                -1,
+                "*"
+            ],
+            [
+                0,
+                "StuID"
+            ],
+            [
+                0,
+                "LName"
+            ],
+            [
+                0,
+                "Fname"
+            ],
+            [
+                0,
+                "Age"
+            ],
+            [
+                0,
+                "Sex"
+            ],
+            [
+                0,
+                "Major"
+            ],
+            [
+                0,
+                "Advisor"
+            ],
+            [
+                0,
+                "city_code"
+            ],
+            [
+                1,
+                "StuID"
+            ],
+            [
+                1,
+                "PetID"
+            ],
+            [
+                2,
+                "PetID"
+            ],
+            [
+                2,
+                "PetType"
+            ],
+            [
+                2,
+                "pet_age"
+            ],
+            [
+                2,
+                "weight"
+            ]
+        ],
+        "column_types": [
+            "text",
+            "number",
+            "text",
+            "text",
+            "number",
+            "text",
+            "number",
+            "number",
+            "text",
+            "number",
+            "number",
+            "number",
+            "text",
+            "number",
+            "number"
+        ],
+        "db_id": "pets_1",
+        "foreign_keys": [
+            [
+                9,
+                1
+            ],
+            [
+                10,
+                11
+            ]
+        ],
+        "primary_keys": [
+            1,
+            11
+        ],
+        "table_names": [
+            "student",
+            "has pet",
+            "pets"
+        ],
+        "table_names_original": [
+            "Student",
+            "Has_Pet",
+            "Pets"
+        ]
+    }
+]

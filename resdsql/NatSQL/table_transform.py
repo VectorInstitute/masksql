@@ -1223,8 +1223,11 @@ if __name__ == "__main__":
     # 2. Prepare data
     with open(args.in_file, "r") as f:
         tables = json.load(f)
-    with open(os.path.join("./NatSQL/data/20k.pkl"), "rb") as f:
-        all_words = pickle.load(f)
+    # Only load all_words if seperate_col_name flag is enabled
+    all_words = None
+    if args.seperate_col_name:
+        with open(os.path.join("./NatSQL/data/20k.pkl"), "rb") as f:
+            all_words = pickle.load(f)
     new_tables = []
 
     lstem = MyStemmer()

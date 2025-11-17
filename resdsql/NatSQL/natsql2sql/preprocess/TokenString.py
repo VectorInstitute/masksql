@@ -300,27 +300,37 @@ def get_spacy_tokenizer():
     import spacy
     from spacy.symbols import LEMMA, ORTH
 
-    nlp = spacy.load("en_core_web_sm")
+    # Try to load model, download if not available
+    try:
+        nlp = spacy.load("en_core_web_sm")
+    except OSError:
+        # Model not found, download it
+        import subprocess
+        import sys
 
-    suffixes = (
-        nlp.Defaults.suffixes
-        + (
-            r"((\d{4}((_|-|/){1}\d{2}){2})|((\d{2})(_|-|/)){2}\d{4})(\s\d{2}(:\d{2}){2}){0,1}",
+        print("Downloading spacy en_core_web_sm model...")
+        subprocess.run(
+            [sys.executable, "-m", "spacy", "download", "en_core_web_sm"],
+            check=True,
         )
-        + (
-            r"(\d{1,2}(st|nd|rd|th){0,1}(,|\s)){0,1}((J|j)an(uary){0,1}|(F|f)eb(ruary){0,1}|(M|m)ar(ch){0,1}|(A|a)pr(il){0,1}|(M|m)ay|(J|j)un(e){0,1}|(J|j)ul(y){0,1}|(A|a)ug(ust){0,1}|(S|s)ep(tember){0,1}|(O|o)ct(ober){0,1}|(N|n)ov(ember){0,1}|(D|d)ec(ember){0,1})(\s|,)(\d{1,2}(st|nd|rd|th){0,1}(\s|,){1,3}){0,1}\d{4}",
-        )
-        + (r"(\d{1,6}(_|-|\+|/)\d{0,6}[A-Za-z]{0,6}\d{0,6}[A-Za-z]{0,6})",)
-    )
-    suffix_regex = spacy.util.compile_suffix_regex(suffixes)
+        nlp = spacy.load("en_core_web_sm")
+
+    # Convert to list for compatibility with spacy 3.x
+    suffixes = list(nlp.Defaults.suffixes) + [
+        r"((\d{4}((_|-|/){1}\d{2}){2})|((\d{2})(_|-|/)){2}\d{4})(\s\d{2}(:\d{2}){2}){0,1}",
+        r"(\d{1,2}(st|nd|rd|th){0,1}(,|\s)){0,1}((J|j)an(uary){0,1}|(F|f)eb(ruary){0,1}|(M|m)ar(ch){0,1}|(A|a)pr(il){0,1}|(M|m)ay|(J|j)un(e){0,1}|(J|j)ul(y){0,1}|(A|a)ug(ust){0,1}|(S|s)ep(tember){0,1}|(O|o)ct(ober){0,1}|(N|n)ov(ember){0,1}|(D|d)ec(ember){0,1})(\s|,)(\d{1,2}(st|nd|rd|th){0,1}(\s|,){1,3}){0,1}\d{4}",
+        r"(\d{1,6}(_|-|\+|/)\d{0,6}[A-Za-z]{0,6}\d{0,6}[A-Za-z]{0,6})",
+    ]
+    suffix_regex = spacy.util.compile_suffix_regex(tuple(suffixes))
     nlp.tokenizer.suffix_search = suffix_regex.search
 
-    nlp.tokenizer.add_special_case("Ph.D", [{ORTH: "Ph.D", LEMMA: "ph.d"}])
-    nlp.tokenizer.add_special_case("id", [{ORTH: "id", LEMMA: "id"}])
-    nlp.tokenizer.add_special_case("Id", [{ORTH: "Id", LEMMA: "id"}])
-    nlp.tokenizer.add_special_case("ID", [{ORTH: "ID", LEMMA: "id"}])
-    nlp.tokenizer.add_special_case("iD", [{ORTH: "iD", LEMMA: "id"}])
-    nlp.tokenizer.add_special_case("statuses", [{ORTH: "statuses", LEMMA: "status"}])
+    # In spacy 3.x, tokenizer exceptions can only specify ORTH and NORM
+    nlp.tokenizer.add_special_case("Ph.D", [{ORTH: "Ph.D"}])
+    nlp.tokenizer.add_special_case("id", [{ORTH: "id"}])
+    nlp.tokenizer.add_special_case("Id", [{ORTH: "Id"}])
+    nlp.tokenizer.add_special_case("ID", [{ORTH: "ID"}])
+    nlp.tokenizer.add_special_case("iD", [{ORTH: "iD"}])
+    nlp.tokenizer.add_special_case("statuses", [{ORTH: "statuses"}])
 
     global_tokenizer = Tokenizer_Similar_Allennlp(nlp)
     global_spacy = nlp

@@ -1,0 +1,19 @@
+[
+    {
+        "db_id": "pets_1",
+        "query": "SELECT count(*) FROM pets WHERE weight  >  10",
+        "question": "Find the number of pets whose weight is heavier than 10.",
+        "question_id": 45,
+        "schema": "pets:\n  pet_age: number\n  petid:\n    primary_key: true\n    type: number\n  pettype: text\n  weight: number\n",
+        "evidence": "",
+        "evidence_added": true,
+        "gold_value_links": {
+            "10": "pets.weight"
+        },
+        "gold_schema_links": {
+            "pets": "TABLE:pets",
+            "weight": "COLUMN:pets.weight"
+        },
+        "idx": "spider_45"
+    }
+]

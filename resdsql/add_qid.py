@@ -25,4 +25,4 @@ for i, row in enumerate(dst_data):
     updated_data.append(row)
 
 with open(args.out, "w") as f:
-    f.write(json.dumps(updated_data, indent=4))
+    f.write(json.dumps(updated_data, indent=4) + "\n")

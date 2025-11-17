@@ -1,0 +1,25 @@
+[
+    {
+        "db_id": "pets_1",
+        "question": "Find the number of pets whose weight is heavier than 10.",
+        "input_sequence": "Find the number of pets whose weight is heavier than 10. | pets : pets.weight , pets.petid , pets.pettype , pets.pet_age | student : student.age , student.sex , student.major , student.advisor , student.stuid | has_pet : has_pet.stuid , has_pet.petid | has_pet.stuid = student.stuid | has_pet.petid = pets.petid",
+        "output_sequence": " | ",
+        "tc_original": [
+            "pets.weight",
+            "pets.petid",
+            "pets.pettype",
+            "pets.pet_age",
+            "pets.*",
+            "student.age",
+            "student.sex",
+            "student.major",
+            "student.advisor",
+            "student.stuid",
+            "student.*",
+            "has_pet.stuid",
+            "has_pet.petid",
+            "has_pet.*"
+        ],
+        "question_id": 45
+    }
+]
