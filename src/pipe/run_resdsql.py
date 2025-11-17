@@ -231,6 +231,14 @@ class RunResdsql(JsonListTransformer):
 
     def _pre_run(self) -> None:
         """Execute RESDSQL pipeline before processing rows."""
+        # Skip if RESDSQL output already exists and force is not enabled
+        if not self.force and self.output_path.exists():
+            logger.info(
+                f"[dim]⏭  Skipping RESDSQL pipeline - output exists:[/dim] "
+                f"{self.output_path.name}"
+            )
+            return
+
         # Set TORCH_DEVICE environment variable
         if "TORCH_DEVICE" not in os.environ:
             os.environ["TORCH_DEVICE"] = self.device
