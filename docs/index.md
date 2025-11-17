@@ -65,28 +65,67 @@ cp .env.example .env
 **Optional:**
 - `LIMIT`: Number of dataset entries to process (e.g., `LIMIT=10`)
 - `START`: Starting index in the dataset (default: 0)
-- `SLM_MODEL`: Small language model ID (e.g., `openai/gpt-4.1`)
-- `LLM_MODEL`: Large language model ID
+- `LOG_LEVEL`: Logging verbosity (INFO, DEBUG, etc.)
+
+### Download RESDSQL Models
+
+MaskSQL uses RESDSQL for schema filtering, which requires pre-trained models:
+
+```sh
+# Download and extract models (if not already in data.zip)
+cd resdsql
+unzip -o ../data/resdsql/text2sql-t5-base.zip -d models
+unzip -o ../data/resdsql/text2sql_schema_item_classifier.zip -d models
+cd ..
+```
+
+The models will be extracted to `models/text2sql_schema_item_classifier/` and `models/text2sql-t5-base/`.
 
 ## Running MaskSQL
 
-### 1. Run RESDSQL (Schema Filtering)
+### Configuration
 
-MaskSQL requires RESDSQL for initial schema filtering. Follow the [RESDSQL setup instructions](./Resd.md) to generate the required files.
+MaskSQL uses `configs/conf.yaml` by default. You can specify a different config file using the `--config` option:
 
-### 2. Run the Pipeline
+```sh
+python3 main.py --config path/to/config.yaml
+```
+
+**Key configuration options:**
+- `data_dir`: Directory containing datasets and databases
+- `resd`: Use RESDSQL for schema ranking (default: true)
+- `policy`: Evaluation policy ("full", "partial", etc.)
+- `slm`: Small language model for entity detection and linking
+- `llm`: Large language model for SQL generation
+
+### Run the Pipeline
 
 Execute the MaskSQL pipeline:
 
 ```sh
-python3 main.py --resd
+python3 main.py
 ```
 
-or to clean previous outputs and rerun:
+The pipeline will automatically:
+1. Run RESDSQL for schema filtering (if `data/resd_output.json` doesn't exist)
+2. Execute masking, SQL generation, and evaluation stages
+3. Generate results in numbered output files (`2_LimitJson.json`, `3_RunResdsql.json`, etc.)
+
+**Optional flags:**
+- `--clean`: Remove intermediate files before running
+- `--config`: Specify a custom config file
+
+Example:
 
 ```sh
-python3 main.py --resd --clean
+# Clean previous outputs and rerun
+python3 main.py --clean
+
+# Use custom config
+python3 main.py --config configs/custom.yaml
 ```
+
+**Note:** RESDSQL schema filtering runs only once and caches results in `data/resd_output.json`. To force regeneration, delete this file or set `FORCE=1` in your environment.
 
 ## Documentation
 
