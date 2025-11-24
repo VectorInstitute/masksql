@@ -1,13 +1,31 @@
 """Concurrent SQL execution utilities."""
 
-from typing import Any
+from typing import Any, List, Optional
 
-from src.pipe.processor.list_transformer import JsonListTransformer
+from pydantic import BaseModel
+
+from src.pipe.processor.list_processor import JsonListProcessor
 from src.pipe.sqlite_facade import SqliteFacade
+from src.pipe.unmask import AddConcreteSql
 from src.utils.logging import logger
 
 
-class ExecuteConcreteSql(JsonListTransformer):
+class PreEvaluation(BaseModel):
+    """
+    Data model for preliminary SQL execution evaluation.
+
+    Stores accuracy score, error messages, and predicted results
+    from SQL query execution.
+    """
+
+    acc: float
+    err: str
+    pred_res: Optional[List[Any]]
+
+
+class ExecuteConcreteSql(
+    JsonListProcessor[AddConcreteSql.Model, "ExecuteConcreteSql.Model"]
+):
     """
     Execute concrete SQL queries and compare results with gold standard.
 
@@ -20,30 +38,32 @@ class ExecuteConcreteSql(JsonListTransformer):
         Directory containing SQLite database files
     """
 
-    async def _process_row(self, row: dict[str, Any]) -> dict[str, Any]:
-        return await self.get_exec_acc(row)
+    class Model(AddConcreteSql.Model):
+        """Data model for concrete SQL execution with preliminary evaluation results."""
+
+        pre_eval: PreEvaluation
 
     def __init__(self, database_dir: str) -> None:
-        super().__init__(False)
+        super().__init__(self.Model, force=True)
         self.dbf = SqliteFacade(database_dir)
 
-    async def get_exec_acc(self, row: dict[str, Any]) -> dict[str, Any]:
+    async def _process_row(self, row: AddConcreteSql.Model) -> Model:
         """
         Calculate execution accuracy for a row.
 
         Parameters
         ----------
-        row : dict
+        row : AddConcreteSql.Model
             Data row with query, concrete_sql, and db_id
 
         Returns
         -------
-        dict
+        ExecuteConcreteSql.Model
             Row with pre_eval results added
         """
-        gold = row["query"]
-        pred = row["concrete_sql"]
-        db_id = row["db_id"]
+        gold = row.query
+        pred = row.concrete_sql
+        db_id = row.db_id
         try:
             gold_res, _ = self.dbf.exec_query_sync(db_id, gold)
             pred_res, pred_err = self.dbf.exec_query_sync(db_id, pred)
@@ -62,8 +82,10 @@ class ExecuteConcreteSql(JsonListTransformer):
             #           different from the gold execution result"
             # else:
             #     err = None
-            row["pre_eval"] = {"acc": acc, "err": pred_err, "pred_res": pred_res}
-            return row
+
+            pre_eval = PreEvaluation(acc=acc, err=pred_err, pred_res=pred_res)
+
+            return self.Model(**row.dict(), pre_eval=pre_eval)
         except Exception as e:
             print(e)
             raise e

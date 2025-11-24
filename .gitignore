@@ -4,7 +4,6 @@
 .DS_Store
 data
 eval_results
-models
 tensorboard_log
 third_party
 predictions
@@ -23,9 +22,4 @@ archive
 __MACOSX
 *.zip
 .coverage
-
-# Ignore numbered pipeline stage outputs in e2e test data
-tests/e2e/test_data/[0-9]*_*.json
-
-# Ignore RESDSQL intermediate files in e2e test data
-tests/e2e/test_data/resd/
+cache

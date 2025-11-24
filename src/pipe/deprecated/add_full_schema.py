@@ -1,6 +1,11 @@
+# mypy: ignore-errors
+
 """Module for adding database schema information to data rows."""
 
+from typing import Any
+
 from src.pipe.processor.list_processor import JsonListProcessor
+from src.pipe.processor.list_transformer import JsonListTransformer
 from src.pipe.rank_schema import RankSchemaResd
 from src.pipe.schema_repo import DatabaseSchema, DatabaseSchemaRepo
 
@@ -49,6 +54,26 @@ def filter_schema(schema: DatabaseSchema, schema_items: list[str]) -> DatabaseSc
     return filtered_schema
 
 
+class AddFullSchema(JsonListTransformer):
+    """
+    Processor for adding full database schema to data rows.
+
+    Parameters
+    ----------
+    tables_path : str
+        Path to the database tables/schemas repository.
+    """
+
+    def __init__(self, tables_path: str) -> None:
+        super().__init__()
+        self.schema_repo = DatabaseSchemaRepo(tables_path)
+
+    async def __process_row_internal(self, row: dict[str, Any]) -> dict[str, Any]:
+        schema = self.schema_repo.dbs[row["db_id"]]
+        row["schema"] = schema.to_yaml()
+        return row
+
+
 class AddFilteredSchema(
     JsonListProcessor[RankSchemaResd.Model, "AddFilteredSchema.Model"]
 ):
@@ -64,24 +89,44 @@ class AddFilteredSchema(
     """
 
     class Model(RankSchemaResd.Model):
-        """Data model with filtered database schema.
+        """Data model for filtered schema processing with schema field."""
 
-        This model extends the RankSchemaResd.Model by adding a filtered
-        database schema that only includes relevant schema items.
-
-        Attributes
-        ----------
-            db_schema: YAML representation of the filtered database schema
-        """
-
-        db_schema: str
+        schema: str
 
     def __init__(self, tables_path: str) -> None:
-        super().__init__(self.Model, force=True)
+        super().__init__(self.Model)
         self.schema_repo = DatabaseSchemaRepo(tables_path)
 
     async def _process_row(self, row: RankSchemaResd.Model) -> Model:
         schema = self.schema_repo.dbs[row.db_id]
         schema_items = row.schema_items
         filtered_schema = filter_schema(schema, schema_items)
-        return self.Model(db_schema=filtered_schema.to_yaml(), **row.dict())
+        return self.Model(schema=filtered_schema.to_yaml(), **row.dict())
+
+
+class AddSchemaItems(JsonListTransformer):
+    """
+    Processor for extracting all schema items from database schema.
+
+    Creates a list of all tables and columns in the database schema.
+
+    Parameters
+    ----------
+    tables_path : str
+        Path to the database tables/schemas repository.
+    """
+
+    def __init__(self, tables_path: str) -> None:
+        super().__init__(force=True)
+        self.schema_repo = DatabaseSchemaRepo(tables_path)
+
+    async def __process_row_internal(self, row: dict[str, Any]) -> dict[str, Any]:
+        schema = self.schema_repo.dbs[row["db_id"]]
+        schema_items = []
+        for table, columns in schema.tables.items():
+            schema_items.append(f"TABLE:{table}")
+            for col, _col_data in columns.items():
+                schema_items.append(f"COLUMN:{table}.{col}")
+            schema_items.append(f"COLUMN:{table}.[*]")
+        row["schema_items"] = schema_items
+        return row

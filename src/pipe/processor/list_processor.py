@@ -1,65 +1,75 @@
 """Base list processing utilities."""
 
-import json
+import os.path
 from abc import ABC, abstractmethod
-from typing import Any
+from typing import Generic, Optional, Type, TypeVar
 
+from src.data_cache.json_cache import JsonCache
+from src.models.base_object import BaseObject
 from src.pipe.async_utils import apply_async
 
 
-class JsonListProcessor(ABC):
+T = TypeVar("T", bound=BaseObject)
+U = TypeVar("U", bound=BaseObject)
+
+
+class JsonListProcessor(ABC, Generic[T, U]):
     """Base class for JSON list processing operations."""
 
+    cls: Type[U]
+    force: bool
+    cache: Optional[JsonCache[U]] = None
+
+    def __init__(self, cls: Type[U], force: bool = False) -> None:
+        self.cls = cls
+        self.force = force
+
+    def set_cache_file(self, cache_dir: str, sequence: int) -> None:
+        """
+        Set up the cache file for storing processed results.
+
+        Parameters
+        ----------
+        cache_dir : str
+            Directory to store cache files
+        sequence : int
+            Sequence number for the cache file
+        """
+        self.cache = JsonCache[U](
+            self.get_cache_file_path(cache_dir, sequence), self.cls
+        )
+
+    def get_cache_file_path(self, cache_dir: str, sequence: int) -> str:
+        """
+        Generate the path for the cache file.
+
+        Parameters
+        ----------
+        cache_dir : str
+            Directory to store cache files
+        sequence : int
+            Sequence number for the cache file
+
+        Returns
+        -------
+        str
+            Full path to the cache file
+        """
+        return os.path.join(cache_dir, f"{sequence}_{self.name}.json")
+
+    async def __process_row_internal(self, row: T) -> U:
+        if self.cache and not self.force and row.idx in self.cache:
+            return self.cache[row.idx]
+
+        processed_row = await self._process_row(row)
+
+        if self.cache:
+            self.cache.add_or_update(processed_row)
+        return processed_row
+
     @abstractmethod
-    async def _process_row(self, row: Any) -> Any:
+    async def _process_row(self, row: T) -> U:
         pass
-
-    def get_prop(self, row: Any, prop: str) -> Any:
-        """
-        Get nested property from row using dot notation.
-
-        Parameters
-        ----------
-        row : dict
-            Data row
-        prop : str
-            Property path in dot notation
-
-        Returns
-        -------
-        any
-            Property value
-        """
-        props = prop.split(".")
-        d = row
-        for p in props:
-            d = d[p]
-        return d
-
-    def set_prop(self, row: Any, prop: str, value: Any) -> Any:
-        """
-        Set nested property in row using dot notation.
-
-        Parameters
-        ----------
-        row : dict
-            Data row
-        prop : str
-            Property path in dot notation
-        value : any
-            Value to set
-
-        Returns
-        -------
-        dict
-            Modified row
-        """
-        props = prop.split(".")
-        d = row
-        for p in props[:-1]:
-            d = d[p]
-        d[props[-1]] = value
-        return row
 
     @property
     def name(self) -> str:
@@ -79,13 +89,9 @@ class JsonListProcessor(ABC):
     def _post_run(self) -> None:  # noqa: B027
         """Override to add post-processing logic after run."""
 
-    def _get_input_data(self, input_file: str) -> Any:
-        with open(input_file) as f:
-            return json.load(f)
-
-    async def run(self, input_file: str) -> list[Any] | str:
+    async def run(self, input_data: list[T]) -> list[U]:
         """
-        Process input file and return output.
+        Process input file and return output_data.
 
         Parameters
         ----------
@@ -95,14 +101,13 @@ class JsonListProcessor(ABC):
         Returns
         -------
         list | str
-            Processed data rows or output file path
+            Processed data rows or output_data file path
         """
+        data = [item.model_copy() for item in input_data]
         self._pre_run()
 
-        in_data = self._get_input_data(input_file)
-
-        output = await apply_async(self._process_row, in_data, self.name)
+        output_data = await apply_async(self.__process_row_internal, data, self.name)
 
         self._post_run()
 
-        return output
+        return output_data

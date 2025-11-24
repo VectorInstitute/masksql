@@ -1,9 +1,11 @@
 ---
+name: "full-base"
 data_dir: "data"
+cache_dir: "cache"
 resd: true
 policy: "full"
-slm: "qwen/qwen-2.5-7b-instruct"
-llm: "openai/gpt-4.1"
+slm: "qwen/qwen-2.5-7b-instruct@preset/qwen"
+llm: "openai/gpt-4.1-mini"
 openai:
   base_url: "https://openrouter.ai/api/v1"
   timeout: 30

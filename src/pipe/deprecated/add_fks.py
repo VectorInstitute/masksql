@@ -1,3 +1,5 @@
+# mypy: ignore-errors
+
 """Module for adding foreign key relationships to database schemas."""
 
 from typing import Any
@@ -26,7 +28,7 @@ class AddForeignKeys(JsonListTransformer):
         self.prop_name = prop_name
         self.schema_repo = DatabaseSchemaRepo(tables_path)
 
-    async def _process_row(self, row: dict[str, Any]) -> dict[str, Any]:
+    async def __process_row_internal(self, row: dict[str, Any]) -> dict[str, Any]:
         fks = []
         schema = self.schema_repo.dbs[row["db_id"]]
         for table_name, table_columns in schema.tables.items():

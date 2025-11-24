@@ -1,18 +1,22 @@
 """Base processor for LLM-based value detection."""
 
-import os
-from abc import abstractmethod
+from abc import ABC, abstractmethod
 from json import JSONDecodeError
-from typing import Any
+from typing import Any, Generic, Tuple, Type, TypeVar
 
 from src.config import OpenAIConfig
 from src.pipe.llm_util import send_prompt
-from src.pipe.processor.list_transformer import JsonListTransformer
+from src.pipe.processor.list_processor import JsonListProcessor
+from src.pipe.util_processors import InitData
 from src.pipe.utils import Timer
 from src.utils.logging import logger
 
 
-class PromptProcessor(JsonListTransformer):
+T = TypeVar("T", bound=InitData.Model)
+U = TypeVar("U", bound=InitData.Model)
+
+
+class PromptProcessor(JsonListProcessor[T, U], ABC, Generic[T, U]):
     """
     Base processor for LLM-based prompt processing.
 
@@ -34,21 +38,18 @@ class PromptProcessor(JsonListTransformer):
 
     def __init__(
         self,
-        prop_name: str,
+        cls: Type[U],
         openai_config: OpenAIConfig,
         model: str,
         force: bool = False,
         include_stats: bool = True,
     ) -> None:
-        super().__init__(force)
+        super().__init__(cls)
         self.openai_config = openai_config
         self.model = model
-        self.prop_name = prop_name
-        self.prompt_file = "/dev/null"
-        self.response_file = "/dev/null"
         self.include_stats = include_stats
 
-    async def _prompt_llm(self, row: dict[str, Any], prompt: str) -> tuple[Any, str]:
+    async def _prompt_llm(self, row: T, prompt: str) -> Tuple[Any, str]:
         try:
             res, toks = await send_prompt(prompt, self.openai_config, model=self.model)
         except JSONDecodeError as e:
@@ -61,55 +62,27 @@ class PromptProcessor(JsonListTransformer):
         return processed_res, toks
 
     @abstractmethod
-    def _process_output(self, row: dict[str, Any], output: str) -> Any:
+    def _process_output(self, row: T, output: str) -> Any:
         pass
 
     @abstractmethod
-    def _get_prompt(self, row: dict[str, Any]) -> str:
+    def _get_prompt(self, row: T) -> str:
         pass
 
-    async def _process_row(self, row: dict[str, Any]) -> dict[str, Any]:
+    @abstractmethod
+    def _get_result_data(self, row: T, llm_output: Any) -> U:
+        pass
+
+    async def _process_row(self, row: T) -> U:
         prompt = self._get_prompt(row)
-        with open(self.prompt_file, "a") as f:
-            f.write(f"######################\n {prompt}\n")
         timer = Timer.start()
         res, toks = await self._prompt_llm(row, prompt)
-        with open(self.response_file, "a") as f:
-            f.write(f"######################\n {res}\n")
-
+        result_data = self._get_result_data(row, res)
         if self.include_stats:
-            if "total_latency" not in row:
-                row["total_latency"] = 0
             latency = timer.lap()
-            row["total_latency"] += latency
-
-            if "total_toks" not in row:
-                row["total_toks"] = 0
-            row["total_toks"] += int(toks)
-
-        if self.prop_name in row and not isinstance(row[self.prop_name], str):
-            row[self.prop_name].update(res)
-        else:
-            row[self.prop_name] = res
-        return row
-
-    async def run(self, input_file: str) -> str:
-        """
-        Run the processor and log prompts/responses.
-
-        Parameters
-        ----------
-        input_file : str
-            Path to input JSON file
-
-        Returns
-        -------
-        str
-            Path to output file
-        """
-        os.makedirs("logs", exist_ok=True)
-        self.prompt_file = f"logs/{self.name}.prompt.txt"
-        self.response_file = f"logs/{self.name}.response.txt"
-        open(self.prompt_file, "w").close()
-        open(self.response_file, "w").close()
-        return await super().run(input_file)
+            new_latency = row.total_latency + latency
+            new_toks = row.total_toks + int(toks)
+            result_data = result_data.model_copy(
+                update={"total_latency": new_latency, "total_toks": new_toks}
+            )
+        return result_data

@@ -1,16 +1,33 @@
 """Deterministic masking of terms in questions."""
 
 import logging
-from typing import Any
+from typing import Dict, List
 
-from src.pipe.processor.list_transformer import JsonListTransformer
+from src.pipe.add_symb_schema import AddSymbolicSchema, SymbolicSchema
+from src.pipe.processor.list_processor import JsonListProcessor
 from src.pipe.utils import replace_str
 
 
 logger = logging.getLogger(__name__)
 
 
-class AddSymbolicQuestion(JsonListTransformer):
+class SymbolicQuestion(SymbolicSchema):
+    """
+    Data model for questions with symbolic representations.
+
+    Extends SymbolicSchema with question-specific fields for tracking
+    masked terms and their replacements.
+    """
+
+    question: str
+    to_value: Dict[str, str]
+    masked: int
+    masked_terms: List[str]
+
+
+class AddSymbolicQuestion(
+    JsonListProcessor[AddSymbolicSchema.Model, "AddSymbolicQuestion.Model"]
+):
     """
     Add symbolic representations to questions by replacing schema and value terms.
 
@@ -19,8 +36,13 @@ class AddSymbolicQuestion(JsonListTransformer):
     generation.
     """
 
+    class Model(AddSymbolicSchema.Model):
+        """Data model for symbolic question processing with symbolic field."""
+
+        symbolic: SymbolicQuestion
+
     def __init__(self) -> None:
-        super().__init__(force=True)
+        super().__init__(self.Model, force=True)
 
     def get_symbol(
         self, schema_items: list[str] | str, symbol_table: dict[str, str]
@@ -170,13 +192,15 @@ class AddSymbolicQuestion(JsonListTransformer):
                         updated_schema_links[question_term] = schema_item
         return updated_schema_links
 
-    async def _process_row(self, row: dict[str, Any]) -> dict[str, Any]:
+    async def _process_row(
+        self, row: "AddSymbolicSchema.Model"
+    ) -> "AddSymbolicQuestion.Model":
         self.vid: int = 1
         self.value_dict: dict[str, str] = {}
-        filtered_schema_links = row["filtered_schema_links"]
-        schema_links = row["schema_links"]
-        question = row["question"]
-        symbol_table = row["symbolic"]["to_symbol"]
+        filtered_schema_links = row.filtered_schema_links
+        schema_links = row.schema_links
+        question = row.question
+        symbol_table = row.symbolic.to_symbol
         updated_schema_links = self.add_tables_of_columns(
             schema_links, filtered_schema_links
         )
@@ -185,8 +209,8 @@ class AddSymbolicQuestion(JsonListTransformer):
         symbolic_question = question
         masked = 0
 
-        value_links = row["value_links"]
-        filtered_value_links = row["filtered_value_links"]
+        value_links = row.value_links
+        filtered_value_links = row.filtered_value_links
 
         if isinstance(value_links, (list, str)):
             logger.error(f"Invalid value links: {value_links}")
@@ -229,12 +253,13 @@ class AddSymbolicQuestion(JsonListTransformer):
                 logger.warning(
                     f"[yellow]⚠  Mask failed[/yellow] [dim]{question_term}[/dim] → {e}"
                 )
-        row["symbolic"].update(
-            {
-                "question": symbolic_question,
-                "to_value": self.value_dict,
-                "masked": masked,
-                "masked_terms": masked_terms,
-            }
+
+        symbolic = SymbolicQuestion(
+            **row.symbolic.dict(),
+            question=symbolic_question,
+            to_value=self.value_dict,
+            masked=masked,
+            masked_terms=masked_terms,
         )
-        return row
+
+        return self.Model(**row.dict(exclude={"symbolic"}), symbolic=symbolic)

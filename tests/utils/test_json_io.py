@@ -4,7 +4,7 @@ import json
 
 import pytest
 
-from src.utils.json_io import read_json, write_json
+from src.utils.json_io import read_json_raw, write_json_raw
 
 
 class TestReadJson:
@@ -18,7 +18,7 @@ class TestReadJson:
         json_file.write_text(json.dumps(test_data))
 
         # Read the file
-        result = read_json(str(json_file))
+        result = read_json_raw(str(json_file))
 
         assert result == test_data
         assert isinstance(result, dict)
@@ -29,7 +29,7 @@ class TestReadJson:
         test_data = [1, 2, 3, 4, 5]
         json_file.write_text(json.dumps(test_data))
 
-        result = read_json(str(json_file))
+        result = read_json_raw(str(json_file))
 
         assert result == test_data
         assert isinstance(result, list)
@@ -43,7 +43,7 @@ class TestReadJson:
         }
         json_file.write_text(json.dumps(test_data))
 
-        result = read_json(str(json_file))
+        result = read_json_raw(str(json_file))
 
         assert result == test_data
         assert len(result["users"]) == 2
@@ -54,7 +54,7 @@ class TestReadJson:
         json_file = tmp_path / "test.json"
         json_file.write_text("{}")
 
-        result = read_json(str(json_file))
+        result = read_json_raw(str(json_file))
 
         assert result == {}
 
@@ -63,7 +63,7 @@ class TestReadJson:
         json_file = tmp_path / "test.json"
         json_file.write_text("[]")
 
-        result = read_json(str(json_file))
+        result = read_json_raw(str(json_file))
 
         assert result == []
 
@@ -73,7 +73,7 @@ class TestReadJson:
         test_data = {"message": "Hello 世界! 🌍"}
         json_file.write_text(json.dumps(test_data, ensure_ascii=False))
 
-        result = read_json(str(json_file))
+        result = read_json_raw(str(json_file))
 
         assert result == test_data
         assert result["message"] == "Hello 世界! 🌍"
@@ -91,7 +91,7 @@ class TestReadJson:
         }
         json_file.write_text(json.dumps(test_data))
 
-        result = read_json(str(json_file))
+        result = read_json_raw(str(json_file))
 
         assert result == test_data
         assert result["null_value"] is None
@@ -101,7 +101,7 @@ class TestReadJson:
     def test_read_json_file_not_found(self):
         """Test reading a non-existent file raises FileNotFoundError."""
         with pytest.raises(FileNotFoundError):
-            read_json("/nonexistent/path/file.json")
+            read_json_raw("/nonexistent/path/file.json")
 
     def test_read_json_invalid_json(self, tmp_path):
         """Test reading invalid JSON raises JSONDecodeError."""
@@ -109,7 +109,7 @@ class TestReadJson:
         json_file.write_text("{ invalid json }")
 
         with pytest.raises(json.JSONDecodeError):
-            read_json(str(json_file))
+            read_json_raw(str(json_file))
 
 
 class TestWriteJson:
@@ -120,7 +120,7 @@ class TestWriteJson:
         json_file = tmp_path / "output.json"
         test_data = {"name": "Alice", "age": 30}
 
-        write_json(str(json_file), test_data)
+        write_json_raw(str(json_file), test_data)
 
         # Verify file was created and contains correct data
         assert json_file.exists()
@@ -133,7 +133,7 @@ class TestWriteJson:
         json_file = tmp_path / "output.json"
         test_data = [1, 2, 3, 4, 5]
 
-        write_json(str(json_file), test_data)
+        write_json_raw(str(json_file), test_data)
 
         assert json_file.exists()
         with open(json_file) as f:
@@ -151,7 +151,7 @@ class TestWriteJson:
             "metadata": {"version": "1.0", "count": 2},
         }
 
-        write_json(str(json_file), test_data)
+        write_json_raw(str(json_file), test_data)
 
         with open(json_file) as f:
             result = json.load(f)
@@ -162,7 +162,7 @@ class TestWriteJson:
         json_file = tmp_path / "output.json"
         test_data = {"name": "Alice", "age": 30}
 
-        write_json(str(json_file), test_data)
+        write_json_raw(str(json_file), test_data)
 
         # Read raw content to check formatting
         content = json_file.read_text()
@@ -175,11 +175,11 @@ class TestWriteJson:
 
         # Write initial data
         initial_data = {"value": 1}
-        write_json(str(json_file), initial_data)
+        write_json_raw(str(json_file), initial_data)
 
         # Overwrite with new data
         new_data = {"value": 2}
-        write_json(str(json_file), new_data)
+        write_json_raw(str(json_file), new_data)
 
         # Verify new data is present
         with open(json_file) as f:
@@ -190,7 +190,7 @@ class TestWriteJson:
     def test_write_json_empty_dict(self, tmp_path):
         """Test writing an empty dictionary."""
         json_file = tmp_path / "output.json"
-        write_json(str(json_file), {})
+        write_json_raw(str(json_file), {})
 
         with open(json_file) as f:
             result = json.load(f)
@@ -199,7 +199,7 @@ class TestWriteJson:
     def test_write_json_empty_list(self, tmp_path):
         """Test writing an empty list."""
         json_file = tmp_path / "output.json"
-        write_json(str(json_file), [])
+        write_json_raw(str(json_file), [])
 
         with open(json_file) as f:
             result = json.load(f)
@@ -210,7 +210,7 @@ class TestWriteJson:
         json_file = tmp_path / "output.json"
         test_data = {"message": "Hello 世界! 🌍", "emoji": "✨"}
 
-        write_json(str(json_file), test_data)
+        write_json_raw(str(json_file), test_data)
 
         with open(json_file, encoding="utf-8") as f:
             result = json.load(f)
@@ -228,19 +228,19 @@ class TestWriteJson:
             "float": 3.14159,
         }
 
-        write_json(str(json_file), test_data)
+        write_json_raw(str(json_file), test_data)
 
         with open(json_file) as f:
             result = json.load(f)
         assert result == test_data
 
     def test_write_json_creates_parent_directory(self, tmp_path):
-        """Test that write_json fails if parent directory doesn't exist."""
+        """Test that write_json_raw fails if parent directory doesn't exist."""
         json_file = tmp_path / "subdir" / "output.json"
 
         # This should raise an error since subdir doesn't exist
         with pytest.raises(FileNotFoundError):
-            write_json(str(json_file), {"test": "data"})
+            write_json_raw(str(json_file), {"test": "data"})
 
 
 class TestRoundTrip:
@@ -260,8 +260,8 @@ class TestRoundTrip:
         }
 
         # Write then read
-        write_json(str(json_file), original_data)
-        result = read_json(str(json_file))
+        write_json_raw(str(json_file), original_data)
+        result = read_json_raw(str(json_file))
 
         assert result == original_data
 
@@ -271,7 +271,7 @@ class TestRoundTrip:
 
         for i in range(3):
             data = {"iteration": i, "value": i * 10}
-            write_json(str(json_file), data)
-            result = read_json(str(json_file))
+            write_json_raw(str(json_file), data)
+            result = read_json_raw(str(json_file))
             assert result == data
             assert result["iteration"] == i

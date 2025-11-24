@@ -31,6 +31,8 @@ class MaskSqlConfig(BaseModel):
     ----------
     data_dir : str
         Base directory for data files.
+    resd : bool
+        Whether to use RESD mode.
     policy : str
         Policy configuration for execution.
     slm : str
@@ -41,13 +43,16 @@ class MaskSqlConfig(BaseModel):
         Flag to enable or disable RESD.
     """
 
+    name: str
     data_dir: str
+    cache_dir: str
     policy: str
     slm: str
     llm: str
     resd: bool
     openai: OpenAIConfig = field(default_factory=OpenAIConfig)
     __input_file: str = "1_input.json"
+    __output_file: str = "output.json"
     __db_dir: str = "databases"
     __tables_file: str = "tables.json"
     __resd_file: str = "resd_output.json"
@@ -78,6 +83,11 @@ class MaskSqlConfig(BaseModel):
     def input_path(self) -> str:
         """Get the absolute path to the input JSON file."""
         return self.get_abs_path(self.__input_file)
+
+    @property
+    def output_path(self) -> str:
+        """Get the absolute path to the input JSON file."""
+        return self.get_abs_path(self.__output_file)
 
     @property
     def tables_path(self) -> str:

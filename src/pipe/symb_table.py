@@ -1,12 +1,29 @@
 """Symbol table for tracking symbolic representations."""
 
-from typing import Any
+from typing import Dict
 
-from src.pipe.processor.list_transformer import JsonListTransformer
+from pydantic import BaseModel
+
+from src.pipe.add_schema import AddFilteredSchema
+from src.pipe.processor.list_processor import JsonListProcessor
 from src.pipe.schema_repo import DatabaseSchema, DatabaseSchemaRepo
 
 
-class AddSymbolTable(JsonListTransformer):
+class SymbolTableDicts(BaseModel):
+    """
+    Data model for bidirectional symbol-name mappings.
+
+    Provides mappings between symbolic representations and their
+    corresponding database element names.
+    """
+
+    to_name: Dict[str, str]
+    to_symbol: Dict[str, str]
+
+
+class AddSymbolTable(
+    JsonListProcessor[AddFilteredSchema.Model, "AddSymbolTable.Model"]
+):
     """
     Create symbol tables mapping database elements to symbolic representations.
 
@@ -18,8 +35,17 @@ class AddSymbolTable(JsonListTransformer):
         Path to the database schema definitions file
     """
 
+    class Model(AddFilteredSchema.Model):
+        """Data model for symbol table processing.
+
+        Extends the filtered schema model with symbolic representations
+        of database elements.
+        """
+
+        symbolic: SymbolTableDicts
+
     def __init__(self, tables_path: str) -> None:
-        super().__init__(True)
+        super().__init__(self.Model, force=True)
         self.schema_repo = DatabaseSchemaRepo(tables_path)
 
     def table_symbol(self, idx: int) -> str:
@@ -54,8 +80,8 @@ class AddSymbolTable(JsonListTransformer):
         """
         return f"[C{idx}]"
 
-    async def _process_row(self, row: dict[str, Any]) -> dict[str, Any]:
-        schema = DatabaseSchema.from_yaml(row["schema"])
+    async def _process_row(self, row: AddFilteredSchema.Model) -> Model:
+        schema = DatabaseSchema.from_yaml(row.db_schema)
         tid = 1
         cid = 1
         symbol_table = {}
@@ -71,36 +97,5 @@ class AddSymbolTable(JsonListTransformer):
                 cid += 1
                 symbol_table[col_symbol] = col_ref
                 rev_table[col_ref] = col_symbol
-        row["symbolic"] = {"to_name": symbol_table, "to_symbol": rev_table}
-        return row
-
-
-class AddValueSymbolTable(JsonListTransformer):
-    """
-    Add symbolic representations for values to the symbol table.
-
-    Extends the symbol table with value symbols for values detected in questions.
-
-    Parameters
-    ----------
-    tables_path : str
-        Path to the database schema definitions file
-    """
-
-    def __init__(self, tables_path: str) -> None:
-        super().__init__(True)
-        self.schema_repo = DatabaseSchemaRepo(tables_path)
-
-    async def _process_row(self, row: dict[str, Any]) -> dict[str, Any]:
-        vid = 1
-        value_links = row["value_links"]
-        symbol_table = row["symbolic"]["to_symbol"]
-        to_value = {}
-        for value in value_links:
-            symbol = f"[V{vid}]"
-            symbol_table[value] = symbol
-            to_value[symbol] = value
-            vid += 1
-        row["symbolic"]["to_symbol"] = symbol_table
-        row["symbolic"]["to_value"] = to_value
-        return row
+        symbolic_dicts = SymbolTableDicts(to_name=symbol_table, to_symbol=rev_table)
+        return self.Model(symbolic=symbolic_dicts, **row.dict())
