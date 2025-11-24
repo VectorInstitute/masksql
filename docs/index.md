@@ -69,17 +69,38 @@ cp .env.example .env
 
 ### Download RESDSQL Models
 
-MaskSQL uses RESDSQL for schema filtering, which requires pre-trained models:
+MaskSQL uses RESDSQL for schema filtering, which requires pre-trained models. Download the following models from the [RESDSQL repository](https://github.com/RUCKBReasoning/RESDSQL):
+
+#### 1. Schema Item Classifier (Cross-Encoder)
+- **text2sql_schema_item_classifier**: [Google Drive](https://drive.google.com/file/d/1zHAhECq1uGPR9Rt1EDsTai1LbRx0jYIo/view?usp=share_link) | [Baidu Netdisk](https://pan.baidu.com/s/1trSi8OBOcPo5NkZb_o-T4g) (pwd: dr62)
+
+#### 2. T5 Language Model (Skeleton Parsing)
+Choose one model size (base recommended for most use cases):
+- **text2sql-t5-base**: [Google Drive](https://drive.google.com/file/d/1lqZ81f_fSZtg6BRcRw1-Ol-RJCcKRsmH/view?usp=sharing) | [Baidu](https://pan.baidu.com/s/1-6H7zStq0WCJHTjDuVspoQ) (pwd: wuek)
+- **text2sql-t5-large**: [Google Drive](https://drive.google.com/file/d/1-xwtKwfJZSrmJrU-_Xdkx1kPuZao7r7e/view?usp=sharing) | [Baidu](https://pan.baidu.com/s/1Mwg0OZZ48APEq9jPvQQNtw) (pwd: q58k)
+- **text2sql-t5-3b**: [Google Drive](https://drive.google.com/file/d/1M-zVeB6TKrvcIzaH8vHBIKeWqPn95i11/view?usp=sharing) | [Baidu](https://pan.baidu.com/s/1mZxakfes4wRSEwnRW43i5A) (pwd: sc62)
+
+After downloading, extract the models to the `models/` directory:
 
 ```sh
-# Download and extract models (if not already in data.zip)
-cd resdsql
-unzip -o ../data/resdsql/text2sql-t5-base.zip -d models
-unzip -o ../data/resdsql/text2sql_schema_item_classifier.zip -d models
-cd ..
+# Extract the downloaded models
+unzip text2sql_schema_item_classifier.zip -d models/
+unzip text2sql-t5-base.zip -d models/
 ```
 
-The models will be extracted to `models/text2sql_schema_item_classifier/` and `models/text2sql-t5-base/`.
+Expected structure:
+```
+models/
+├── text2sql_schema_item_classifier/
+│   ├── config.json
+│   ├── dense_classifier.pt
+│   └── ...
+└── text2sql-t5-base/
+    └── checkpoint-39312/
+        ├── config.json
+        ├── pytorch_model.bin
+        └── ...
+```
 
 ## Running MaskSQL
 
