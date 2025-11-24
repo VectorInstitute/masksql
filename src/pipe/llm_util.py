@@ -104,6 +104,44 @@ async def send_prompt(
     return content, usage
 
 
+def _preprocess_json_string(text: str) -> str:
+    """
+    Pre-process JSON string to fix common LLM formatting errors.
+
+    Parameters
+    ----------
+    text : str
+        Raw JSON text that may have formatting issues
+
+    Returns
+    -------
+    str
+        Cleaned JSON text
+    """
+    # Strip whitespace
+    text = text.strip()
+
+    # Fix common array termination issues like: ["item1", "item2".]
+    # Replace ".] with "]
+    text = re.sub(r'"\s*\.\s*\]', '"]', text)
+
+    # Fix missing closing quotes before array end: ["item1", "item2]
+    # Find patterns like: "something] where ] should be "]
+    text = re.sub(r'([^"])\]', r'\1"]', text)
+    # But undo if we just added "" which would be wrong
+    text = text.replace('"""]', '"]')
+
+    # Fix patterns like: "COLUMN:." or "TABLE:" (empty after colon)
+    # Remove items that are just "TYPE:." or "TYPE:"
+    text = re.sub(r'"\s*[A-Z]+\s*:\s*\.?\s*"', '""', text)
+
+    # Remove empty strings from arrays
+    text = re.sub(r',\s*""\s*,', ",", text)  # middle
+    text = re.sub(r'\[\s*""\s*,', "[", text)  # start
+    text = re.sub(r',\s*""\s*\]', "]", text)  # end
+    return re.sub(r'\[\s*""\s*\]', "[]", text)  # only item
+
+
 def extract_json(text: str) -> dict[str, Any] | None:
     """
     Extract JSON object from text with code blocks.
@@ -121,13 +159,17 @@ def extract_json(text: str) -> dict[str, Any] | None:
     try:
         if "```json" in text:
             res = re.findall(r"```json([\s\S]*?)```", text)
-            json_res = json.loads(res[0])
+            json_text = res[0]
         elif "```" in text:
             res = re.findall(r"```([\s\S]*?)```", text)
-            json_res = json.loads(res[0])
+            json_text = res[0]
         else:
-            json_res = json.loads(text)
-        return json_res
+            json_text = text
+
+        # Pre-process to fix common formatting errors
+        json_text = _preprocess_json_string(json_text)
+
+        return json.loads(json_text)
     except Exception as e:
         logger.warning(f"Failed to extract json from: {text}, error={e}")
         return None
@@ -172,6 +214,7 @@ def extract_object(text: str) -> Any | None:
     if obj is None:
         obj = eval_literal(text)
     if obj is None:
-        logger.error(f"Failed to extract object: {text}")
+        # Only log at debug level since callers typically handle None gracefully
+        logger.debug(f"Failed to extract object: {text}")
         obj = None
     return obj
