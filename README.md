@@ -65,21 +65,61 @@ cp .env.example .env
 **Optional:**
 - `LIMIT`: Number of dataset entries to process (e.g., `LIMIT=10`)
 - `START`: Starting index in the dataset (default: 0)
+- `LOG_LEVEL`: Logging verbosity (INFO, DEBUG, etc.)
+
+### Download RESDSQL Models
+
+MaskSQL uses RESDSQL for schema filtering, which requires pre-trained models. Download the following models from the [RESDSQL repository](https://github.com/RUCKBReasoning/RESDSQL):
+
+#### 1. Schema Item Classifier (Cross-Encoder)
+- **text2sql_schema_item_classifier**: [Google Drive](https://drive.google.com/file/d/1zHAhECq1uGPR9Rt1EDsTai1LbRx0jYIo/view?usp=share_link) | [Baidu Netdisk](https://pan.baidu.com/s/1trSi8OBOcPo5NkZb_o-T4g) (pwd: dr62)
+
+#### 2. T5 Language Model (Skeleton Parsing)
+Choose one model size (base recommended for most use cases):
+- **text2sql-t5-base**: [Google Drive](https://drive.google.com/file/d/1lqZ81f_fSZtg6BRcRw1-Ol-RJCcKRsmH/view?usp=sharing) | [Baidu](https://pan.baidu.com/s/1-6H7zStq0WCJHTjDuVspoQ) (pwd: wuek)
+- **text2sql-t5-large**: [Google Drive](https://drive.google.com/file/d/1-xwtKwfJZSrmJrU-_Xdkx1kPuZao7r7e/view?usp=sharing) | [Baidu](https://pan.baidu.com/s/1Mwg0OZZ48APEq9jPvQQNtw) (pwd: q58k)
+- **text2sql-t5-3b**: [Google Drive](https://drive.google.com/file/d/1M-zVeB6TKrvcIzaH8vHBIKeWqPn95i11/view?usp=sharing) | [Baidu](https://pan.baidu.com/s/1mZxakfes4wRSEwnRW43i5A) (pwd: sc62)
+
+After downloading, extract the models to the `models/` directory:
+
+```sh
+# Extract the downloaded models
+unzip text2sql_schema_item_classifier.zip -d models/
+unzip text2sql-t5-base.zip -d models/
+```
+
+Expected structure:
+```
+models/
+├── text2sql_schema_item_classifier/
+│   ├── config.json
+│   ├── dense_classifier.pt
+│   └── ...
+└── text2sql-t5-base/
+    └── checkpoint-39312/
+        ├── config.json
+        ├── pytorch_model.bin
+        └── ...
+```
 
 ## Running MaskSQL
 
 ### Configuration
 
-To configure the MaskSQL, uses the `configs/conf.yaml` file by default.
-You can pass in arbitrary config files using the `--config` option of
-the CLI interface.
+MaskSQL uses `configs/conf.yaml` by default. You can specify a different config file using the `--config` option:
 
+```sh
+python3 main.py --config path/to/config.yaml
+```
 
-### 1. Run RESDSQL (Schema Filtering)
+**Key configuration options:**
+- `data_dir`: Directory containing datasets and databases
+- `resd`: Use RESDSQL for schema ranking (default: true)
+- `policy`: Evaluation policy ("full", "partial", etc.)
+- `slm`: Small language model for entity detection and linking
+- `llm`: Large language model for SQL generation
 
-MaskSQL requires RESDSQL for initial schema filtering. Follow the [RESDSQL setup instructions](./Resd.md) to generate the required files.
-
-### 2. Run the Pipeline
+### Run the Pipeline
 
 Execute the MaskSQL pipeline:
 
@@ -87,11 +127,26 @@ Execute the MaskSQL pipeline:
 python3 main.py
 ```
 
-or to clean previous outputs and rerun:
+The pipeline will automatically:
+1. Run RESDSQL for schema filtering (if `data/resd_output.json` doesn't exist)
+2. Execute masking, SQL generation, and evaluation stages
+3. Generate results in numbered output files (`2_LimitJson.json`, `3_RunResdsql.json`, etc.)
+
+**Optional flags:**
+- `--clean`: Remove intermediate files before running
+- `--config`: Specify a custom config file
+
+Example:
 
 ```sh
+# Clean previous outputs and rerun
 python3 main.py --clean
+
+# Use custom config
+python3 main.py --config configs/custom.yaml
 ```
+
+**Note:** RESDSQL schema filtering runs only once and caches results in `data/resd_output.json`. To force regeneration, delete this file or set `FORCE=1` in your environment.
 
 ## Documentation
 
