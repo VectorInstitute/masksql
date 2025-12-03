@@ -8,6 +8,7 @@ license = "Apache-2.0"
 repository = "https://github.com/VectorInstitute/masksql"
 requires-python = ">=3.11"
 dependencies = [
+    "fonttools>=4.60.2",  # Pinning version to address vulnerability GHSA-768j-98cg-p3fv
     "absl-py>=2.3.1",
     "python-dotenv>=1.0.0",
     "func-timeout>=4.3.5",
