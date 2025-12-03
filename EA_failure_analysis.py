@@ -4,9 +4,9 @@ This module provides tools for analyzing failed test cases by comparing
 JSON result files and extracting SQL query details for further investigation.
 """
 
-from typing import Any
+from typing import Any, Dict
 
-from src.utils.json_io import read_json, write_json
+from src.utils.json_io import read_json_raw, write_json_raw
 
 
 def finder(path1: str, path2: str) -> list[Any]:
@@ -24,13 +24,13 @@ def finder(path1: str, path2: str) -> list[Any]:
     list
         Items present in path1 but not in path2.
     """
-    full = read_json(path1)
-    category = read_json(path2)
+    full: list[Dict] = read_json_raw(path1)
+    category: list[Dict] = read_json_raw(path2)
     diff = []
     for items in full:
         if items not in category:
             diff.append(items)
-    write_json("data/EA_diff", diff)
+    write_json_raw("data/EA_diff", diff)
 
     for items in category:
         if items not in full:
@@ -47,7 +47,7 @@ def analyser(arr: list[Any]) -> None:
         List of question IDs to analyze.
     """
     path = "data/full/19_RepairSQL.json"
-    file = read_json(path)
+    file = read_json_raw(path)
     res = []
     for items in arr:
         for records in file:
@@ -61,7 +61,7 @@ def analyser(arr: list[Any]) -> None:
                     }
                 )
 
-    write_json("data/EA_sql_diff", res)
+    write_json_raw("data/EA_sql_diff", res)
 
 
 def main() -> None:

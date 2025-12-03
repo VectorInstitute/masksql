@@ -3,7 +3,6 @@
 import re
 from difflib import SequenceMatcher
 from enum import Enum
-from typing import Optional
 
 
 def delete_whitespace(content: str) -> str:
@@ -61,7 +60,7 @@ def quote_str(s: str) -> str:
     return f"'{s}'"
 
 
-def shrink_whitespaces(s: Optional[str]) -> Optional[str]:
+def shrink_whitespaces(s: str | None) -> str | None:
     """
     Normalize whitespace in a string.
 
@@ -70,12 +69,12 @@ def shrink_whitespaces(s: Optional[str]) -> Optional[str]:
 
     Parameters
     ----------
-    s : Optional[str]
+    s : str | None
         The string to process, or None.
 
     Returns
     -------
-    Optional[str]
+    str | None
         The normalized string, or None if input was None.
     """
     if s is None:

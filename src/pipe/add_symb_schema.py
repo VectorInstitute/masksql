@@ -2,11 +2,32 @@
 
 from typing import Any
 
-from src.pipe.processor.list_transformer import JsonListTransformer
+from src.pipe.link_schema import FilterSchemaLinksModel
+from src.pipe.processor.list_processor import JsonListProcessor
 from src.pipe.schema_repo import DatabaseSchema, DatabaseSchemaRepo
+from src.pipe.symb_table import SymbolTableDicts
 
 
-class AddSymbolicSchema(JsonListTransformer):
+class SymbolicSchema(SymbolTableDicts):
+    """Symbolic representation of a database schema.
+
+    This class extends SymbolTableDicts to include a symbolic representation
+    of a database schema, where table and column names are replaced with
+    symbolic identifiers (e.g., T1, C1).
+
+    Attributes
+    ----------
+        db_schema: YAML representation of the symbolic database schema
+        reverse_dict: Mapping from symbolic identifiers back to original names
+    """
+
+    db_schema: str
+    reverse_dict: dict[str, str]
+
+
+class AddSymbolicSchema(
+    JsonListProcessor[FilterSchemaLinksModel, "AddSymbolicSchema.Model"]
+):
     """
     Processor for converting database schemas to symbolic representations.
 
@@ -18,20 +39,38 @@ class AddSymbolicSchema(JsonListTransformer):
         Path to the database tables/schemas repository.
     """
 
+    class Model(FilterSchemaLinksModel):
+        """Data model with symbolic schema representation.
+
+        This model extends FilterSchemaLinksModel by adding a symbolic
+        representation of the database schema.
+
+        Attributes
+        ----------
+            symbolic: Symbolic representation of the database schema
+        """
+
+        symbolic: SymbolicSchema
+
     def __init__(self, tables_path: str) -> None:
-        super().__init__()
+        super().__init__(self.Model, force=True)
         self.schema_repo = DatabaseSchemaRepo(tables_path)
 
-    async def _process_row(self, row: dict[str, Any]) -> dict[str, Any]:
-        schema = DatabaseSchema.from_yaml(row["schema"])
-        symbol_table = row["symbolic"]["to_symbol"]
+    async def _process_row(self, row: FilterSchemaLinksModel) -> Model:
+        schema = DatabaseSchema.from_yaml(row.db_schema)
+        symbol_table = row.symbolic.to_symbol
 
         symbolic_schema = self.get_symb_schema(schema, symbol_table)
 
         reverse_dict = self.get_reverse_dict(schema, symbol_table)
-        row["symbolic"]["schema"] = symbolic_schema.to_yaml()
-        row["symbolic"]["reverse_dict"] = reverse_dict
-        return row
+
+        symbolic = SymbolicSchema(
+            **row.symbolic.dict(),
+            db_schema=symbolic_schema.to_yaml(),
+            reverse_dict=reverse_dict,
+        )
+
+        return self.Model(**row.dict(exclude={"symbolic"}), symbolic=symbolic)
 
     def get_col_symbol(
         self, table_name: str, col_name: str, symbol_table: dict[str, str]

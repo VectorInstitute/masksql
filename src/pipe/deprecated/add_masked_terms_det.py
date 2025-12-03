@@ -1,3 +1,5 @@
+# mypy: ignore-errors
+
 """Module for deterministic masking of terms in natural language questions."""
 
 from typing import Any
@@ -166,7 +168,7 @@ class AddMaskedTermsDeterministic(JsonListTransformer):
                         updated_schema_links[question_term] = schema_item
         return updated_schema_links
 
-    async def _process_row(self, row: dict[str, Any]) -> dict[str, Any]:
+    async def __process_row_internal(self, row: dict[str, Any]) -> dict[str, Any]:
         self.vid: int = 1
         self.value_dict: dict[str, str] = {}
         filtered_schema_links = row["filtered_schema_links"]

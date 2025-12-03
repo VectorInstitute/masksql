@@ -1,4 +1,6 @@
-"""Schema linking evaluation utilities."""
+# mypy: ignore-errors
+
+"""Value linking evaluation processor."""
 
 from typing import Any
 
@@ -7,11 +9,11 @@ import pandas as pd
 from src.pipe.processor.list_processor import JsonListProcessor
 
 
-class SchemaLinkEval(JsonListProcessor):
-    """Evaluate schema linking accuracy."""
+class ValueLinkEval(JsonListProcessor[dict[str, Any], dict[str, Any]]):
+    """Evaluate value linking accuracy."""
 
     def __init__(self) -> None:
-        super().__init__()
+        super().__init__(dict)
         self.scores: list[dict[str, int]] = []
 
     def _post_run(self) -> None:
@@ -26,8 +28,8 @@ class SchemaLinkEval(JsonListProcessor):
         print(f"Binary Score: {bin_avg}")
 
     async def _process_row(self, row: dict[str, Any]) -> dict[str, Any]:
-        gold = row["gold_schema_links"]
-        pred = row["filtered_schema_links"]
+        gold = row["gold_value_links"]
+        pred = row["filtered_value_links"]
         print("##############################")
         print(f"GOLD: {gold}")
         print("------------------------------")
@@ -39,5 +41,6 @@ class SchemaLinkEval(JsonListProcessor):
             total += 1
             if gk in pred and pred[gk] == gv:
                 score += 1
+
         self.scores.append({"score": score, "total": total})
         return row

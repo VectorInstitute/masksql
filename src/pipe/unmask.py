@@ -1,13 +1,15 @@
 """Unmasking of symbolic placeholders in generated SQL."""
 
 import re
-from typing import Any
 
-from src.pipe.processor.list_transformer import JsonListTransformer
+from src.pipe.processor.list_processor import JsonListProcessor
+from src.pipe.repair_symb_sql import RepairSymbolicSQL
 from src.pipe.utils import replace_str_punc
 
 
-class AddConcreteSql(JsonListTransformer):
+class AddConcreteSql(
+    JsonListProcessor[RepairSymbolicSQL.Model, "AddConcreteSql.Model"]
+):
     """
     Convert symbolic SQL to concrete SQL by replacing symbols with actual names.
 
@@ -15,8 +17,17 @@ class AddConcreteSql(JsonListTransformer):
     with their original table names, column names, and values.
     """
 
+    class Model(RepairSymbolicSQL.Model):
+        """Data model for concrete SQL generation.
+
+        Extends the symbolic SQL model with the concrete SQL query
+        where all symbols have been replaced with actual database elements.
+        """
+
+        concrete_sql: str = ""
+
     def __init__(self) -> None:
-        super().__init__(force=True)
+        super().__init__(self.Model, force=True)
 
     def get_value_variations(self, value_symbol: str) -> list[str]:
         """
@@ -34,11 +45,11 @@ class AddConcreteSql(JsonListTransformer):
         """
         return [value_symbol, f'"{value_symbol[1:-1]}"', f"'{value_symbol[1:-1]}'"]
 
-    async def _process_row(self, row: dict[str, Any]) -> dict[str, Any]:
-        reverse_dict = row["symbolic"]["reverse_dict"]
-        value_table = row["symbolic"]["to_value"]
+    async def _process_row(self, row: "RepairSymbolicSQL.Model") -> Model:
+        reverse_dict = row.symbolic.reverse_dict
+        value_table = row.symbolic.to_value
 
-        symbolic_sql = row["symbolic"]["repaired_sql"]
+        symbolic_sql = row.symbolic.repaired_sql
 
         for symbol, name in reverse_dict.items():
             if "." in symbol:
@@ -62,5 +73,6 @@ class AddConcreteSql(JsonListTransformer):
                     symbolic_sql,
                     flags=re.IGNORECASE,
                 )
-        row["concrete_sql"] = symbolic_sql
-        return row
+
+        concrete_sql = symbolic_sql
+        return self.Model(**row.dict(), concrete_sql=concrete_sql)

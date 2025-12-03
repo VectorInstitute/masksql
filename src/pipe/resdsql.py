@@ -1,12 +1,12 @@
 """RESDSQL model integration for SQL generation."""
 
-from typing import Any
+from src.models.masksql_input import MaskSqlInput
+from src.pipe.processor.list_processor import JsonListProcessor
+from src.pipe.util_processors import InitData
+from src.utils.json_io import read_json_raw
 
-from src.pipe.processor.list_transformer import JsonListTransformer
-from src.utils.json_io import read_json
 
-
-class AddResd(JsonListTransformer):
+class AddResd(JsonListProcessor[MaskSqlInput, "AddResd.Model"]):
     """
     Add RESDSQL predictions to data rows.
 
@@ -16,19 +16,22 @@ class AddResd(JsonListTransformer):
         Path to RESDSQL predictions JSON file
     """
 
+    class Model(InitData.Model):
+        """Data model for RESDSQL integration with original table-column predictions."""
+
+        tc_original: list[str] = []
+
     def __init__(self, resd_path: str) -> None:
-        super().__init__()
+        super().__init__(self.Model, force=True)
         self.resd_path = resd_path
-        self.resd: Any = None
+        self.resd: list[dict] = []
 
     def _pre_run(self) -> None:
         """Load RESDSQL predictions before processing rows."""
-        if self.resd is None:
-            self.resd = read_json(self.resd_path)
+        self.resd = read_json_raw(self.resd_path)
 
-    async def _process_row(self, row: dict[str, Any]) -> dict[str, Any]:
+    async def _process_row(self, row: MaskSqlInput) -> Model:
         for r in self.resd:
-            if r["question_id"] == row["question_id"]:
-                row["tc_original"] = r["tc_original"]
-                return row
-        raise RuntimeError(f"Row with qid = {row['question_id']} not found")
+            if r["idx"] == row.idx:
+                return self.Model(tc_original=r["tc_original"], **row.dict())
+        raise RuntimeError(f"Row with idx = {row.idx} not found")

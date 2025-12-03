@@ -1,12 +1,11 @@
 """Schema ranking utilities."""
 
-from typing import Any
-
-from src.pipe.processor.list_transformer import JsonListTransformer
+from src.pipe.processor.list_processor import JsonListProcessor
+from src.pipe.resdsql import AddResd
 from src.pipe.schema_repo import DatabaseSchemaRepo
 
 
-class RankSchemaResd(JsonListTransformer):
+class RankSchemaResd(JsonListProcessor[AddResd.Model, "RankSchemaResd.Model"]):
     """
     Rank schema items from RESDSQL predictions.
 
@@ -16,13 +15,18 @@ class RankSchemaResd(JsonListTransformer):
         Path to tables JSON file
     """
 
+    class Model(AddResd.Model):
+        """Data model for schema ranking with list of ranked schema items."""
+
+        schema_items: list[str]
+
     def __init__(self, tables_path: str) -> None:
-        super().__init__(force=True)
+        super().__init__(self.Model)
         self.schema_repo = DatabaseSchemaRepo(tables_path)
 
-    async def _process_row(self, row: dict[str, Any]) -> dict[str, Any]:
-        schema_items = row["tc_original"]
-        schema = self.schema_repo.dbs[row["db_id"]]
+    async def _process_row(self, row: AddResd.Model) -> Model:
+        schema_items = row.tc_original
+        schema = self.schema_repo.dbs[row.db_id]
         refined_schema_items = []
         for item in schema_items:
             parts = item.split(".")
@@ -39,5 +43,4 @@ class RankSchemaResd(JsonListTransformer):
             if table_item not in refined_schema_items:
                 refined_schema_items.append(f"TABLE:{table_name}")
             refined_schema_items.append(f"COLUMN:{table_name}.{column_name}")
-        row["schema_items"] = refined_schema_items
-        return row
+        return self.Model(schema_items=refined_schema_items, **row.dict())

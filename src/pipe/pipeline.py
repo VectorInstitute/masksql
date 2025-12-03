@@ -1,7 +1,9 @@
 """Pipeline execution and management."""
 
-from typing import Any
+import os
+from typing import Any, Generic, TypeVar
 
+from src.models.base_object import BaseObject
 from src.pipe.monitor.lib import Timer
 from src.pipe.monitor.mem import track_memory_async
 from src.pipe.processor.list_processor import JsonListProcessor
@@ -13,7 +15,10 @@ from src.utils.logging import (
 )
 
 
-class Pipeline:
+T = TypeVar("T", bound=BaseObject)
+
+
+class Pipeline(Generic[T]):
     """
     Pipeline for sequential execution of processing stages.
 
@@ -23,18 +28,27 @@ class Pipeline:
         List of processing stages to execute in order
     """
 
-    def __init__(self, stages: list[JsonListProcessor]) -> None:
+    def __init__(
+        self, name: str, cache_dir: str, stages: list[JsonListProcessor]
+    ) -> None:
+        self.name = name
         self.stages = stages
+        for i, stage in enumerate(self.stages):
+            pipeline_cache_dir = os.path.join(cache_dir, name)
+            if not os.path.exists(pipeline_cache_dir):
+                os.makedirs(pipeline_cache_dir, exist_ok=True)
+            stage.set_cache_file(pipeline_cache_dir, i + 1)
 
-    async def __run_internal(self, input_file: str) -> Any:
-        tmp_file: Any = input_file
+    async def __run_internal(self, input_data: list[T]) -> list[Any]:
+        # tmp_file: Any = input_file
+        tmp_data = input_data
         timer: Timer = Timer()
         timer.start()
         last_lap_time = 0.0
 
         for stage in self.stages:
             log_stage_start(stage.name)
-            tmp_file = await stage.run(tmp_file)
+            tmp_data = await stage.run(tmp_data)
 
             # Get cumulative time and calculate stage time
             cumulative_time = timer.lap()
@@ -42,9 +56,9 @@ class Pipeline:
             last_lap_time = cumulative_time
 
             log_stage_complete(stage.name, stage_time)
-        return tmp_file
+        return tmp_data
 
-    async def run(self, input_file: str) -> tuple[Any, float, float]:
+    async def run(self, input_data: list[T]) -> list[Any]:
         """
         Execute pipeline on input file.
 
@@ -63,7 +77,7 @@ class Pipeline:
 
         timer: Timer = Timer.start()
         result, avg_mem, peak_mem = await track_memory_async(
-            self.__run_internal, input_file
+            self.__run_internal, input_data
         )
         total_time = timer.lap()
 
@@ -76,4 +90,4 @@ class Pipeline:
         # Log comprehensive summary
         log_pipeline_summary(total_time, avg_mem, peak_mem, results_dict)
 
-        return result, avg_mem, peak_mem
+        return result

@@ -1,0 +1,9 @@
+*
+!.gitignore
+!1_input.json
+!resd_output.json
+!tables.json
+!databases
+!databases/**
+!cassettes/
+!cassettes/**

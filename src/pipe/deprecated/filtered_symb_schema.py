@@ -1,7 +1,10 @@
+# mypy: ignore-errors
+
 """Filtered symbolic schema generation."""
 
 from typing import Any
 
+from src.models.base_object import BaseObject
 from src.pipe.processor.list_transformer import JsonListTransformer
 from src.pipe.schema_repo import DatabaseSchema, DatabaseSchemaRepo
 from src.utils.logging import logger
@@ -18,10 +21,10 @@ class AddFilteredSymbolicSchema(JsonListTransformer):
     """
 
     def __init__(self, tables_path: str) -> None:
-        super().__init__()
+        super().__init__(BaseObject)
         self.schema_repo = DatabaseSchemaRepo(tables_path)
 
-    async def _process_row(self, row: dict[str, Any]) -> dict[str, Any]:
+    async def __process_row_internal(self, row: dict[str, Any]) -> dict[str, Any]:
         tables, col_refs = self.get_items_to_symbolize(row)
 
         schema = DatabaseSchema.from_yaml(row["schema"])

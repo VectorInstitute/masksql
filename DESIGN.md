@@ -741,9 +741,9 @@ class AbstractionStep(PipelineStep):
         self.symbol_generator = SymbolGenerator()
 
     async def execute(
-        self,
-        request: QueryRequest,
-        context: PipelineContext
+            self,
+            request: QueryRequest,
+            context: PipelineContext
     ) -> PipelineContext:
         """Execute abstraction."""
         # 1. Load and filter schema
@@ -787,7 +787,7 @@ class AbstractionStep(PipelineStep):
         )
 
         # Update context
-        context.schema = filtered_schema
+        context.db_schema = filtered_schema
         context.abstraction = AbstractionResult(
             abstract_question=abstract_question,
             abstract_schema=abstract_schema,
@@ -811,22 +811,23 @@ class AbstractionStep(PipelineStep):
         """Create abstract schema."""
         pass
 
+
 class SQLGenerationStep(PipelineStep):
     """SQL generation step implementation."""
 
     def __init__(
-        self,
-        config: MaskSQLConfig,
-        enable_self_correction: bool = True
+            self,
+            config: MaskSQLConfig,
+            enable_self_correction: bool = True
     ):
         self.config = config
         self.llm = LLMClient(config.models.llm_model)
         self.enable_self_correction = enable_self_correction
 
     async def execute(
-        self,
-        request: QueryRequest,
-        context: PipelineContext
+            self,
+            request: QueryRequest,
+            context: PipelineContext
     ) -> PipelineContext:
         """Execute SQL generation."""
         if not context.abstraction:
@@ -855,13 +856,14 @@ class SQLGenerationStep(PipelineStep):
     def name(self) -> str:
         return "SQLGeneration"
 
+
 class ReconstructionStep(PipelineStep):
     """Reconstruction step implementation."""
 
     def __init__(
-        self,
-        config: MaskSQLConfig,
-        enable_repair: bool = True
+            self,
+            config: MaskSQLConfig,
+            enable_repair: bool = True
     ):
         self.config = config
         self.slm = LLMClient(config.models.slm_model)
@@ -869,9 +871,9 @@ class ReconstructionStep(PipelineStep):
         self.enable_repair = enable_repair
 
     async def execute(
-        self,
-        request: QueryRequest,
-        context: PipelineContext
+            self,
+            request: QueryRequest,
+            context: PipelineContext
     ) -> PipelineContext:
         """Execute reconstruction."""
         if not context.generation or not context.abstraction:
@@ -879,8 +881,8 @@ class ReconstructionStep(PipelineStep):
 
         # Get final abstract SQL (corrected or original)
         abstract_sql = (
-            context.generation.corrected_abstract_sql
-            or context.generation.abstract_sql
+                context.generation.corrected_abstract_sql
+                or context.generation.abstract_sql
         )
 
         # Reconstruct concrete SQL
@@ -898,7 +900,7 @@ class ReconstructionStep(PipelineStep):
         if self.enable_repair and exec_error:
             repair_prompt = self._build_repair_prompt(
                 question=request.question,
-                schema=context.schema,
+                schema=context.db_schema,
                 sql=concrete_sql,
                 error=exec_error,
                 exec_result=exec_result

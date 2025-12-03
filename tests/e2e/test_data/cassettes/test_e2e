@@ -1,126 +1,5 @@
 interactions:
 - request:
-    body: "{\"messages\":[{\"role\":\"user\",\"content\":\"\\nYou are a SQL generation
-      assistant. Given\\n(1) NL Question: a natural-language question about a dataset
-      and\\n(2) DB Schema: the database\u2019s schema expressed in YAML\\nproduce
-      a single SQL SELECT statement that answers the question.\\nWe also provided
-      the immediate generated SQL query as your reference to find the related database
-      items needed for the given question.\\nThe provided SQL query is not always
-      complete and accurate and you have to use it as a hint only.\\n\\nInput Format:\\n-
-      DB Schema: given in YAML format where top-level keys are table names; each table
-      lists its columns and their data types.\\n- Column names are case-sensitive
-      exactly as shown in the schema.\\n- Each column might be primary key or a foreign
-      key.\\n- For foreign key columns, fully qualified name of the referenced column
-      is given\\n\\nOutput Rules\\n- Table and column names specified in the database
-      schema already wrapped in brackets. You should use them with the brackets.\\nYou
-      should not remove the brackets when using them in the SQL.\\n- Each reference
-      to a table or column name should be of the form [table_name] or [table_name].[column_name].\\n-
-      Output ONLY the SQL query (no extra explanation or text).\\n- Use fully qualified
-      column names: table.column.\\n- Only reference tables/columns that exist in
-      the provided schema.\\n- Do not include any comments.\\n- For columns names
-      with spaces, wrap them in backticks, e.g. \\\"WHERE `car model` = 'bar'\\\"
-      instead of \\\"WHERE car model = 'bar'\\\".\\n\\nHere are some examples:\\n\\n-----------------------------------\\nExample
-      1:\\nNL Question: What is the release title of the single that was released
-      by Ron Hunt in 1979 that was downloaded 239 times? release title refers to groupName;
-      Ron Hunt is an artist; groupYear = 1979; releaseType = 'single'; downloaded
-      239 times refer to totalSnatched = 239;\\nDatabase Schema:\\n    torrents:\\n
-      \       groupname: text\\n        artist: text\\n        releasetype: text\\n
-      \       groupyear: number\\n        totalsnatched: number\\n    tags:\\n        tag:
-      text\\n        index: number\\n        id: number\\n\\nOUTPUT:\\nSELECT [groupName]
-      FROM [torrents] WHERE [artist] LIKE 'ron hunt & ronnie g & the sm crew' AND
-      [groupYear] = 1979 AND [releaseType] LIKE 'single' AND [totalSnatched] = 239\\n\\n\\n-----------------------------------\\nExample
-      2:\\nNL Question: How many times was the album released by blowfly in 1980 downloaded?
-      blowfly is an artist; groupYear = 1980; album refers to releaseType; downloaded
-      refers to totalSnatched;\\nDatabase Schema:\\n    torrents:\\n        groupname:
-      text\\n        artist: text\\n        releasetype: text\\n        groupyear:
-      number\\n        totalsnatched: number\\n    tags:\\n        tag: text\\n        index:
-      number\\n        id: number\\n\\nOUTPUT:\\nSELECT [totalSnatched] FROM [torrents]
-      WHERE [artist] LIKE 'blowfly' AND [groupYear] = 1980\\n\\nNow, generate a SQL
-      query for the following question and database schema:\\nInputs:\\nquestion:
-      Find the number of pets whose weight is heavier than 10.\\nschema: '[has_pet]':\\n
-      \ '[petid]':\\n    foreign_key: '[pets].[petid]'\\n    type: number\\n  '[stuid]':\\n
-      \   foreign_key: '[student].[stuid]'\\n    type: number\\n'[pets]':\\n  '[pet_age]':
-      number\\n  '[petid]':\\n    primary_key: true\\n    type: number\\n  '[pettype]':
-      text\\n  '[weight]': number\\n'[student]':\\n  '[advisor]': number\\n  '[age]':
-      number\\n  '[major]': number\\n  '[sex]': text\\n  '[stuid]':\\n    primary_key:
-      true\\n    type: number\\n\\n\"}],\"model\":\"qwen/qwen-2.5-7b-instruct\",\"max_completion_tokens\":300}"
-    headers:
-      accept:
-      - application/json
-      accept-encoding:
-      - gzip, deflate
-      authorization:
-      - Bearer sk
-      connection:
-      - keep-alive
-      content-length:
-      - '3537'
-      content-type:
-      - application/json
-      host:
-      - openrouter.ai
-      user-agent:
-      - AsyncOpenAI/Python 2.1.0
-      x-stainless-arch:
-      - arm64
-      x-stainless-async:
-      - async:asyncio
-      x-stainless-lang:
-      - python
-      x-stainless-os:
-      - MacOS
-      x-stainless-package-version:
-      - 2.1.0
-      x-stainless-read-timeout:
-      - '30'
-      x-stainless-retry-count:
-      - '0'
-      x-stainless-runtime:
-      - CPython
-      x-stainless-runtime-version:
-      - 3.11.13
-    method: POST
-    uri: https://openrouter.ai/api/v1/chat/completions
-  response:
-    body:
-      string: !!binary |
-        H4sIAAAAAAAAA+JSgAEuAAAAAP//4kIwAQAAAP//dJBLawJBEIT/ylCnBGYTNVkfcwgEURLIizzI
-        QUTG3XZ34jgzzvTGgPjfgxiTUy59qKqmv+otTAmFilzW7nU7ed7vdvtZf+PXg2V1PS7ny05rfdnk
-        XxUkQvSfpqQIhadaWw2JlS/JQmG9IXe+H1nnLM9688y4xLEpGBJ+/kEFQ6GoNZ8VfhUssfEOEkUk
-        zVRC/R2XKGpvCkpQky2sr0L08wTlGmslFsaZVM8i6eQdFBL7AAmn2XzS7B/XuJK+oFoSK0pJVwS1
-        RfSWoKBTMom124MW3jG5PenL6G40fBXDx7eH15NJIDbl9FSMnx/vxaTWaRaIp+L9ZvQ8Ej+uuH0Q
-        Jz9rR+mQD8TpN7whU9U8FVei3TqFRKRFk7Q91juQG1cdhN1uKtEciUP0q8Az9ktyCaqfD/bIx2/+
-        6hc9Cfas7V9y0N3tvgEAAP//AwDAxT1mAAIAAA==
-    headers:
-      Access-Control-Allow-Origin:
-      - '*'
-      CF-RAY:
-      - 99b0a91bac26ac26-YYZ
-      Connection:
-      - keep-alive
-      Content-Encoding:
-      - gzip
-      Content-Type:
-      - application/json
-      Date:
-      - Fri, 07 Nov 2025 23:37:49 GMT
-      Permissions-Policy:
-      - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
-        "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
-      Referrer-Policy:
-      - no-referrer, strict-origin-when-cross-origin
-      Server:
-      - cloudflare
-      Transfer-Encoding:
-      - chunked
-      Vary:
-      - Accept-Encoding
-      X-Content-Type-Options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
     body: "{\"messages\":[{\"role\":\"user\",\"content\":\"\\nYou are given a natural
       language question and a list of schema items\\n(table names or fully qualified
       column names).\\nThe question is a textual representation of some SQL query
@@ -151,7 +30,7 @@ interactions:
       accept-encoding:
       - gzip, deflate
       authorization:
-      - Bearer sk
+      - Bearer <TOKEN>
       connection:
       - keep-alive
       content-length:
@@ -185,17 +64,17 @@ interactions:
   response:
     body:
       string: !!binary |
-        H4sIAAAAAAAAA+JSgAEuAAAAAP//4kIwAQAAAP//QmICAAAA//90jzFvwjAQhf/Lmx0KqEmK1w4s
-        HdgBIeMciVvHZ+wLtEL571WEaLt0ueHd6bvv3eAaaLQUikVdLcvypapWxbqlDa2u63rdtG/X82v8
-        qi0UYuKLayhBY9MZb6DQc0MeGucrhadpFMtZWdTHwoUsabACBT6+kxVo2M7IzHIfPYnjAAWbyAg1
-        0L/PFWzHzlKG3t7guY2Jjxk6DN4rnFxwuTskMpkDNLJwhEIw4i50+GfrQkOf0HOFnnI2LUHfkNgT
-        NEzOLosJk6jlIBQm0+0Oi/kOeygkOg3Z+IfAne1Cew/Gca8wPJgxcR/lIPxBIUM/14sJ+uj7k5cK
-        wmL8n8NqHL8BAAD//wMAm7deX6wBAAA=
+        H4sIAAAAAAAAA+JSgAEuAAAAAP//dI9PS8NAEMW/yztvalsbC3sUxJugiGD/ELababq62Ym7k1gp
+        +e4SSqtFvMzhzZvfvHeAK6FRUcgm85vr6TTP55Ps+eluMZst6javX1/23eNXeXsPhSZy50qK0Hjg
+        zomBQs0leWh8fFK4GkY2HeXZfJO5kCS2VqDAmzeyAg27MzKyXDeexHGAgo1khEron+8KdsfOUoJe
+        HuC5aiJvEnRovVfYuuDSrohkEgdoJOEGCsGI66j4Z+tCSXvosUJNKZmKoA+I7AkaJiWXxIQhqOUg
+        FIakyxUm4xXWUIi0bZPxpwBHtgvVUej7tUJ7YjaR60YK4XcKCXqWjwfoqe9ZzxWExfhfxlxdHhcl
+        iXH+3PsP5dLQ998AAAD//wMAVBsIgtUBAAA=
     headers:
       Access-Control-Allow-Origin:
       - '*'
       CF-RAY:
-      - 99b0a924d8a7ac28-YYZ
+      - 99f042ebcd7cf41f-YYZ
       Connection:
       - keep-alive
       Content-Encoding:
@@ -203,7 +82,7 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Fri, 07 Nov 2025 23:37:50 GMT
+      - Sat, 15 Nov 2025 16:52:51 GMT
       Permissions-Policy:
       - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
         "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
@@ -269,7 +148,7 @@ interactions:
       accept-encoding:
       - gzip, deflate
       authorization:
-      - Bearer sk
+      - Bearer <TOKEN>
       connection:
       - keep-alive
       content-length:
@@ -303,17 +182,17 @@ interactions:
   response:
     body:
       string: !!binary |
-        H4sIAAAAAAAAA+JSgAEuAAAAAP//dJDNasMwEIRfpcxZTmMXx0YPUOihIVBKKXEIiryx1corV5Lz
-        Q/C7FxPSnHrZw+zA9zEXmBoSDXGSFossz8tFkSbZ+b18W34SvZ5XmT59LJ9fcgj03h1MTR4Sq1ZZ
-        BYHO1WQh8XMkfpxOks3ypNglhkP0g44QcLsv0hESulVxpl3XW4rGMQS0JxWphrzDBXTrjKYAub7A
-        uqb3bhcgebBWYG/YhHbrSQXHkAjR9RBgFc2Btv98Ddd0gpwLdBSCagjyAu8sQUKFYEJUPIlqx5F4
-        Mr1UPM1TIZ1XkA8V1j3FsJmtj2SaNm4qVDxCwNN+CMre7K5gw801GMeNwHAD9t51fdxG900cIItF
-        ORFvY/zl6ZNAdFHZe7NMx/EXAAD//wMAfJUOCbQBAAA=
+        H4sIAAAAAAAAA+JSgAEuAAAAAP//dJDBbsIwEER/pZqzQ0kQBPnWQ29t4VAJtQQh4yyJqbNObQcq
+        Rfn3KkKUUy97mB3pPU0PU0KiIk7SfDHLsvk8z5K39/Wq/WhO5ebl+XX1ZD83Jw2B1ruzKclDYl0r
+        qyDQuJIsJL4vxI/jSbLJPMkPieEQfacjBNzhRDpCQtcqTrRrWkvROIaA9qQilZB3uICundEUILc9
+        rKta7w4BkjtrBY6GTaj3nlRwDIkQXQsBVtGcaf/P13BJP5BTgYZCUBVB9vDOEiRUCCZExaOodhyJ
+        R9O+4HGeAum0gHwosG0pht1keyFT1XFXoOABAp6OXVD2ZncFG66uwTDsBLobsPWuaeM+ui/iAJkv
+        liPxNsZfns4EoovK3pvLdBh+AQAA//8DAESNBV60AQAA
     headers:
       Access-Control-Allow-Origin:
       - '*'
       CF-RAY:
-      - 99b0a92e6d23b687-YYZ
+      - 99f042f1999d180e-YYZ
       Connection:
       - keep-alive
       Content-Encoding:
@@ -321,7 +200,7 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Fri, 07 Nov 2025 23:37:51 GMT
+      - Sat, 15 Nov 2025 16:52:52 GMT
       Permissions-Policy:
       - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
         "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
@@ -407,7 +286,7 @@ interactions:
       accept-encoding:
       - gzip, deflate
       authorization:
-      - Bearer sk
+      - Bearer <TOKEN>
       connection:
       - keep-alive
       content-length:
@@ -441,18 +320,18 @@ interactions:
   response:
     body:
       string: !!binary |
-        H4sIAAAAAAAAA+JSgAEuAAAAAP//4kIwAQAAAP//QmICAAAA//+MkU1Lw0AQhv+KvOdNNdVauzc/
-        iqD1EwWhKWWbTJPV7WzcnVah5L9LqFUvipc5zPswMzyzhi2gURInaf+w2+sdHfa7ycnw9u7x/P7i
-        8nw26KeD0cXZ0xMU6uBXtqAAjdvKOAOFhS/IQeP1jXi3LUm300v6s8RylLDMBQp+9ky5QCOvjHRy
-        v6gdifUMhTyQESqgv5cr5JW3OUXo8RrOl3XwswjNS+cU5pZtrKaBTPQMjSi+hgIbsSua/pJaLugd
-        ek9hQTGakqDXCN4RNEyMNorh9tDcsxC3l64zbvVkeCNbVpJB72Q4vRk9Xl3rcU0SJ53xJppkUFu4
-        DTbow/HJaPhJ/gAqMitL4Z/jpDL8TzTd+xvMuIFCoPkyGrd1udFkudw0mmaisNzqqYNf1DIV/0Ic
-        odN0/6AVtP3dV9A7UhAvxv1AB92m+QAAAP//AwAxtaIDegIAAA==
+        H4sIAAAAAAAAA+JSgAEuAAAAAP//4kIwAQAAAP//jJFPbxpBDMW/CnrnWcr/beeWVG0upBCpPbEI
+        DbNmd5rBs5kx0Artd69WhJZLo1x88PvJ9ns+w5XQqIizYT4bj0bTaT7K8rFZlvnx4dPMft3uFr+f
+        nqoFFJoYjq6kCI1lbbyBwj6U5KHxciL+0JVs1J9m+TZznCQerEAhbH+SFWjY2kjfhn3jSVxgKNhI
+        RqiE/rdcwdbBWUrQqzN8qJoYtgmaD94r7By7VG8imRQYGklCAwU24o60+Y/quKRf0AOFPaVkKoI+
+        IwZP0DApuSSGu0NtYCHuLj0X3MVT4ESuqqWA7hX4vJj/ePymVw1JWvdXF2ldQF3hTrig3+/u519e
+        yRugJnN0FHtSG37nzA7tDQdv0wW3UIi0OyTjr1FdUnBcXRptu1Y4XN03Mewb2Uh4Jk7Qw+F40vm/
+        vuavMB0oSBDjb9CPk7b9AwAA//8DAJL64t5OAgAA
     headers:
       Access-Control-Allow-Origin:
       - '*'
       CF-RAY:
-      - 99b0a934193ab408-YYZ
+      - 99f042f68e058af6-YYZ
       Connection:
       - keep-alive
       Content-Encoding:
@@ -460,7 +339,7 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Fri, 07 Nov 2025 23:37:53 GMT
+      - Sat, 15 Nov 2025 16:52:53 GMT
       Permissions-Policy:
       - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
         "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
@@ -514,9 +393,9 @@ interactions:
       [T2] JOIN [T1] ON [T1].[C3] = [T2].[C6] WHERE [T2].[C5] = [V1] AND [T2].[C7]
       = [V2]\\n\\n\\n-----------------------------------\\n\\nNow, generate a SQL
       query for the following question and database schema:\\nInputs:\\nNL Question:
-      Find the number of [T2] whose [C6] is [C6] [C6] [V1].; [V1] is a value of the
-      column [C6]\\nDB Schema: '[T1]':\\n  '[C1]':\\n    foreign_key: '[T2].[C4]'\\n
-      \   type: number\\n  '[C2]':\\n    foreign_key: '[T3].[C11]'\\n    type: number\\n'[T2]':\\n
+      Find the number of [T2] whose [C6] is [C6] [V1].; [V1] is a value of the column
+      [C6]\\nDB Schema: '[T1]':\\n  '[C1]':\\n    foreign_key: '[T2].[C4]'\\n    type:
+      number\\n  '[C2]':\\n    foreign_key: '[T3].[C11]'\\n    type: number\\n'[T2]':\\n
       \ '[C3]': number\\n  '[C4]':\\n    primary_key: true\\n    type: number\\n  '[C5]':
       text\\n  '[C6]': number\\n'[T3]':\\n  '[C10]': text\\n  '[C11]':\\n    primary_key:
       true\\n    type: number\\n  '[C7]': number\\n  '[C8]': number\\n  '[C9]': number\\n\\n\"}],\"model\":\"openai/gpt-4.1\",\"max_completion_tokens\":300}"
@@ -526,11 +405,11 @@ interactions:
       accept-encoding:
       - gzip, deflate
       authorization:
-      - Bearer sk
+      - Bearer <TOKEN>
       connection:
       - keep-alive
       content-length:
-      - '3366'
+      - '3361'
       content-type:
       - application/json
       host:
@@ -560,18 +439,18 @@ interactions:
   response:
     body:
       string: !!binary |
-        H4sIAAAAAAAAAwAAAP//4lKAAS4AAAAA//9skF1PAjEQRf/K5j6pKQjIh9b4gAS/opIgSshmA2V3
-        WCrdttkWYkL2vxtAwBjfJjN3cs7MGjIBR0q6VG01a43GZbN1UdJPbScf6iu1GA5no6yS3I9uwWBz
-        s5IJ5eDoWdLtRzBkJiEFDmNJC3meWl+ql6tgMNNPij044rnw5dhkVpGXRoMhzkl4SsCPSIZ4bmRM
-        DjxcQ5nU5mbqwPVSKYaZ1NLNxzkJZzQ4nDcWDFp4uaLx3+kPixIwSJ3QF3iFISPnRErga+RGETiE
-        c9J5of1GyWhPeqM7ees+dzuDoNN7fx2cnJ0Gd/3eSxAOalEwfOj2u9uyHHaaUXAThB/V6HoChpxm
-        SyfUXnjnInW6axRFxLDc421uMuvH3ixIO/BqpdZgOD7oMKjVGbzxQv2K1q/+iY4T8kIqt71tTz4s
-        VYqi+AYAAP//AwDdCm7s8gEAAA==
+        H4sIAAAAAAAAAwAAAP//4lKAAS4AAAAA//9skGFLAkEQhv/K8X6qWM271GCjDyVGQWWUFSFi6910
+        bu3tbLurFHL/Pay0iL4NM+/wPDNL6AISJdlGut/dy7JOZ7/diN3X85avXq6mx+9Fl+nsobcHAed5
+        oQvykBg4skdnEKi4IAMJdmSV3i1dbLSbKQR4+kx5hEQ+U7GZc+UMRc0WArknFamA/EEK5DPWOQXI
+        0RKGS+d5GiDt3BiBJ211mE08qcAWEiGyg4BVUS9o8nf6zaICAtoW9AbZEqgoBFUS5BKeDUFChaBD
+        VDaulNhGsivdx5v+eb83THqD28vh1s52cnI9uEhGw2yc3J/2r/ufZXPU646Tw2R0l44PHiHg6Wke
+        lFkLf7loW3416nosMF/jnefKxUnkF7IBMm1lqcDPgzaDrC0QOSrzK9ru/BOdFBSVNuHztjV5s9Sq
+        6/oDAAD//wMAz8euA/IBAAA=
     headers:
       Access-Control-Allow-Origin:
       - '*'
       CF-RAY:
-      - 99b0a93feb582659-YYZ
+      - 99f042fdfda5ac06-YYZ
       Connection:
       - keep-alive
       Content-Encoding:
@@ -579,7 +458,7 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Fri, 07 Nov 2025 23:37:54 GMT
+      - Sat, 15 Nov 2025 16:52:54 GMT
       Permissions-Policy:
       - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
         "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
@@ -653,7 +532,7 @@ interactions:
       \ '[C10]': text\\n  '[C11]':\\n    primary_key: true\\n    type: number\\n  '[C7]':
       number\\n  '[C8]': number\\n  '[C9]': number\\n\\n**************************\\nThe
       original question is:\\nNL Question: Find the number of [T2] whose [C6] is [C6]
-      [C6] [V1].; [V1] is a value of the column [C6]\\nThe predicted SQL query: SELECT
+      [V1].; [V1] is a value of the column [C6]\\nThe predicted SQL query: SELECT
       COUNT(*) FROM [T2] WHERE [T2].[C6] = [V1];\\n**************************\\nBased
       on the NL question, database schema and the previously predicted SQL query,\\nanalyze
       the query and question and fix the SQL query if needed.\\n\"}],\"model\":\"openai/gpt-4.1\",\"max_completion_tokens\":300}"
@@ -663,11 +542,11 @@ interactions:
       accept-encoding:
       - gzip, deflate
       authorization:
-      - Bearer sk
+      - Bearer <TOKEN>
       connection:
       - keep-alive
       content-length:
-      - '4778'
+      - '4773'
       content-type:
       - application/json
       host:
@@ -697,18 +576,18 @@ interactions:
   response:
     body:
       string: !!binary |
-        H4sIAAAAAAAAAwAAAP//4lKAAS4AAAAA///iQjABAAAA//9CYgIAAAD//2yQXUtCQRCG/8rhvapY
-        zXP8ioUuyg8KKkHNCBFZz47HtXV3ObtaIOe/h5oa0d0w8w7PM7OFkuDIyJTiZiOp128azVpJ9uLB
-        Rn6+j9qDylLct5td3wSDy+1GScrB0XNk7h7BsLKSNDisIyPUdeZCqVaOwWBnS0oDONKFCOXUrpym
-        oKwBQ5qTCCTBz0iGdGFVSh58vIW2mcvtzIObtdYMc2WUX0xzEt4acPhgHRiMCGpD07/THxZJMCgj
-        6Qu8wrAi70VG4FvkVhM4hPfKB2HCTsmaQGanO+g8dVrDqNV7fRleXF1G3X7vORoPk0n09tDpd/Zl
-        edxqTKLbaDyKJ2DIab72Qh9tDyLKZIdGUUwY1ke2y+3KhWmwH2Q8eFytVBnO3zkNkoQh2CD0r2hS
-        /yc6lRSE0n5/2JF8WqoURfENAAD//wMA0RVX2gUCAAA=
+        H4sIAAAAAAAAAwAAAP//4lKAAS4AAAAA//9skGFLAkEQhv/K8X6qWM27UnGhDyEXBtWBmX0QkfVu
+        OrfWne12zwS5/x5WJkTfhpl3eJ6ZHXQBiZJsK+73LpKk2+1ftm6yd55uth95ra/T0XTVHxUZBFzF
+        G11QBYnMkb2+hcCaCzKQYEdW6fPShdZlO4YAL18pD5DIVyq0c147Q0GzhUBekQpUQB6RAvmKdU4e
+        craD4dJVvPSQtjZG4EVb7VeLipRnCwkf2EHAqqA3tPg7/WFRAQFtC9pCdgTW5L0qCXKHig1BQnmv
+        fVA27JXYBrJ73cf0Lh1OomH29DA5OTuNbsbZfTSbJPPoeZSO06+yPRv25tFVNJvGcwhU9FJ7ZQ62
+        3yLalt+NppkL1Ae2q3jtwiLwG1kPGSeDgcDxO7+DJBEIHJQ5Ri+S+J/ooqCgtPFfhx3Iv0udpmk+
+        AQAA//8DAG7FJ5PvAQAA
     headers:
       Access-Control-Allow-Origin:
       - '*'
       CF-RAY:
-      - 99b0a9446c98f80a-YYZ
+      - 99f04302b82661e9-YYZ
       Connection:
       - keep-alive
       Content-Encoding:
@@ -716,7 +595,7 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Fri, 07 Nov 2025 23:37:54 GMT
+      - Sat, 15 Nov 2025 16:52:55 GMT
       Permissions-Policy:
       - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
         "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
@@ -800,7 +679,7 @@ interactions:
       true\n    type: number\n\n**************************\nThe original question
       is:\nQuestion: Find the number of pets whose weight is heavier than 10.\nThe
       SQL query executed was: SELECT COUNT(*) FROM [pets] WHERE [pets].[weight] =
-      10\nThe execution result: Execution Result: [[0]], Execution Error: \n**************************\nBased
+      10\nThe execution result: Execution Result: [(0,)], Execution Error: \n**************************\nBased
       on the question, table schema and the previous query, analyze the result try
       to fix the query.\n"}],"model":"qwen/qwen-2.5-7b-instruct","max_completion_tokens":300}'
     headers:
@@ -809,11 +688,11 @@ interactions:
       accept-encoding:
       - gzip, deflate
       authorization:
-      - Bearer sk
+      - Bearer <TOKEN>
       connection:
       - keep-alive
       content-length:
-      - '5763'
+      - '5764'
       content-type:
       - application/json
       host:
@@ -843,18 +722,20 @@ interactions:
   response:
     body:
       string: !!binary |
-        H4sIAAAAAAAAA+JSgAEuAAAAAP//4kIwAQAAAP//QmICAAAA//9CYgIAAAD//0JiAgAAAP//dNBB
-        TwIxEAXgv7J5JzVdBJRd6MELQTFRMIAxhhBSusNupbRrW8BA9r8bgoSTl0nmvcN8mQNUBo6cTNxI
-        k2ar1U7SJP5sj5ed54E1Itvu90n/adWRYCid3aqMHDjeCqEFGNY2Iw2O7x2Z2+OIm7VWnC5iZXxw
-        GxnAYBdfJAM4ZCFCTdp1qSkoa8AgHYlAGfjlOIMsrJLkwacHaJuXzi48uNlozbBURvli7kh4a8Dh
-        gy3BYERQW5r/0yqT0Q94nWFN3oucwA9wVhM4hPfKB2GOUGlNIHOUjnsvve4k6g7fB5Orm+vocTR8
-        jaYlBT+LPvq9Ue9vqU13pPIizKKHqFEHg6Plxgt95p4kyuSnoKpmDJuzoHR2XYZ5sCsyHrxx1+4c
-        Def3XIo2Q7BB6EtyX0+r6hcAAP//AwDlPwmT8wEAAA==
+        H4sIAAAAAAAAA+JSgAEuAAAAAP//4kIwAQAAAP//QmICAAAA//9CYgIAAAD//0JiAgAAAP//QmIC
+        AAAA//9CYgIAAAD//0JiAgAAAP//QmICAAAA//9CYgIAAAD//0JiAgAAAP//QmICAAAA//9CYgIA
+        AAD//0JiAgAAAP//QmICAAAA//9CYgIAAAD//3TQT2vCQBAF8K8S3qktG6uxqXEPvYjSQ6vFakVE
+        ZE3GZOu6m+6uf0Dy3Uuw4qmXgXnvMD/mDJmBIycdtjrP7SiK404cHgezufxqbaddmmvbOQ2TUwSG
+        0pqDzMiC46MQSoBhZzJS4Pg5kn6sRxg14rCzDqV23u5TDwaz/qbUgyMthG+kZlcq8tJoMKSWhKcM
+        /Ho8iRjSwsiUHPjiDGXy0pq1A9d7pRg2UktXrCwJZzQ4nDclGLTw8kCrf1qpMzqBNxl25JzICfwM
+        axSBQzgnnRe6hqZGe9K19LP/1u9Ngt5oOpzcPdwHg/HoPViU5N0ymL32x/2/pbE4kswLvwxeglYT
+        DJY2eyfUlXuRSJ1fgqpaMuyvgtKaXelX3mxJO/BWu9usDdf33IqEwRsv1C15aiZV9QsAAP//AwAe
+        TJ7ObAIAAA==
     headers:
       Access-Control-Allow-Origin:
       - '*'
       CF-RAY:
-      - 99b0a94f3b33ac96-YYZ
+      - 99f04307aa39880c-YYZ
       Connection:
       - keep-alive
       Content-Encoding:
@@ -862,7 +743,7 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Fri, 07 Nov 2025 23:37:58 GMT
+      - Sat, 15 Nov 2025 16:53:02 GMT
       Permissions-Policy:
       - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
         "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")
@@ -901,8 +782,8 @@ interactions:
       is the name of people who have a car with horse power higher than 1000? 1000
       is a value of horse power\\n\\nNow, unmask the following text considering the
       following DB schema\\nInputs:\\nNL Text: Find the number of [T2] whose [C6]
-      is [C6] [C6] [V1].; [V1] is a value of the column [C6]\\nDB Schema: '[T1]':\\n
-      \ '[C1]':\\n    foreign_key: '[T2].[C4]'\\n    type: number\\n  '[C2]':\\n    foreign_key:
+      is [C6] [V1].; [V1] is a value of the column [C6]\\nDB Schema: '[T1]':\\n  '[C1]':\\n
+      \   foreign_key: '[T2].[C4]'\\n    type: number\\n  '[C2]':\\n    foreign_key:
       '[T3].[C11]'\\n    type: number\\n'[T2]':\\n  '[C3]': number\\n  '[C4]':\\n
       \   primary_key: true\\n    type: number\\n  '[C5]': text\\n  '[C6]': number\\n'[T3]':\\n
       \ '[C10]': text\\n  '[C11]':\\n    primary_key: true\\n    type: number\\n  '[C7]':
@@ -913,11 +794,11 @@ interactions:
       accept-encoding:
       - gzip, deflate
       authorization:
-      - Bearer sk
+      - Bearer <TOKEN>
       connection:
       - keep-alive
       content-length:
-      - '2174'
+      - '2169'
       content-type:
       - application/json
       host:
@@ -947,18 +828,18 @@ interactions:
   response:
     body:
       string: !!binary |
-        H4sIAAAAAAAAAwAAAP//4lKAAS4AAAAA//9sUNFKw0AQ/JUwz9ealrbW80kQq4j4pCIi5Zpsk9PL
-        7nF3qULJv0usqSA+7TK7OzM7e9gSGhXxaHK6mM7ny8XpcnR3vVxdPvpbuXl4fDLPM3pb3UDBB9nZ
-        kgI07j3xRY81UpKDhnhiY08qn0az8QQKsnmjIkGjqE0aF9J4R8kKQ6EIZBKV0L+SCkUttqAI/bKH
-        k8oH2URobp1T2Fq2sV4HMlEYGjGJhwKbZHe0/jv90aISCpZL+oTOFRqK0VQEvUcQR9AwMdqYDKfe
-        knAi7u1eWS6zVFPGbbOhkMk2K0yI2UctkbLGOjIVZTYe26FO8jzPzw+ln5tsZ1xLPUFPV4hrGx62
-        oRBo20bjhh8P9i1XB6DrXhXawbEP0vi0TvJOHKHnZ2cKv5Ee8elcIUky7ogsprN/NtclJWNd/A5j
-        0D3e5F3XfQEAAP//AwCFAxZGIwIAAA==
+        H4sIAAAAAAAAAwAAAP//4lKAAS4AAAAA///iQjABAAAA//9sUNGKE0EQ/JWhnicxm7u90/HpfBBO
+        BBH0RZHQme3szjk7Pcz0RiXsv8t6JgHxramu6qquE0IHh57Tqrm/u9lu2/blzerTl89N8/HdEz3y
+        mwPTbX1o38MiFzmGjgscPmROD4+wGKXjCAfJnCi86LOubtcNLGT/xF7h4AfStZcxR9YgCRa+MCl3
+        cFdLCz9I8Fzhvp4Qpc9F9hUuTTFaHEIKddgVpioJDlUlwyKRhiPv/t3+9eIOFiF1/BNuYzFyrdQz
+        3AlFIsOBag1VKekSSZJyWuK+DakzOrBJ07jnYuRg9kJazY9BKhtPmXzQXybU69xu1q9Nu1kwMkeK
+        Ey+y5YiXOI3pwoRF4cNUKZ5fe04dUv8MzPM3i+kcNBcZs+5UvnOqcO2r1uLa5AXfbi1UlOIFuWvu
+        /8PcdawUYv3Twdn3otnM8/wbAAD//wMAwrdBqSUCAAA=
     headers:
       Access-Control-Allow-Origin:
       - '*'
       CF-RAY:
-      - 99b0a95effb536cf-YYZ
+      - 99f043359bdeac2a-YYZ
       Connection:
       - keep-alive
       Content-Encoding:
@@ -966,7 +847,7 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Fri, 07 Nov 2025 23:37:59 GMT
+      - Sat, 15 Nov 2025 16:53:03 GMT
       Permissions-Policy:
       - payment=(self "https://checkout.stripe.com" "https://connect-js.stripe.com"
         "https://js.stripe.com" "https://*.js.stripe.com" "https://hooks.stripe.com")

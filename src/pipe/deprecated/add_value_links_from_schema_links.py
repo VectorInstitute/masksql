@@ -1,3 +1,5 @@
+# mypy: ignore-errors
+
 """Module for extracting value links from schema links."""
 
 from typing import Any
@@ -13,7 +15,7 @@ class AddValueLinksFromSchemaLinks(JsonListTransformer):
     creating separate mappings for each.
     """
 
-    async def _process_row(self, row: dict[str, Any]) -> dict[str, Any]:
+    async def __process_row_internal(self, row: dict[str, Any]) -> dict[str, Any]:
         schema_links = row["schema_links"]
         value_links = {}
         updated_schema_links = {}

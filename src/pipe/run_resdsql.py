@@ -6,11 +6,13 @@ import sys
 from pathlib import Path
 from typing import Any
 
-from src.pipe.processor.list_transformer import JsonListTransformer
+from src.pipe.processor.list_processor import JsonListProcessor
+from src.pipe.util_processors import InitData
+from src.utils.json_io import write_json
 from src.utils.logging import console, log_error, log_success, logger
 
 
-class RunResdsql(JsonListTransformer):
+class RunResdsql(JsonListProcessor[InitData.Model, InitData.Model]):
     """
     Execute RESDSQL pipeline to generate schema predictions.
 
@@ -36,6 +38,19 @@ class RunResdsql(JsonListTransformer):
         Device to use for inference (cpu, cuda, mps). Defaults to cpu.
     """
 
+    tables_path: Path
+    db_path: Path
+    device: str
+    resd_dir: Path
+    resdsql_dir: Path
+    python_exe: Any
+    resd_input_path: Path
+    resd_output_path: Path
+
+    async def _process_row(self, row: InitData.Model) -> InitData.Model:
+        """Pass through data unchanged - processing happens in RESDSQL."""
+        return row
+
     def __init__(
         self,
         tables_path: str,
@@ -43,17 +58,17 @@ class RunResdsql(JsonListTransformer):
         output_path: str,
         device: str = "cpu",
     ) -> None:
-        super().__init__(force=False)
+        super().__init__(InitData.Model,force=False)
         self.tables_path = Path(tables_path).absolute()
         self.db_path = Path(db_path).absolute()
-        self.output_path = Path(output_path).absolute()
+        self.resd_output_path = Path(output_path).absolute()
         self.device = device
-        self.resd_dir = self.output_path.parent / "resd"
+        self.resd_dir = self.resd_output_path.parent / "resd"
         self.resdsql_dir = Path("resdsql").absolute()
         self.python_exe = sys.executable
-        self.pipeline_input_path: Path | None = None
+        self.resd_input_path = self.resd_output_path.parent / "resd_input.json"
 
-    async def run(self, input_file: str) -> str:
+    async def run(self, input_data: list[InitData.Model]) -> list[InitData.Model]:
         """
         Override run to capture the input file from the pipeline.
 
@@ -68,8 +83,8 @@ class RunResdsql(JsonListTransformer):
             Path to output file
         """
         # Store the actual input from the pipeline (e.g., 2_LimitJson.json)
-        self.pipeline_input_path = Path(input_file).absolute()
-        return await super().run(input_file)
+        write_json(str(self.resd_input_path), input_data)
+        return input_data
 
     def _run_step(self, step_name: str, script: str, args: list[str]) -> None:
         """
@@ -146,7 +161,7 @@ class RunResdsql(JsonListTransformer):
                 "--table_path",
                 str(self.tables_path),
                 "--input_dataset_path",
-                str(self.pipeline_input_path),
+                str(self.resd_input_path),
                 "--output_dataset_path",
                 str(self.resd_dir / "preprocessed_test.json"),
                 "--db_path",
@@ -219,11 +234,11 @@ class RunResdsql(JsonListTransformer):
             "add_qid.py",
             [
                 "--src",
-                str(self.pipeline_input_path),
+                str(self.resd_input_path),
                 "--dst",
                 str(self.resd_dir / "resd_output_orig.json"),
                 "--out",
-                str(self.output_path),
+                str(self.resd_output_path),
                 "--prop",
                 "question_id",
             ],
@@ -232,10 +247,10 @@ class RunResdsql(JsonListTransformer):
     def _pre_run(self) -> None:
         """Execute RESDSQL pipeline before processing rows."""
         # Skip if RESDSQL output already exists and force is not enabled
-        if not self.force and self.output_path.exists():
+        if not self.force and self.resd_output_path.exists():
             logger.info(
                 f"[dim]⏭  Skipping RESDSQL pipeline - output exists:[/dim] "
-                f"{self.output_path.name}"
+                f"{self.resd_output_path.name}"
             )
             return
 
@@ -258,13 +273,9 @@ class RunResdsql(JsonListTransformer):
 
             log_success(
                 "RESDSQL pipeline completed",
-                output_file=str(self.output_path),
+                output_file=str(self.resd_output_path),
             )
 
         except Exception as e:
             log_error(f"RESDSQL pipeline failed: {e}")
             raise
-
-    async def _process_row(self, row: dict[str, Any]) -> dict[str, Any]:
-        """Pass through data unchanged - processing happens in RESDSQL."""
-        return row
