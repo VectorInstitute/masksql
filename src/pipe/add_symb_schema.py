@@ -1,6 +1,6 @@
 """Module for converting database schemas to symbolic representations."""
 
-from typing import Any, Dict
+from typing import Any
 
 from src.pipe.link_schema import FilterSchemaLinksModel
 from src.pipe.processor.list_processor import JsonListProcessor
@@ -22,7 +22,7 @@ class SymbolicSchema(SymbolTableDicts):
     """
 
     db_schema: str
-    reverse_dict: Dict[str, str]
+    reverse_dict: dict[str, str]
 
 
 class AddSymbolicSchema(

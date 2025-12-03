@@ -6,7 +6,6 @@ which processes natural language questions and converts them to SQL queries.
 
 import os
 import uuid
-from typing import List
 
 from src.config import MaskSqlConfig
 from src.models.masksql_input import MaskSqlInput
@@ -135,7 +134,7 @@ class MaskSQL:
         results = await self.pipeline.run([data])
         return results[0]
 
-    async def query_batch(self, batch_file: str) -> List[MaskSqlOutput]:
+    async def query_batch(self, batch_file: str) -> list[MaskSqlOutput]:
         """Process a batch of questions from a file.
 
         Args:
@@ -148,7 +147,7 @@ class MaskSQL:
         input_data = read_json(batch_file, MaskSqlInput)
         return await self.pipeline.run(input_data)
 
-    async def evaluate(self) -> List[MaskSqlOutput]:
+    async def evaluate(self) -> list[MaskSqlOutput]:
         """Evaluate the system on a dataset and save results.
 
         Reads input data from the configured input path, processes it,

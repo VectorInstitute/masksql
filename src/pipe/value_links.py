@@ -1,7 +1,5 @@
 """Value link data structures and utilities."""
 
-from typing import Dict
-
 from src.config import OpenAIConfig
 from src.pipe.detect_entities import DetectValues
 from src.pipe.detect_values_prompts.prompt_processor import PromptProcessor, T
@@ -24,15 +22,15 @@ class LinkValues(PromptProcessor[DetectValues.Model, "LinkValues.Model"]):
         question values and database columns.
         """
 
-        value_links: Dict[str, str] = {}
+        value_links: dict[str, str] = {}
 
     def __init__(self, openai_config: OpenAIConfig, model: str) -> None:
         super().__init__(self.Model, openai_config, model)
 
-    def _get_result_data(self, row: T, llm_processed_output: Dict[str, str]) -> Model:
+    def _get_result_data(self, row: T, llm_processed_output: dict[str, str]) -> Model:
         return self.Model(value_links=llm_processed_output, **row.dict())
 
-    def _process_output(self, row: T, output: str) -> Dict[str, str]:
+    def _process_output(self, row: T, output: str) -> dict[str, str]:
         obj = extract_object(output)
         if obj is None:
             return {}
@@ -55,4 +53,4 @@ class FilterValueLinksModel(LinkValues.Model):
     that are relevant for the current query.
     """
 
-    filtered_value_links: Dict[str, str] = {}
+    filtered_value_links: dict[str, str] = {}

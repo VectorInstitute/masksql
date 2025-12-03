@@ -1,7 +1,5 @@
 """Schema ranking utilities."""
 
-from typing import List
-
 from src.pipe.processor.list_processor import JsonListProcessor
 from src.pipe.resdsql import AddResd
 from src.pipe.schema_repo import DatabaseSchemaRepo
@@ -20,7 +18,7 @@ class RankSchemaResd(JsonListProcessor[AddResd.Model, "RankSchemaResd.Model"]):
     class Model(AddResd.Model):
         """Data model for schema ranking with list of ranked schema items."""
 
-        schema_items: List[str]
+        schema_items: list[str]
 
     def __init__(self, tables_path: str) -> None:
         super().__init__(self.Model)

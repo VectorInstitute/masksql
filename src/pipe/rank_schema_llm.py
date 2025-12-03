@@ -1,6 +1,6 @@
 """LLM-based schema ranking."""
 
-from typing import Any, List
+from typing import Any
 
 from src.config import OpenAIConfig
 from src.pipe.detect_values_prompts.prompt_processor import PromptProcessor
@@ -34,7 +34,7 @@ class RankSchemaItems(PromptProcessor[InitData.Model, RankSchemaResd.Model]):
         self.schema_repo = DatabaseSchemaRepo(tables_path)
 
     def _get_result_data(
-        self, row: InitData.Model, llm_output: List[str]
+        self, row: InitData.Model, llm_output: list[str]
     ) -> RankSchemaResd.Model:
         return RankSchemaResd.Model(schema_items=llm_output, **row.dict())
 

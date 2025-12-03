@@ -1,7 +1,5 @@
 """Schema linking from questions to database schemas."""
 
-from typing import Dict
-
 from src.config import OpenAIConfig
 from src.pipe.detect_values_prompts.prompt_processor import PromptProcessor
 from src.pipe.llm_util import extract_object
@@ -20,19 +18,19 @@ class LinkSchema(PromptProcessor[FilterValueLinksModel, "LinkSchema.Model"]):
         to database schema elements.
         """
 
-        schema_links: Dict[str, str] = {}
+        schema_links: dict[str, str] = {}
 
     def __init__(self, openai_config: OpenAIConfig, model: str) -> None:
         super().__init__(self.Model, openai_config, model)
 
     def _get_result_data(
-        self, row: FilterValueLinksModel, llm_output: Dict[str, str]
+        self, row: FilterValueLinksModel, llm_output: dict[str, str]
     ) -> Model:
         return self.Model(schema_links=llm_output, **row.dict())
 
     def _process_output(
         self, row: FilterValueLinksModel, output: str
-    ) -> Dict[str, str]:
+    ) -> dict[str, str]:
         schema_links = extract_object(output)
         if schema_links is None:
             schema_links = {}
@@ -74,4 +72,4 @@ class FilterSchemaLinksModel(LinkSchema.Model):
     that are relevant for the current query.
     """
 
-    filtered_schema_links: Dict[str, str] = {}
+    filtered_schema_links: dict[str, str] = {}

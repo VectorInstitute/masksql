@@ -2,7 +2,7 @@
 
 import os.path
 from abc import ABC, abstractmethod
-from typing import Generic, Optional, Type, TypeVar
+from typing import Generic, Type, TypeVar
 
 from src.data_cache.json_cache import JsonCache
 from src.models.base_object import BaseObject
@@ -18,7 +18,7 @@ class JsonListProcessor(ABC, Generic[T, U]):
 
     cls: Type[U]
     force: bool
-    cache: Optional[JsonCache[U]] = None
+    cache: JsonCache[U] | None = None
 
     def __init__(self, cls: Type[U], force: bool = False) -> None:
         self.cls = cls

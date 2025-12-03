@@ -23,3 +23,5 @@ __MACOSX
 *.zip
 .coverage
 cache
+models/
+coverage.xml

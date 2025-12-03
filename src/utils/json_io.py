@@ -1,7 +1,7 @@
 """JSON file reading and writing utilities."""
 
 import json
-from typing import Any, Dict, Type, TypeVar
+from typing import Any, Type, TypeVar
 
 from pydantic import BaseModel
 
@@ -46,7 +46,7 @@ def read_json(path: str, cls: Type[T]) -> list[T]:
     return data
 
 
-def write_json_raw(path: str, data: list[Dict]) -> None:
+def write_json_raw(path: str, data: list[dict]) -> None:
     """
     Write data to a JSON file with indentation.
 

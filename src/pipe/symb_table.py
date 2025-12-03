@@ -1,7 +1,5 @@
 """Symbol table for tracking symbolic representations."""
 
-from typing import Dict
-
 from pydantic import BaseModel
 
 from src.pipe.add_schema import AddFilteredSchema
@@ -17,8 +15,8 @@ class SymbolTableDicts(BaseModel):
     corresponding database element names.
     """
 
-    to_name: Dict[str, str]
-    to_symbol: Dict[str, str]
+    to_name: dict[str, str]
+    to_symbol: dict[str, str]
 
 
 class AddSymbolTable(

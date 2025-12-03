@@ -2,7 +2,7 @@
 
 from abc import ABC, abstractmethod
 from json import JSONDecodeError
-from typing import Any, Generic, Tuple, Type, TypeVar
+from typing import Any, Generic, Type, TypeVar
 
 from src.config import OpenAIConfig
 from src.pipe.llm_util import send_prompt
@@ -49,7 +49,7 @@ class PromptProcessor(JsonListProcessor[T, U], ABC, Generic[T, U]):
         self.model = model
         self.include_stats = include_stats
 
-    async def _prompt_llm(self, row: T, prompt: str) -> Tuple[Any, str]:
+    async def _prompt_llm(self, row: T, prompt: str) -> tuple[Any, str]:
         try:
             res, toks = await send_prompt(prompt, self.openai_config, model=self.model)
         except JSONDecodeError as e:

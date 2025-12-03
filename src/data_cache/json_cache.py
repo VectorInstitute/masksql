@@ -5,7 +5,7 @@ in a JSON file and provides methods for adding, updating, and retrieving them.
 """
 
 import os
-from typing import Dict, Generic, Type, TypeVar
+from typing import Generic, Type, TypeVar
 
 from src.models.base_object import BaseObject
 from src.utils.json_io import read_json, write_json
@@ -28,7 +28,7 @@ class JsonCache(Generic[T]):
         cls: Type of objects stored in the cache
     """
 
-    data: Dict[str, T]
+    data: dict[str, T]
     path: str
     cls: Type[T]
 

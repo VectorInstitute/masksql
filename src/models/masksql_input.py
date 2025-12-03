@@ -4,7 +4,7 @@ This module defines the input data structure for the MaskSQL system,
 representing a natural language question to be converted to SQL.
 """
 
-from typing import Any, Dict
+from typing import Any
 
 from src.models.base_object import BaseObject
 
@@ -26,4 +26,4 @@ class MaskSqlInput(BaseObject):
     db_id: str
     question: str
     query: str
-    annotated_links: Dict[str, Any]
+    annotated_links: dict[str, Any]

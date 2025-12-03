@@ -1,7 +1,6 @@
 """Deterministic masking of terms in questions."""
 
 import logging
-from typing import Dict, List
 
 from src.pipe.add_symb_schema import AddSymbolicSchema, SymbolicSchema
 from src.pipe.processor.list_processor import JsonListProcessor
@@ -20,9 +19,9 @@ class SymbolicQuestion(SymbolicSchema):
     """
 
     question: str
-    to_value: Dict[str, str]
+    to_value: dict[str, str]
     masked: int
-    masked_terms: List[str]
+    masked_terms: list[str]
 
 
 class AddSymbolicQuestion(

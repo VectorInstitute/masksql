@@ -1,7 +1,5 @@
 """RESDSQL model integration for SQL generation."""
 
-from typing import Dict, List
-
 from src.models.masksql_input import MaskSqlInput
 from src.pipe.processor.list_processor import JsonListProcessor
 from src.pipe.util_processors import InitData
@@ -21,12 +19,12 @@ class AddResd(JsonListProcessor[MaskSqlInput, "AddResd.Model"]):
     class Model(InitData.Model):
         """Data model for RESDSQL integration with original table-column predictions."""
 
-        tc_original: List[str] = []
+        tc_original: list[str] = []
 
     def __init__(self, resd_path: str) -> None:
         super().__init__(self.Model, force=True)
         self.resd_path = resd_path
-        self.resd : List[Dict] = []
+        self.resd: list[dict] = []
 
     def _pre_run(self) -> None:
         """Load RESDSQL predictions before processing rows."""
