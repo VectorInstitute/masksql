@@ -37,7 +37,7 @@ from src.pipe.value_links import FilterValueLinksModel, LinkValues
 from src.utils.json_io import read_json, write_json
 
 
-TORCH_DEVICE = os.environ.get("TORCH_DEVICE", "cpu")
+CUDA_VISIBLE_DEVICES = os.environ.get("CUDA_VISIBLE_DEVICES", "0")
 
 
 def create_pipeline_stages(conf: MaskSqlConfig) -> list[JsonListProcessor]:
@@ -57,7 +57,10 @@ def create_pipeline_stages(conf: MaskSqlConfig) -> list[JsonListProcessor]:
     if conf.resd:
         rank_schema = [
             RunResdsql(
-                conf.tables_path, conf.db_path, conf.resd_path, device=TORCH_DEVICE
+                conf.tables_path,
+                conf.db_path,
+                conf.resd_path,
+                device=CUDA_VISIBLE_DEVICES,
             ),
             AddResd(conf.resd_path),
             RankSchemaResd(conf.tables_path),
