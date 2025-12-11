@@ -6,8 +6,13 @@ import logging
 import shutil
 from pathlib import Path
 
-from src.masksql import MaskSQL
-from src.utils.logging import configure_logging
+from dotenv import load_dotenv
+
+
+load_dotenv()
+
+from src.masksql import MaskSQL  # noqa: E402
+from src.utils.logging import configure_logging  # noqa: E402
 
 
 logger = logging.getLogger(__name__)
