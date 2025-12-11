@@ -24,7 +24,7 @@ class AddResd(JsonListProcessor[MaskSqlInput, "AddResd.Model"]):
     def __init__(self, resd_path: str) -> None:
         super().__init__(self.Model, force=True)
         self.resd_path = resd_path
-        self.resd: list[dict] = []
+        self.resd : list[dict] = []
 
     def _pre_run(self) -> None:
         """Load RESDSQL predictions before processing rows."""

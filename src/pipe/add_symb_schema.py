@@ -84,7 +84,7 @@ class AddSymbolicSchema(
             Name of the table.
         col_name : str
             Name of the column.
-        symbol_table : Dict[str, str]
+        symbol_table : dict[str, str]
             Mapping from names to symbols.
 
         Returns
@@ -103,7 +103,7 @@ class AddSymbolicSchema(
         ----------
         table_name : str
             Name of the table.
-        symbol_table : Dict[str, str]
+        symbol_table : dict[str, str]
             Mapping from names to symbols.
 
         Returns
@@ -121,9 +121,9 @@ class AddSymbolicSchema(
 
         Parameters
         ----------
-        col_data : Union[str, Dict[str, str]]
+        col_data : Union[str, dict[str, str]]
             Column data including potential foreign key references.
-        symbol_table : Dict[str, str]
+        symbol_table : dict[str, str]
             Mapping from names to symbols.
 
         Returns
@@ -154,7 +154,7 @@ class AddSymbolicSchema(
         ----------
         schema : DatabaseSchema
             Database schema to convert.
-        symbol_table : Dict[str, str]
+        symbol_table : dict[str, str]
             Mapping from names to symbols.
 
         Returns
@@ -184,12 +184,12 @@ class AddSymbolicSchema(
         ----------
         schema : DatabaseSchema
             Database schema.
-        symbol_table : Dict[str, str]
+        symbol_table : dict[str, str]
             Mapping from names to symbols.
 
         Returns
         -------
-        Dict[str, str]
+        dict[str, str]
             Reverse mapping from symbols to original names.
         """
         reverse_dict = {}

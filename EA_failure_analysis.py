@@ -4,7 +4,7 @@ This module provides tools for analyzing failed test cases by comparing
 JSON result files and extracting SQL query details for further investigation.
 """
 
-from typing import Any, Dict
+from typing import Any
 
 from src.utils.json_io import read_json_raw, write_json_raw
 
@@ -24,8 +24,8 @@ def finder(path1: str, path2: str) -> list[Any]:
     list
         Items present in path1 but not in path2.
     """
-    full: list[Dict] = read_json_raw(path1)
-    category: list[Dict] = read_json_raw(path2)
+    full: list[dict] = read_json_raw(path1)
+    category: list[dict] = read_json_raw(path2)
     diff = []
     for items in full:
         if items not in category:

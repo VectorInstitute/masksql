@@ -45,6 +45,6 @@ async def test_e2e():
         slm="qwen/qwen-2.5-7b-instruct",
         llm="openai/gpt-4.1",
     )
-    mask_sql = MaskSQL(conf)
+    mask_sql = MaskSQL(**conf.dict())
     result_data = await mask_sql.evaluate()
     assert result_data[0].eval.acc == 1
