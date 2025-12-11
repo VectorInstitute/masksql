@@ -57,7 +57,7 @@ class AddFilteredSymbolicSchema(JsonListTransformer):
             Column name
         col_refs : Set[str]
             Set of column references to symbolize
-        symbol_table : Dict[str, str]
+        symbol_table : dict[str, str]
             Mapping from original names to symbols
 
         Returns
@@ -82,7 +82,7 @@ class AddFilteredSymbolicSchema(JsonListTransformer):
             Table name
         tables : Set[str]
             Set of table names to symbolize
-        symbol_table : Dict[str, str]
+        symbol_table : dict[str, str]
             Mapping from original names to symbols
 
         Returns
@@ -106,13 +106,13 @@ class AddFilteredSymbolicSchema(JsonListTransformer):
 
         Parameters
         ----------
-        col_data : Union[str, Dict[str, str]]
+        col_data : Union[str, dict[str, str]]
             Column data including foreign key information
         tables : Set[str]
             Set of table names to symbolize
         col_refs : Set[str]
             Set of column references to symbolize
-        symbol_table : Dict[str, str]
+        symbol_table : dict[str, str]
             Mapping from original names to symbols
 
         Returns
@@ -190,7 +190,7 @@ class AddFilteredSymbolicSchema(JsonListTransformer):
         ----------
         schema : DatabaseSchema
             Original database schema
-        symbol_table : Dict[str, str]
+        symbol_table : dict[str, str]
             Mapping from original names to symbols
         tables : Set[str]
             Set of table names to symbolize
@@ -230,12 +230,12 @@ class AddFilteredSymbolicSchema(JsonListTransformer):
             Set of table names
         col_refs : Set[str]
             Set of column references
-        symbol_table : Dict[str, str]
+        symbol_table : dict[str, str]
             Mapping from original names to symbols
 
         Returns
         -------
-        Dict[str, str]
+        dict[str, str]
             Mapping from symbols back to original names
         """
         reverse_dict = {}

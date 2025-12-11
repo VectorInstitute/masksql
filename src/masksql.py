@@ -7,7 +7,7 @@ which processes natural language questions and converts them to SQL queries.
 import os
 import uuid
 
-from src.config import MaskSqlConfig
+from src.config import MaskSqlConfig, OpenAIConfig
 from src.models.masksql_input import MaskSqlInput
 from src.models.masksql_output import MaskSqlOutput
 from src.pipe.add_schema import AddFilteredSchema
@@ -102,6 +102,26 @@ class MaskSQL:
     This class provides the interface for processing natural language questions
     and converting them to SQL queries using a pipeline of processing stages.
 
+    Parameters
+    ----------
+    name : str
+        String identifier of the configuration, used as the name for subdirectory within
+        the cache directory.
+    data_dir : str
+        Base directory for data files.
+    cache_dir : str
+        Base directory for cache files.
+    policy : str
+        Policy configuration for execution.
+    slm : str
+        Small language model identifier.
+    llm : str
+        Large language model identifier.
+    resd : bool
+        Flag to enable or disable RESD (RESidual Disambiguation) mode.
+    openai : OpenAIConfig
+        OpenAI API client configurations.
+
     Attributes
     ----------
         conf: Configuration object for the MaskSQL system
@@ -111,7 +131,27 @@ class MaskSQL:
     conf: MaskSqlConfig
     pipeline: Pipeline
 
-    def __init__(self, conf: MaskSqlConfig) -> None:
+    def __init__(
+        self,
+        name: str,
+        data_dir: str,
+        cache_dir: str,
+        policy: str,
+        slm: str,
+        llm: str,
+        resd: bool,
+        openai: OpenAIConfig,
+    ) -> None:
+        conf = MaskSqlConfig(
+            name=name,
+            data_dir=data_dir,
+            cache_dir=cache_dir,
+            policy=policy,
+            slm=slm,
+            llm=llm,
+            resd=resd,
+            openai=openai,
+        )
         self.conf = conf
         pipeline_stages = create_pipeline_stages(conf)
         self.pipeline = Pipeline(conf.name, conf.cache_dir, pipeline_stages)
@@ -177,4 +217,4 @@ class MaskSQL:
             Configured MaskSQL instance
         """
         conf = MaskSqlConfig.from_yaml(config_path)
-        return MaskSQL(conf)
+        return MaskSQL(**conf.dict())

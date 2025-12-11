@@ -81,7 +81,7 @@ class DatabaseSchemaRepo:
 
     Attributes
     ----------
-    dbs : Dict[str, DatabaseSchema]
+    dbs : dict[str, DatabaseSchema]
         Mapping of database IDs to schemas
     """
 

@@ -29,8 +29,13 @@ class MaskSqlConfig(BaseModel):
 
     Attributes
     ----------
+    name:
+        String identifier of the configuration, used as the name for subdirectory within
+        the cache directory.
     data_dir : str
         Base directory for data files.
+    cache_dir : str
+        Base directory for cache files.
     resd : bool
         Whether to use RESD mode.
     policy : str
@@ -41,6 +46,8 @@ class MaskSqlConfig(BaseModel):
         Large language model identifier (from LLM_MODEL env var).
     resd : bool
         Flag to enable or disable RESD.
+    openai : OpenAIConfig
+        OpenAI API client configurations.
     """
 
     name: str
