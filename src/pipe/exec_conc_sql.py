@@ -1,6 +1,6 @@
 """Concurrent SQL execution utilities."""
 
-from typing import Any
+from typing import Any, Optional
 
 from pydantic import BaseModel
 
@@ -20,7 +20,7 @@ class PreEvaluation(BaseModel):
 
     acc: float
     err: str
-    pred_res: list[Any] | None
+    pred_res: Optional[list[Any]]
 
 
 class ExecuteConcreteSql(

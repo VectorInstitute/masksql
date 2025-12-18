@@ -77,13 +77,45 @@ class RunResdsql(JsonListProcessor[InitData.Model, InitData.Model]):
         input_file : str
             Path to input file from previous pipeline stage (e.g., LimitJson output)
 
-        Returns
-        -------
-        str
-            Path to output file
         """
         # Store the actual input from the pipeline (e.g., 2_LimitJson.json)
         write_json(str(self.resd_input_path), input_data)
+
+        """Execute RESDSQL pipeline before processing rows."""
+        # Skip if RESDSQL output already exists and force is not enabled
+        if not self.force and self.resd_output_path.exists():
+            logger.info(
+                f"[dim]⏭  Skipping RESDSQL pipeline - output exists:[/dim] "
+                f"{self.resd_output_path.name}"
+            )
+            return input_data
+
+        # Set TORCH_DEVICE environment variable
+        if "TORCH_DEVICE" not in os.environ:
+            os.environ["TORCH_DEVICE"] = self.device
+
+        # Create output directory
+        self.resd_dir.mkdir(parents=True, exist_ok=True)
+
+        console.print("[bold blue]Starting RESDSQL pipeline...[/bold blue]")
+
+        try:
+            # Execute pipeline steps
+            self._table_transform()
+            self._preprocess_dataset()
+            self._classify_schema_items()
+            self._generate_text2sql_data()
+            self._add_question_ids()
+
+            log_success(
+                "RESDSQL pipeline completed",
+                output_file=str(self.resd_output_path),
+            )
+
+        except Exception as e:
+            log_error(f"RESDSQL pipeline failed: {e}")
+            raise
+
         return input_data
 
     def _run_step(self, step_name: str, script: str, args: list[str]) -> None:
@@ -119,7 +151,8 @@ class RunResdsql(JsonListProcessor[InitData.Model, InitData.Model]):
                 f"RESDSQL step failed: {step_name}",
                 script=script,
                 exit_code=result.returncode,
-                stderr=result.stderr[:500] if result.stderr else "No error output",
+                stdout=result.stdout if result.stdout else "No output",
+                stderr=result.stderr if result.stderr else "No error output",
             )
             raise RuntimeError(f"RESDSQL step '{step_name}' failed")
 
@@ -176,7 +209,7 @@ class RunResdsql(JsonListProcessor[InitData.Model, InitData.Model]):
         console.print(
             f"[bold cyan]  → Schema classification[/bold cyan] [dim]({self.device})[/dim]"
         )
-        model_path = Path("models/text2sql_schema_item_classifier").absolute()
+        model_path = Path("resdsql/models/text2sql_schema_item_classifier").absolute()
 
         self._run_step(
             "schema_item_classifier",
@@ -240,42 +273,6 @@ class RunResdsql(JsonListProcessor[InitData.Model, InitData.Model]):
                 "--out",
                 str(self.resd_output_path),
                 "--prop",
-                "question_id",
+                "idx",
             ],
         )
-
-    def _pre_run(self) -> None:
-        """Execute RESDSQL pipeline before processing rows."""
-        # Skip if RESDSQL output already exists and force is not enabled
-        if not self.force and self.resd_output_path.exists():
-            logger.info(
-                f"[dim]⏭  Skipping RESDSQL pipeline - output exists:[/dim] "
-                f"{self.resd_output_path.name}"
-            )
-            return
-
-        # Set TORCH_DEVICE environment variable
-        if "TORCH_DEVICE" not in os.environ:
-            os.environ["TORCH_DEVICE"] = self.device
-
-        # Create output directory
-        self.resd_dir.mkdir(parents=True, exist_ok=True)
-
-        console.print("[bold blue]Starting RESDSQL pipeline...[/bold blue]")
-
-        try:
-            # Execute pipeline steps
-            self._table_transform()
-            self._preprocess_dataset()
-            self._classify_schema_items()
-            self._generate_text2sql_data()
-            self._add_question_ids()
-
-            log_success(
-                "RESDSQL pipeline completed",
-                output_file=str(self.resd_output_path),
-            )
-
-        except Exception as e:
-            log_error(f"RESDSQL pipeline failed: {e}")
-            raise

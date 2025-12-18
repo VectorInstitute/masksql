@@ -1,6 +1,6 @@
 """SQL execution accuracy calculation."""
 
-from typing import Any
+from typing import Any, Optional
 
 from pydantic import BaseModel
 
@@ -18,9 +18,9 @@ class EvaluationData(BaseModel):
     """
 
     acc: float
-    gold: list[Any] | None
-    pred: list[Any] | None
-    pred_err: str | None
+    gold: Optional[list[Any]]
+    pred: Optional[list[Any]]
+    pred_err: Optional[str]
 
 
 class CalcExecAcc(JsonListProcessor[RepairSQL.Model, "CalcExecAcc.Model"]):

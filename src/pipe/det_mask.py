@@ -89,7 +89,7 @@ class AddSymbolicQuestion(
             The term in the question to symbolize
         schema_items : str
             The schema items associated with this term
-        symbol_table : Dict[str, str]
+        symbol_table : dict[str, str]
             Mapping from schema items to their symbols
 
         Returns
@@ -120,11 +120,11 @@ class AddSymbolicQuestion(
             The value term in the question to symbolize
         column_ref : str
             Reference to the column this value belongs to
-        updated_schema_links : Dict[str, str]
+        updated_schema_links : dict[str, str]
             Mapping of question terms to schema items
-        filtered_value_links : Dict[str, str]
+        filtered_value_links : dict[str, str]
             Mapping of filtered value links
-        symbol_table : Dict[str, str]
+        symbol_table : dict[str, str]
             Mapping from schema items to their symbols
 
         Returns
@@ -154,14 +154,14 @@ class AddSymbolicQuestion(
 
         Parameters
         ----------
-        schema_links : Dict[str, str]
+        schema_links : dict[str, str]
             All schema links from question terms to schema items
-        filtered_schema_links : Dict[str, str]
+        filtered_schema_links : dict[str, str]
             Filtered subset of schema links
 
         Returns
         -------
-        Dict[str, str]
+        dict[str, str]
             Updated schema links with table references added
         """
         updated_schema_links = filtered_schema_links.copy()

@@ -66,7 +66,7 @@ class AddMaskedTermsDeterministic(JsonListTransformer):
             The term in the question to replace.
         schema_items : str
             Schema item(s) corresponding to the term.
-        symbol_table : Dict[str, str]
+        symbol_table : dict[str, str]
             Mapping from schema items to symbols.
 
         Returns
@@ -97,11 +97,11 @@ class AddMaskedTermsDeterministic(JsonListTransformer):
             The value term in the question to replace.
         column_ref : str
             Reference to the column containing this value.
-        updated_schema_links : Dict[str, str]
+        updated_schema_links : dict[str, str]
             Updated schema links mapping.
-        filtered_value_links : Dict[str, str]
+        filtered_value_links : dict[str, str]
             Filtered value links mapping.
-        symbol_table : Dict[str, str]
+        symbol_table : dict[str, str]
             Mapping from schema items to symbols.
 
         Returns
@@ -131,14 +131,14 @@ class AddMaskedTermsDeterministic(JsonListTransformer):
 
         Parameters
         ----------
-        schema_links : Dict[str, str]
+        schema_links : dict[str, str]
             All schema links from question terms to schema items.
-        filtered_schema_links : Dict[str, str]
+        filtered_schema_links : dict[str, str]
             Subset of schema links to use.
 
         Returns
         -------
-        Dict[str, str]
+        dict[str, str]
             Updated schema links with tables included.
         """
         updated_schema_links = filtered_schema_links.copy()
