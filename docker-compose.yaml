@@ -1,0 +1,8 @@
+services:
+  masksql:
+    image: ghcr.io/vector-institute/masksql:main
+    volumes:
+      - ./data:/app/data
+      - ./cache:/app/cache
+      - ./configs:/app/configs
+    env_file: .env
