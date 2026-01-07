@@ -1,6 +1,6 @@
 """Tests for the JsonListProcessor class functionality.
 
-This module tests the list processor functionality, including caching behavior
+This module tests the list base_processor functionality, including caching behavior
 and proper processing of data items.
 """
 
@@ -11,18 +11,18 @@ from unittest.mock import AsyncMock
 
 import pytest
 
-from src.models.base_object import BaseObject
-from src.pipe.processor.list_processor import JsonListProcessor, T, U
+from src.data_models.base_object import BaseObject
+from src.pipeline.base_processor.list_processor import JsonListProcessor, T, U
 from src.utils.json_io import read_json, write_json_raw
 
 
 class DataModel(BaseObject):
-    """Simple data model for testing processor functionality.
+    """Simple data model for testing base_processor functionality.
 
     Attributes
     ----------
     a : int
-        An integer value to be processed by the test processor.
+        An integer value to be processed by the test base_processor.
     """
 
     a: int
@@ -32,9 +32,9 @@ DataModelList = list[DataModel]
 
 
 class PlusPlusProcessor(JsonListProcessor[DataModel, DataModel]):
-    """Test processor that increments the 'a' attribute of each DataModel.
+    """Test base_processor that increments the 'a' attribute of each DataModel.
 
-    This processor is used to test the JsonListProcessor functionality,
+    This base_processor is used to test the JsonListProcessor functionality,
     particularly its caching behavior when processing the same data multiple times.
     """
 
