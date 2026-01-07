@@ -45,7 +45,7 @@ class Results(JsonListProcessor[AddInferenceAttack.Model, AddInferenceAttack.Mod
         # if "attack" in row and "annotated_links" in row:
         masked_terms = row.symbolic.masked_terms
         attack = row.attack
-        a_links = row.annotated_links
+        a_links = row.gold_schema_links
 
         ri_terms = 0
         num_masks = len(masked_terms)

@@ -1,11 +1,12 @@
 """Logging configuration utilities using rich library."""
 
-import logging
 import os
-from typing import Any
+import sys
+from functools import wraps
+from typing import Any, Awaitable, Callable, ParamSpec, TypeVar
 
+from loguru import logger
 from rich.console import Console
-from rich.logging import RichHandler
 from rich.panel import Panel
 from rich.table import Table
 from rich.text import Text
@@ -25,52 +26,7 @@ LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
 install_rich_traceback(console=console, show_locals=False, width=100, word_wrap=True)
 
 
-def configure_logging() -> None:
-    """Configure Python logging with rich formatting and custom handlers.
-
-    This function sets up logging with:
-    - Rich colored console output
-    - Concise timestamp format
-    - Different colors for different log levels
-    - Enhanced traceback formatting for exceptions
-    """
-    # Remove existing handlers to avoid duplicates
-    root_logger = logging.getLogger()
-    for handler in root_logger.handlers[:]:
-        root_logger.removeHandler(handler)
-
-    # Create rich handler with custom formatting
-    rich_handler = RichHandler(
-        console=console,
-        show_time=True,
-        show_path=False,
-        show_level=True,
-        rich_tracebacks=True,
-        tracebacks_show_locals=False,
-        markup=True,
-        log_time_format="[%H:%M:%S]",
-        omit_repeated_times=False,
-    )
-
-    # Minimal formatter for cleaner output
-    rich_handler.setFormatter(
-        logging.Formatter(
-            fmt="%(message)s",
-            datefmt="[%X]",
-        )
-    )
-
-    # Configure root logger
-    root_logger.addHandler(rich_handler)
-    root_logger.setLevel(LOG_LEVEL)
-
-    # Silence verbose HTTP request logs from third-party libraries
-    logging.getLogger("httpx").setLevel(logging.WARNING)
-    logging.getLogger("openai").setLevel(logging.WARNING)
-    logging.getLogger("urllib3").setLevel(logging.WARNING)
-
-
-def log_error(message: str, **kwargs: Any) -> None:
+def log_panel(message: str, **kwargs: Any) -> None:
     """Log an error message in a styled box.
 
     Parameters
@@ -101,143 +57,29 @@ def log_error(message: str, **kwargs: Any) -> None:
     console.print(panel)
 
 
-def log_warning(message: str, **kwargs: Any) -> None:
-    """Log a warning message in a styled box.
-
-    Parameters
-    ----------
-    message : str
-        The warning message to display
-    **kwargs : Any
-        Additional context information to include in the warning box
-    """
-    # Build warning content
-    warning_text = Text()
-    warning_text.append(message, style="bold yellow")
-
-    if kwargs:
-        warning_text.append("\n\n", style="")
-        warning_text.append("Context:\n", style="bold cyan")
-        for key, value in kwargs.items():
-            warning_text.append(f"  {key}: ", style="cyan")
-            warning_text.append(f"{value}\n", style="white")
-
-    # Display in a yellow panel
-    panel = Panel(
-        warning_text,
-        title="[bold yellow]WARNING",
-        border_style="yellow",
-        padding=(1, 2),
+def configure_logging() -> None:
+    """Configure Python logging with rich formatting and custom handlers."""
+    logger.remove()
+    logger.add(
+        sys.stdout,
+        level=LOG_LEVEL,
+        colorize=True,
+        backtrace=False,
+        catch=False,
+        format="<level>[{level:>7}]: {message}</level>",
     )
-    console.print(panel)
-
-
-def log_success(message: str, **kwargs: Any) -> None:
-    """Log a success message in a styled box.
-
-    Parameters
-    ----------
-    message : str
-        The success message to display
-    **kwargs : Any
-        Additional context information to include in the success box
-    """
-    # Build success content
-    success_text = Text()
-    success_text.append(message, style="bold green")
-
-    if kwargs:
-        success_text.append("\n\n", style="")
-        success_text.append("Details:\n", style="bold cyan")
-        for key, value in kwargs.items():
-            success_text.append(f"  {key}: ", style="cyan")
-            success_text.append(f"{value}\n", style="white")
-
-    # Display in a green panel
-    panel = Panel(
-        success_text,
-        title="[bold green]SUCCESS",
-        border_style="green",
-        padding=(1, 2),
-    )
-    console.print(panel)
-
-
-def log_info(message: str, **kwargs: Any) -> None:
-    """Log an info message in a styled box.
-
-    Parameters
-    ----------
-    message : str
-        The info message to display
-    **kwargs : Any
-        Additional context information to include in the info box
-    """
-    # Build info content
-    info_text = Text()
-    info_text.append(message, style="bold blue")
-
-    if kwargs:
-        info_text.append("\n\n", style="")
-        info_text.append("Details:\n", style="bold cyan")
-        for key, value in kwargs.items():
-            info_text.append(f"  {key}: ", style="cyan")
-            info_text.append(f"{value}\n", style="white")
-
-    # Display in a blue panel
-    panel = Panel(
-        info_text,
-        title="[bold blue]INFO",
-        border_style="blue",
-        padding=(1, 2),
-    )
-    console.print(panel)
-
-
-# Create a logger instance that can be imported
-logger = logging.getLogger("masksql")
-
-
-def log_stage_start(stage_name: str) -> None:
-    """Log the start of a pipeline stage.
-
-    Parameters
-    ----------
-    stage_name : str
-        Name of the pipeline stage starting
-    """
-    console.print(
-        f"\n[bold cyan]▶ Starting Stage:[/bold cyan] [bold white]{stage_name}[/bold white]"
+    logger.add(
+        "logs/debug-{time:MMMD-HH-mm}.log",
+        level="DEBUG",
+        format="[{time:HH:mm:ss}]-[{level:<7}]-[{name:>20} | {function:<25}:{line:<3}]: {message}",
     )
 
-
-def log_stage_complete(stage_name: str, elapsed_time: float) -> None:
-    """Log the completion of a pipeline stage with timing.
-
-    Parameters
-    ----------
-    stage_name : str
-        Name of the pipeline stage completed
-    elapsed_time : float
-        Time taken to complete the stage in seconds
-    """
-    # Store timing for summary
-    _stage_timings.append((stage_name, elapsed_time))
-
-    # Format time with appropriate precision and color
-    if elapsed_time < 1.0:
-        time_str = f"{elapsed_time:.3f}s"
-        time_color = "green"
-    elif elapsed_time < 10.0:
-        time_str = f"{elapsed_time:.2f}s"
-        time_color = "yellow"
-    else:
-        time_str = f"{elapsed_time:.2f}s"
-        time_color = "red"
-
-    console.print(
-        f"[bold green]✓ Done Stage:[/bold green] [bold white]{stage_name}[/bold white] "
-        f"[dim]│[/dim] [{time_color}]{time_str}[/{time_color}]"
+    logger.add(
+        "logs/prompts-{time:MMMD-HH-mm}.jsonl",
+        level="DEBUG",
+        filter=lambda record: record["extra"].get("type") == "prompt",
+        format="{message}",
+        serialize=True,
     )
 
 
@@ -339,10 +181,25 @@ def log_pipeline_summary(
     console.print("\n")
 
 
-def reset_stage_timings() -> None:
-    """Reset the stage timings tracker.
+P = ParamSpec("P")
+R = TypeVar("R")
+AR = Awaitable[R]
 
-    This should be called at the start of a pipeline run.
-    """
-    global _stage_timings  # noqa: PLW0603
-    _stage_timings = []
+
+def along(
+    message: str = "", before: str | None = None
+) -> Callable[[Callable[P, AR]], Callable[P, AR]]:
+    """Log messages before and after an async function execution."""
+
+    def decorator(func: Callable[P, AR]) -> Callable[P, AR]:
+        @wraps(func)
+        async def wrapper(*args: P.args, **kwargs: P.kwargs) -> AR:
+            if before is not None:
+                logger.info(before.format(*args, **kwargs))
+            result = await func(*args, **kwargs)
+            logger.info(message.format(*args, **kwargs))
+            return result
+
+        return wrapper
+
+    return decorator

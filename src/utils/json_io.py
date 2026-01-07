@@ -3,7 +3,8 @@
 import json
 from typing import Any, Type, TypeVar
 
-from pydantic import BaseModel
+from loguru import logger
+from pydantic import BaseModel, ValidationError
 
 
 T = TypeVar("T", bound=BaseModel)
@@ -26,6 +27,9 @@ def read_json_raw(path: str) -> Any:
         return json.load(f)
 
 
+@logger.catch(
+    message="Failed to validate data", reraise=True, exception=ValidationError
+)
 def read_json(path: str, cls: Type[T]) -> list[T]:
     """
     Read and parse a JSON file.

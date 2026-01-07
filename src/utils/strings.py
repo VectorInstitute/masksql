@@ -4,7 +4,7 @@ import re
 from difflib import SequenceMatcher
 from enum import Enum
 
-from src.utils.logging import logger
+from loguru import logger
 
 
 def delete_whitespace(content: str) -> str:

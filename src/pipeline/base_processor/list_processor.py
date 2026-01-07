@@ -4,9 +4,12 @@ import os.path
 from abc import ABC, abstractmethod
 from typing import Generic, Type, TypeVar
 
+from loguru import logger
+
 from src.data_cache.json_cache import JsonCache
 from src.data_models.base_object import BaseObject
 from src.utils.async_utils import apply_async
+from src.utils.logging import along
 
 
 T = TypeVar("T", bound=BaseObject)
@@ -57,6 +60,7 @@ class JsonListProcessor(ABC, Generic[T, U]):
         """
         return os.path.join(cache_dir, f"{sequence}_{self.name}.json")
 
+    @logger.catch(message="Failed to process row", reraise=True)
     async def __process_row_internal(self, row: T) -> U:
         if self.cache and not self.force and row.idx in self.cache:
             return self.cache[row.idx]
@@ -89,6 +93,7 @@ class JsonListProcessor(ABC, Generic[T, U]):
     def _post_run(self) -> None:  # noqa: B027
         """Override to add post-processing logic after run."""
 
+    @along("Processor completed: {0}")
     async def run(self, input_data: list[T]) -> list[U]:
         """
         Process input file and return output_data.
@@ -111,3 +116,7 @@ class JsonListProcessor(ABC, Generic[T, U]):
         self._post_run()
 
         return output_data
+
+    def __repr__(self) -> str:
+        """Name of the processor."""
+        return self.name

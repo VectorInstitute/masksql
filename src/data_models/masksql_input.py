@@ -20,10 +20,10 @@ class MaskSqlInput(BaseObject):
         db_id: Identifier of the database the question is about
         question: Natural language question text
         query: Optional SQL query (may be empty for new inputs)
-        annotated_links: Dictionary of annotations for the question
+        gold_schema_links: Dictionary of annotations for the question
     """
 
     db_id: str
     question: str
     query: str
-    annotated_links: dict[str, Any]
+    gold_schema_links: dict[str, Any]

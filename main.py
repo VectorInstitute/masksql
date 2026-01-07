@@ -2,43 +2,16 @@
 
 import argparse
 import asyncio
-import logging
 import shutil
-from pathlib import Path
 
 from dotenv import load_dotenv
+
+from src.utils.logging import configure_logging
 
 
 load_dotenv()
 
 from src.masksql import MaskSQL  # noqa: E402
-from src.utils.logging import configure_logging  # noqa: E402
-
-
-logger = logging.getLogger(__name__)
-
-
-def clean_cache_directory(cache_dir: str) -> None:
-    """Clean intermediate files from the data directory.
-
-    Removes files matching the pattern [0-9]*_* but excludes files starting with 1_*.
-    This is used to clean up intermediate pipeline output files while preserving
-    the initial input files.
-
-    Parameters
-    ----------
-    cache_dir : str
-        Path to the cache directory to clean.
-    """
-    cache_path = Path(cache_dir)
-
-    if not cache_path.exists():
-        logger.error(f"Data directory does not exist: {cache_dir}")
-        return
-
-    shutil.rmtree(cache_path)
-
-    logger.info("Cleanup complete")
 
 
 async def main() -> None:
@@ -58,7 +31,7 @@ async def main() -> None:
     mask_sql = MaskSQL.from_config(args.config)
 
     if args.clean:
-        clean_cache_directory(mask_sql.conf.cache_dir)
+        shutil.rmtree(mask_sql.conf.cache_dir, ignore_errors=True)
     else:
         await mask_sql.evaluate()
 

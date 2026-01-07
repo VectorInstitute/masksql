@@ -2,11 +2,12 @@
 
 from typing import Any
 
+from loguru import logger
+
 from src.config import OpenAIConfig
 from src.pipeline.base_processor.prompt_processor import PromptProcessor
 from src.pipeline.exec_conc_sql import ExecuteConcreteSql
 from src.pipeline.repair_sql.prompts.v3 import REPAIR_SQL_PROMPT_V3
-from src.utils.logging import logger
 from src.utils.strings import extract_sql
 
 

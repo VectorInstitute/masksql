@@ -1,11 +1,12 @@
 """Schema linking from questions to database schemas."""
 
+from loguru import logger
+
 from src.config import OpenAIConfig
 from src.pipeline.base_processor.prompt_processor import PromptProcessor
 from src.pipeline.link_schema.prompts.v4 import SCHEMA_LINK_PROMPT_V4
 from src.pipeline.link_values.link_values import FilterValueLinksModel
 from src.utils.llm_util import extract_object
-from src.utils.logging import logger
 
 
 class LinkSchema(PromptProcessor[FilterValueLinksModel, "LinkSchema.Model"]):

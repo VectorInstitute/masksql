@@ -2,11 +2,11 @@
 
 from typing import Any, Optional
 
+from loguru import logger
 from pydantic import BaseModel
 
 from src.pipeline.base_processor.list_processor import JsonListProcessor
 from src.pipeline.unmask import AddConcreteSql
-from src.utils.logging import logger
 from src.utils.sqlite_facade import SqliteFacade
 
 

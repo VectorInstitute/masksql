@@ -58,6 +58,7 @@ packages = ["src"]
 [dependency-groups]
 dev = [
     "codecov>=2.1.13",
+    "loguru>=0.7.3",
     "mypy>=1.14.1",
     "nbqa>=1.9.1",
     "pip>=25.3", # Pinning version to address vulnerability GHSA-4xh5-x5gv-qwph

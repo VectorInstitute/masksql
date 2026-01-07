@@ -1,13 +1,10 @@
 """Deterministic masking of terms in questions."""
 
-import logging
+from loguru import logger
 
 from src.pipeline.add_symb_schema import AddSymbolicSchema, SymbolicSchema
 from src.pipeline.base_processor.list_processor import JsonListProcessor
 from src.utils.strings import replace_str
-
-
-logger = logging.getLogger(__name__)
 
 
 class SymbolicQuestion(SymbolicSchema):

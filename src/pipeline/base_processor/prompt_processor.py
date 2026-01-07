@@ -1,14 +1,16 @@
 """Base base_processor for LLM-based value detection."""
 
+import uuid
 from abc import ABC, abstractmethod
 from json import JSONDecodeError
 from typing import Any, Generic, Type, TypeVar
+
+from loguru import logger
 
 from src.config import OpenAIConfig
 from src.pipeline.base_processor.list_processor import JsonListProcessor
 from src.pipeline.init_data import InitData
 from src.utils.llm_util import send_prompt
-from src.utils.logging import logger
 from src.utils.timer import Timer
 
 
@@ -48,10 +50,14 @@ class PromptProcessor(JsonListProcessor[T, U], ABC, Generic[T, U]):
         self.openai_config = openai_config
         self.model = model
         self.include_stats = include_stats
+        self.prompt_logger = logger.bind(type="prompt", name=self.name)
 
     async def _prompt_llm(self, row: T, prompt: str) -> tuple[Any, str]:
+        prompt_logger = self.prompt_logger.bind(prompt_id=uuid.uuid4())
         try:
+            prompt_logger.bind(is_req=True).debug(prompt)
             res, toks = await send_prompt(prompt, self.openai_config, model=self.model)
+            prompt_logger.bind(is_req=False).debug(res)
         except JSONDecodeError as e:
             logger.error(f"Sending prompts failed: {e}")
             return "", "0"

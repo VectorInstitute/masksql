@@ -1,6 +1,5 @@
 """Memory usage monitoring utilities."""
 
-import logging
 import os
 import threading
 import time
@@ -8,9 +7,7 @@ from collections.abc import Awaitable, Callable
 from typing import Any
 
 import psutil
-
-
-logger = logging.getLogger(__name__)
+from loguru import logger
 
 
 def _monitor_memory(

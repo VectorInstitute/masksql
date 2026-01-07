@@ -2,17 +2,15 @@
 
 import ast
 import json
-import logging
 import os
 import re
 from typing import Any
 
+from loguru import logger
 from openai import AsyncClient
 
 from src.config import OpenAIConfig
 
-
-logger = logging.getLogger(__name__)
 
 VLM_ARCH = os.environ.get("VLM_ARCH")
 MAX_COMPLETION_TOKENS = os.environ.get("MAX_COMPLETION_TOKENS")
@@ -72,12 +70,6 @@ async def send_prompt(
         timeout=openai_config.timeout,
     )
 
-    # Concise logging with rich markup
-    logger.debug(
-        f"[cyan]LLM Request[/cyan] → [bold]{model}[/bold] "
-        f"([dim]{len(prompt)} chars[/dim])"
-    )
-
     response = await client.chat.completions.create(
         model=model,
         messages=[
@@ -89,17 +81,11 @@ async def send_prompt(
         max_completion_tokens=openai_config.max_completion_tokens,
     )
     if response.choices is None:
-        print(prompt)
         raise Exception(f"LM prompts failed: {response.model_extra}")
     usage = "0"
     if response.usage:
         usage = str(response.usage.total_tokens)
     content = response.choices[0].message.content or ""
-
-    logger.debug(
-        f"[green]LLM Response[/green] ← [bold]{usage}[/bold] tokens "
-        f"([dim]{len(content)} chars[/dim])"
-    )
 
     return content, usage
 
