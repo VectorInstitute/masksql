@@ -9,7 +9,7 @@ from loguru import logger
 from src.data_cache.json_cache import JsonCache
 from src.data_models.base_object import BaseObject
 from src.utils.async_utils import apply_async
-from src.utils.logging import along
+from src.utils.logging import log
 
 
 T = TypeVar("T", bound=BaseObject)
@@ -93,7 +93,7 @@ class JsonListProcessor(ABC, Generic[T, U]):
     def _post_run(self) -> None:  # noqa: B027
         """Override to add post-processing logic after run."""
 
-    @along("Processor completed: {0}")
+    @log("Processor completed: {0}")
     async def run(self, input_data: list[T]) -> list[U]:
         """
         Process input file and return output_data.

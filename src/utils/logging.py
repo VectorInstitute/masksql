@@ -186,7 +186,7 @@ R = TypeVar("R")
 AR = Awaitable[R]
 
 
-def along(
+def log(
     message: str = "", before: str | None = None
 ) -> Callable[[Callable[P, AR]], Callable[P, AR]]:
     """Log messages before and after an async function execution."""
