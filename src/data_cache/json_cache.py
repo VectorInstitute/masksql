@@ -7,7 +7,7 @@ in a JSON file and provides methods for adding, updating, and retrieving them.
 import os
 from typing import Generic, Type, TypeVar
 
-from src.models.base_object import BaseObject
+from src.data_models.base_object import BaseObject
 from src.utils.json_io import read_json, write_json
 
 

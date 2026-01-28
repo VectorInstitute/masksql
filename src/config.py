@@ -1,7 +1,7 @@
 """Configuration management for MaskSQL.
 
 This module defines the configuration dataclass used throughout the MaskSQL
-project for managing paths, models, and runtime settings.
+project for managing paths, data_models, and runtime settings.
 """
 
 import os

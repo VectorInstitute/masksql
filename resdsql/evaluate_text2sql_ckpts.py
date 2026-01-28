@@ -18,14 +18,14 @@ def parse_option():
     parser.add_argument(
         "--save_path",
         type=str,
-        default="./models/text2sql",
-        help="save path of fine-tuned text2sql models.",
+        default="./data_models/text2sql",
+        help="save path of fine-tuned text2sql data_models.",
     )
     parser.add_argument(
         "--eval_results_path",
         type=str,
         default="./eval_results/text2sql",
-        help="the evaluation results of fine-tuned text2sql models.",
+        help="the evaluation results of fine-tuned text2sql data_models.",
     )
     parser.add_argument("--mode", type=str, default="eval", help="eval.")
     parser.add_argument(
