@@ -10,9 +10,9 @@ from pathlib import Path
 
 import pytest
 
-from src.models.base_object import BaseObject
-from src.pipe.pipeline import Pipeline
-from src.pipe.processor.list_processor import JsonListProcessor, T, U
+from src.data_models.base_object import BaseObject
+from src.pipeline.base_processor.list_processor import JsonListProcessor, T, U
+from src.pipeline.pipeline import Pipeline
 from src.utils.json_io import read_json, write_json_raw
 
 
@@ -38,7 +38,7 @@ DataModelList = list[DataModel]
 class Plus2(JsonListProcessor[DataModel, DataModel]):
     """Processor that adds 2 to the 'a' attribute of each DataModel.
 
-    This processor is used in the pipeline test to demonstrate
+    This base_processor is used in the pipeline test to demonstrate
     sequential processing of data.
     """
 
@@ -53,8 +53,8 @@ class Plus2(JsonListProcessor[DataModel, DataModel]):
 class Times5(JsonListProcessor[DataModel, DataModel]):
     """Processor that multiplies the 'a' attribute of each DataModel by 5.
 
-    This processor is used in the pipeline test to demonstrate
-    sequential processing of data after the Plus2 processor.
+    This base_processor is used in the pipeline test to demonstrate
+    sequential processing of data after the Plus2 base_processor.
     """
 
     def __init__(self):
