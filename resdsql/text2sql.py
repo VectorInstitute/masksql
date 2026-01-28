@@ -48,7 +48,7 @@ def parse_option():
     parser.add_argument(
         "--save_path",
         type=str,
-        default="models/text2sql",
+        default="data_models/text2sql",
         help="save path of best fine-tuned text2sql model.",
     )
     parser.add_argument(

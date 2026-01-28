@@ -8,9 +8,10 @@ license = "Apache-2.0"
 repository = "https://github.com/VectorInstitute/masksql"
 requires-python = ">=3.11"
 dependencies = [
-    "filelock>=3.20.1",  # Pinning version to address vulnerability CVE-2025-68146
-    "fonttools>=4.60.2",  # Pinning version to address vulnerability GHSA-768j-98cg-p3fv
-    "werkzeug>=3.1.4", # Pinning version to address vulnerability GHSA-hgf8-39gv-g3f2
+    "filelock>=3.20.3", # Pinning version to address vulnerabilities CVE-2025-68146, CVE-2026-22701
+    "fonttools>=4.60.2", # Pinning version to address vulnerability GHSA-768j-98cg-p3fv
+    "werkzeug>=3.1.5", # Pinning version to address vulnerabilities GHSA-hgf8-39gv-g3f2, CVE-2026-21860
+    "virtualenv>=20.36.1", # TODO: Update to >=20.36.2 when released to address CVE-2026-22702
     "absl-py>=2.3.1",
     "python-dotenv>=1.0.0",
     "func-timeout>=4.3.5",
@@ -45,6 +46,7 @@ dependencies = [
     "transformers>=4.30.0",
     "vcrpy>=7.0.0",
     "ply>=3.11",
+    "urllib3==2.6.3",
 ]
 
 [build-system]
