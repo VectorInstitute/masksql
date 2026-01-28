@@ -19,12 +19,50 @@ MaskSQL is a privacy-preserving framework for LLM-based text-to-SQL that uses sc
 
 ## Installation and Setup Instructions
 
-### Prerequisites
+### Docker Installation
+
+Setup the env variables:
+```shell
+cp .env.example .env
+```
+> Fill in the required variables
+
+Run the MaskSQL using the published Docker image:
+```shell
+docker compose run --rm masksql python main.py
+```
+#### Build the Docker image
+
+Build the Docker image locally:
+```shell
+docker compose -f docker-compose.local.yaml build
+```
+
+#### Interactive shell
+
+You can run the MaskSQL container and then have a shell access to
+the container:
+```shell
+docker compose up -d
+# Or
+docker compose -f docker-compose.local.yaml up -d
+```
+After the container started successfully you can have a shell access:
+
+```shell
+docker compose exec -it masksql bash
+# Or
+docker compose -f docker-compose.local.yaml exec -it masksql bash
+```
+
+### Native Installation
+
+#### Requirements
 
 - Python 3.11
 - [uv](https://github.com/astral-sh/uv?tab=readme-ov-file#installation) package manager
 
-### Setup
+#### Setup Environment
 
 Install dependencies and activate the virtual environment:
 
@@ -33,7 +71,7 @@ uv sync --dev
 source .venv/bin/activate
 ```
 
-### Download Dataset
+#### Download Dataset
 
 Download and extract the dataset:
 
@@ -51,7 +89,7 @@ data/
 └── ...
 ```
 
-### Configure Environment
+#### Configure Environment
 
 Create a `.env` file from the template:
 
