@@ -20,7 +20,7 @@ opts = {
     "epochs": 128,
     "patience": 32,
     "seed": 42,
-    "save_path": "./models/text2sql_schema_item_classifier",
+    "save_path": "./data_models/text2sql_schema_item_classifier",
     "tensorboard_save_path": None,
     "train_filepath": "data/pre-processing/preprocessed_train_spider.json",
     "dev_filepath": "./data/preprocessed_data/preprocessed_test.json",
