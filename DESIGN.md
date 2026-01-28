@@ -240,10 +240,10 @@ class TextToSQLModelConfig:
     """Text-to-SQL model configuration.
 
     Supports multiple model types:
-    - "openai": OpenAI models (GPT-4, GPT-3.5, etc.)
-    - "anthropic": Anthropic models (Claude, etc.)
-    - "custom": Custom models via REST API (proprietary models, custom endpoints)
-    - "local": Local models or self-hosted endpoints
+    - "openai": OpenAI data_models (GPT-4, GPT-3.5, etc.)
+    - "anthropic": Anthropic data_models (Claude, etc.)
+    - "custom": Custom data_models via REST API (proprietary data_models, custom endpoints)
+    - "local": Local data_models or self-hosted endpoints
     - "none": Disable built-in SQL generation (use custom steps instead)
 
     When model_type="none", you must provide custom SQL generation steps.
@@ -263,7 +263,7 @@ class TextToSQLModelConfig:
     custom_endpoint: Optional[str] = None
     custom_headers: Optional[dict] = None
 
-    # Request/response format for custom models
+    # Request/response format for custom data_models
     custom_request_format: Optional[str] = None  # "openai", "anthropic", "custom"
     custom_response_parser: Optional[callable] = None  # Custom parser function
 
@@ -306,7 +306,7 @@ class MaskSQLConfig:
     """Main configuration for MaskSQL.
 
     Configuration Philosophy:
-    - Use config_file for standard settings (models, databases, privacy policy)
+    - Use config_file for standard settings (data_models, databases, privacy policy)
     - Use the `steps` parameter in MaskSQL() for pipeline customization
     - Custom steps provide more flexibility than PipelineConfig flags
 
@@ -481,7 +481,7 @@ class MaskSQL:
 
             Use cases:
             - Domain-specific preprocessing (e.g., medical terminology normalization)
-            - Custom Text-to-SQL models
+            - Custom Text-to-SQL data_models
             - Compliance validation
             - Custom logging or monitoring hooks
             - Additional SQL repair or optimization steps
@@ -506,7 +506,7 @@ class MaskSQL:
         ...     })
         ... ]
         >>> config = MaskSQLConfig.from_yaml("config.yaml")
-        >>> config.models.text_to_sql.model_type = "none"  # Disable built-in generation
+        >>> config.data_models.text_to_sql.model_type = "none"  # Disable built-in generation
         >>> masksql = MaskSQL(config=config, steps=custom_steps)
 
         """

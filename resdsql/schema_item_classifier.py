@@ -62,7 +62,7 @@ def parse_option():
     parser.add_argument(
         "--save_path",
         type=str,
-        default="models/schema_item_classifier",
+        default="data_models/schema_item_classifier",
         help="save path of best fine-tuned model on validation set.",
     )
     parser.add_argument(
