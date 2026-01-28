@@ -1,0 +1,13 @@
+services:
+  masksql:
+    container_name: masksql
+    build:
+      context: .
+      cache_from:
+        - masksql
+    image: masksql
+    volumes:
+      - ./data:/app/data
+      - ./cache:/app/cache
+      - ./configs:/app/configs
+    env_file: .env
