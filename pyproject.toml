@@ -10,7 +10,7 @@ requires-python = ">=3.11"
 dependencies = [
     "filelock>=3.20.3", # Pinning version to address vulnerabilities CVE-2025-68146, CVE-2026-22701
     "fonttools>=4.60.2", # Pinning version to address vulnerability GHSA-768j-98cg-p3fv
-    "werkzeug>=3.1.5", # Pinning version to address vulnerabilities GHSA-hgf8-39gv-g3f2, CVE-2026-21860
+    "werkzeug>=3.1.6", # Pinning version to address vulnerabilities GHSA-hgf8-39gv-g3f2, CVE-2026-21860, CVE-2026-27199
     "virtualenv>=20.36.1", # TODO: Update to >=20.36.2 when released to address CVE-2026-22702
     "absl-py>=2.3.1",
     "python-dotenv>=1.0.0",
@@ -19,7 +19,7 @@ dependencies = [
     "huggingface-hub>=0.33.2",
     "matplotlib>=3.7.5",
     "natsort>=8.4.0",
-    "nltk>=3.9.1",
+    "nltk>=3.9.4", # Pinning version to address vulnerability GHSA-rf74-v2fm-23pw
     "numpy>=1.24.4,<2.0.0",
     "openai>=1.93.0",
     "pytest>=8.4.2",
