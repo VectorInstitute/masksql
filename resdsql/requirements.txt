@@ -15,7 +15,7 @@ huggingface-hub==0.34.4
 idna==3.10
 importlib-metadata==8.5.0
 joblib==1.4.2
-Markdown==3.7
+Markdown==3.8.1
 MarkupSafe==2.1.2
 murmurhash==1.0.9
 nltk==3.9.3
