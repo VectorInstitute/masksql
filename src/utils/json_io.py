@@ -58,7 +58,7 @@ def write_json_raw(path: str, data: list[dict]) -> None:
         The data to write as JSON.
     """
     with open(path, "w") as f:
-        f.write(json.dumps(data, indent=4))
+        f.write(json.dumps(data, indent=4) + "\n")
 
 
 def write_json(path: str, data: list[T]) -> None:
@@ -74,4 +74,4 @@ def write_json(path: str, data: list[T]) -> None:
     """
     out_data = [item.model_dump() for item in data]
     with open(path, "w") as f:
-        f.write(json.dumps(out_data, indent=4))
+        f.write(json.dumps(out_data, indent=4) + "\n")
