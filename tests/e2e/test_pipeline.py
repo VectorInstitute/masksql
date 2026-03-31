@@ -66,7 +66,7 @@ class Times5(JsonListProcessor[DataModel, DataModel]):
 
 
 @pytest.mark.asyncio
-async def test_pipeline():
+async def test_pipeline(tmp_path):
     cache_dir = os.path.join(TEST_DATA_DIR, "cache", "pipeline_test")
     if os.path.exists(cache_dir):
         shutil.rmtree(cache_dir)
@@ -75,8 +75,9 @@ async def test_pipeline():
     pipeline = Pipeline(
         "test_pipeline", os.path.join(TEST_DIR, "cache"), [Plus2(), Times5()]
     )
-    write_json_raw("test.json", [{"idx": "i1", "a": 1}])
-    data = read_json("test.json", DataModel)
+    test_file = str(tmp_path / "test.json")
+    write_json_raw(test_file, [{"idx": "i1", "a": 1}])
+    data = read_json(test_file, DataModel)
 
     result = await pipeline.run(data)
 

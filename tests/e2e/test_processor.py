@@ -51,14 +51,15 @@ TEST_DATA_DIR = os.path.join(TEST_DIR, "test_data")
 
 
 @pytest.mark.asyncio
-async def test_processor():
+async def test_processor(tmp_path):
     cache_dir = os.path.join(TEST_DATA_DIR, "cache", "processor_test")
     if os.path.exists(cache_dir):
         shutil.rmtree(cache_dir)
     os.makedirs(cache_dir, exist_ok=True)
 
-    write_json_raw("test.json", [{"idx": "i1", "a": 1}])
-    data = read_json("test.json", DataModel)
+    test_file = str(tmp_path / "test.json")
+    write_json_raw(test_file, [{"idx": "i1", "a": 1}])
+    data = read_json(test_file, DataModel)
     p = PlusPlusProcessor()
     p.set_cache_file(cache_dir, 1)
     method = p._process_row
