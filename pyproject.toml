@@ -15,6 +15,9 @@ dependencies = [
     "tornado>=6.5.5", # Pinning version to address vulnerabilities GHSA-78cv-mqj4-43f7, CVE-2026-31958
     "werkzeug>=3.1.6", # Pinning version to address vulnerabilities GHSA-hgf8-39gv-g3f2, CVE-2026-21860, CVE-2026-27199
     "virtualenv>=20.36.1", # TODO: Update to >=20.36.2 when released to address CVE-2026-22702
+    "tornado>=6.5.5", # Pinning version to address vulnerabilities GHSA-78cv-mqj4-43f7, CVE-2026-31958
+    "pillow>=12.1.1", # Pinning version to address vulnerability CVE-2026-25990
+    "pip>=26.0", # Pinning version to address vulnerability CVE-2026-1703
     "absl-py>=2.3.1",
     "python-dotenv>=1.0.0",
     "func-timeout>=4.3.5",
