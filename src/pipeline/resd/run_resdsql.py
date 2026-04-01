@@ -6,10 +6,12 @@ import sys
 from pathlib import Path
 from typing import Any
 
+from loguru import logger
+
 from src.pipeline.base_processor.list_processor import JsonListProcessor
 from src.pipeline.init_data import InitData
 from src.utils.json_io import write_json
-from src.utils.logging import console, log_error, log_success, logger
+from src.utils.logging import console
 
 
 class RunResdsql(JsonListProcessor[InitData.Model, InitData.Model]):
@@ -85,7 +87,7 @@ class RunResdsql(JsonListProcessor[InitData.Model, InitData.Model]):
         # Skip if RESDSQL output already exists and force is not enabled
         if not self.force and self.resd_output_path.exists():
             logger.info(
-                f"[dim]⏭  Skipping RESDSQL pipeline - output exists:[/dim] "
+                f"Skipping RESDSQL pipeline - output exists:"
                 f"{self.resd_output_path.name}"
             )
             return input_data
@@ -107,13 +109,10 @@ class RunResdsql(JsonListProcessor[InitData.Model, InitData.Model]):
             self._generate_text2sql_data()
             self._add_question_ids()
 
-            log_success(
-                "RESDSQL pipeline completed",
-                output_file=str(self.resd_output_path),
-            )
+            logger.info(f"RESDSQL pipeline completed: {self.resd_output_path}")
 
         except Exception as e:
-            log_error(f"RESDSQL pipeline failed: {e}")
+            logger.error(f"RESDSQL pipeline failed: {e}")
             raise
 
         return input_data
@@ -147,7 +146,7 @@ class RunResdsql(JsonListProcessor[InitData.Model, InitData.Model]):
         )
 
         if result.returncode != 0:
-            log_error(
+            logger.error(
                 f"RESDSQL step failed: {step_name}",
                 script=script,
                 exit_code=result.returncode,

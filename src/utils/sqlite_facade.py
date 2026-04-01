@@ -8,7 +8,7 @@ from contextlib import contextmanager
 from sqlite3 import Connection
 from typing import Any
 
-from src.utils.logging import logger
+from loguru import logger
 
 
 DB_TIMEOUT = 10000

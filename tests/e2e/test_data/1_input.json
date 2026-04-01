@@ -14,11 +14,6 @@
             "pets": "TABLE:pets",
             "weight": "COLUMN:pets.weight"
         },
-        "annotated_links": {
-            "10": "VALUE:pets.weight",
-            "pets": "TABLE:pets",
-            "weight": "COLUMN:pets.weight"
-        },
         "idx": "spider_45"
     }
 ]

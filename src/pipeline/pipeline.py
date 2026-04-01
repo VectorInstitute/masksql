@@ -7,9 +7,6 @@ from src.data_models.base_object import BaseObject
 from src.pipeline.base_processor.list_processor import JsonListProcessor
 from src.utils.logging import (
     log_pipeline_summary,
-    log_stage_complete,
-    log_stage_start,
-    reset_stage_timings,
 )
 from src.utils.mem import track_memory_async
 from src.utils.timer import Timer
@@ -40,22 +37,9 @@ class Pipeline(Generic[T]):
             stage.set_cache_file(pipeline_cache_dir, i + 1)
 
     async def __run_internal(self, input_data: list[T]) -> list[Any]:
-        # tmp_file: Any = input_file
         tmp_data = input_data
-        timer: Timer = Timer()
-        timer.start()
-        last_lap_time = 0.0
-
         for stage in self.stages:
-            log_stage_start(stage.name)
             tmp_data = await stage.run(tmp_data)
-
-            # Get cumulative time and calculate stage time
-            cumulative_time = timer.lap()
-            stage_time = cumulative_time - last_lap_time
-            last_lap_time = cumulative_time
-
-            log_stage_complete(stage.name, stage_time)
         return tmp_data
 
     async def run(self, input_data: list[T]) -> list[Any]:
@@ -72,9 +56,6 @@ class Pipeline(Generic[T]):
         tuple[Any, float, float]
             Tuple of (result, average_memory_mb, peak_memory_mb)
         """
-        # Reset timing tracker for new pipeline run
-        reset_stage_timings()
-
         timer: Timer = Timer.start()
         result, avg_mem, peak_mem = await track_memory_async(
             self.__run_internal, input_data

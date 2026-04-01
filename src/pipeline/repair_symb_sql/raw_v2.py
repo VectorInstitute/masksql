@@ -108,7 +108,7 @@ SELECT COUNT(*) FROM [T1] WHERE [T1].[C1] = '[V1]' AND [C2] = 0
 The corrected SQL query is:
 SELECT COUNT(*) FROM [T1] WHERE [T1].[C1] = '[V1]' AND [C2] = 0
 
-======= Your task =======
+******* Your task *******
 **************************
 NL Question and Database Schema:
 {symbolic_raw}

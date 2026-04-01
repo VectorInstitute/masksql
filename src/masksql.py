@@ -21,10 +21,7 @@ from src.pipeline.exec_acc import CalcExecAcc
 from src.pipeline.exec_conc_sql import ExecuteConcreteSql
 from src.pipeline.gen_sql.gen_masked_sql import GenerateSymbolicSql
 from src.pipeline.init_data import InitData
-from src.pipeline.link_schema.link_schema import (
-    FilterSchemaLinksModel,
-    LinkSchema,
-)
+from src.pipeline.link_schema.link_schema import FilterSchemaLinksModel, LinkSchema
 from src.pipeline.link_values.link_values import FilterValueLinksModel, LinkValues
 from src.pipeline.pipeline import Pipeline
 from src.pipeline.rank_schema import RankSchemaResd
@@ -74,10 +71,8 @@ def create_pipeline_stages(conf: MaskSqlConfig) -> list[JsonListProcessor]:
         LimitJson(),
         InitData(),
         *rank_schema,
-        # ResdItemCount(),
         AddFilteredSchema(conf.tables_path),
         AddSymbolTable(conf.tables_path),
-        # SlmSQL("slm_sql", conf.openai, model=conf.slm),
         DetectValues(conf.openai, model=conf.slm),
         LinkValues(conf.openai, model=conf.slm),
         CopyTransformer("value_links", "filtered_value_links", FilterValueLinksModel),
@@ -94,7 +89,6 @@ def create_pipeline_stages(conf: MaskSqlConfig) -> list[JsonListProcessor]:
         RepairSQL(conf.openai, model=conf.slm),
         CalcExecAcc(conf.db_path, conf.policy),
         AddInferenceAttack(conf.openai, model=conf.llm),
-        # # PrintProps(['question', 'symbolic.question', 'attack'])
         Results(),
     ]
 
@@ -175,7 +169,7 @@ class MaskSQL:
             db_id=db_id,
             question=question,
             query="",
-            annotated_links={},
+            gold_schema_links={},
         )
         results = await self.pipeline.run([data])
         return results[0]

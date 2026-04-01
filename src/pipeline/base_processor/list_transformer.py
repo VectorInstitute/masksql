@@ -1,14 +1,10 @@
 """List transformation base classes."""
 
-import logging
 import os
 from abc import ABC
 
 from src.data_models.base_object import BaseObject
 from src.pipeline.base_processor.list_processor import JsonListProcessor
-
-
-logger = logging.getLogger(__name__)
 
 
 FORCE = int(os.environ.get("FORCE", "0")) > 0

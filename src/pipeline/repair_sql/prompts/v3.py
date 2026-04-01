@@ -117,7 +117,7 @@ SELECT T1.[city name], T2.[region] FROM [Store Locations] AS T1 JOIN regions AS 
 The execution result:
 no such table: store_locations
 
-======= Your task =======
+******* Your task *******
 **************************
 Database schema:
 {schema}
