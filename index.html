@@ -782,23 +782,24 @@
 </ul>
 <h3 id="setup">Setup<a class="headerlink" href="#setup" title="Permanent link">&para;</a></h3>
 <p>Install dependencies and activate the virtual environment:</p>
-<p><code>sh
-uv sync --dev
-source .venv/bin/activate</code></p>
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>uv<span class="w"> </span>sync<span class="w"> </span>--dev
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nb">source</span><span class="w"> </span>.venv/bin/activate
+</span></code></pre></div>
 <h3 id="download-dataset">Download Dataset<a class="headerlink" href="#download-dataset" title="Permanent link">&para;</a></h3>
 <p>Download and extract the dataset:</p>
-<p><code>sh
-wget -O data.zip "https://www.dropbox.com/scl/fi/vtraf79vfi1x105veaflk/data.zip?rlkey=7yq6d46aer6h45pdihrc9rht1&amp;st=zdac3rqx&amp;dl=0"
-unzip data.zip</code></p>
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>wget<span class="w"> </span>-O<span class="w"> </span>data.zip<span class="w"> </span><span class="s2">&quot;https://www.dropbox.com/scl/fi/vtraf79vfi1x105veaflk/data.zip?rlkey=7yq6d46aer6h45pdihrc9rht1&amp;st=zdac3rqx&amp;dl=0&quot;</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>unzip<span class="w"> </span>data.zip
+</span></code></pre></div>
 <p>Expected directory structure:</p>
-<p><code>data/
-├── databases/
-├── 1_input.json
-└── ...</code></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>data/
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>├── databases/
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>├── 1_input.json
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>└── ...
+</span></code></pre></div>
 <h3 id="configure-environment">Configure Environment<a class="headerlink" href="#configure-environment" title="Permanent link">&para;</a></h3>
 <p>Create a <code>.env</code> file from the template:</p>
-<p><code>sh
-cp .env.example .env</code></p>
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>cp<span class="w"> </span>.env.example<span class="w"> </span>.env
+</span></code></pre></div>
 <p><strong>Required:</strong>
 - <code>OPENAI_API_KEY</code>: Your <a href="https://openrouter.ai/">OpenRouter</a> API key</p>
 <p><strong>Optional:</strong>
@@ -811,11 +812,11 @@ cp .env.example .env</code></p>
 <p>MaskSQL requires RESDSQL for initial schema filtering. Follow the <a href="./Resd.md">RESDSQL setup instructions</a> to generate the required files.</p>
 <h3 id="2-run-the-pipeline">2. Run the Pipeline<a class="headerlink" href="#2-run-the-pipeline" title="Permanent link">&para;</a></h3>
 <p>Execute the MaskSQL pipeline:</p>
-<p><code>sh
-python3 main.py --resd</code></p>
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>python3<span class="w"> </span>main.py<span class="w"> </span>--resd
+</span></code></pre></div>
 <p>or to clean previous outputs and rerun:</p>
-<p><code>sh
-python3 main.py --resd --clean</code></p>
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>python3<span class="w"> </span>main.py<span class="w"> </span>--resd<span class="w"> </span>--clean
+</span></code></pre></div>
 <h2 id="documentation">Documentation<a class="headerlink" href="#documentation" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="FRAMEWORK.md">MaskSQL Framework</a> - Overview of the framework architecture</li>
@@ -823,13 +824,13 @@ python3 main.py --resd --clean</code></p>
 </ul>
 <h2 id="citation">Citation<a class="headerlink" href="#citation" title="Permanent link">&para;</a></h2>
 <p>If you use MaskSQL in your research, please cite our paper:</p>
-<p><code>bibtex
-@article{abedini2025masksql,
-  title={MaskSQL: Safeguarding Privacy for LLM-Based Text-to-SQL via Abstraction},
-  author={Abedini, Sepideh and Mohapatra, Shubhankar and Emerson, DB and Shafieinejad, Masoumeh and Cresswell, Jesse C and He, Xi},
-  journal={arXiv preprint arXiv:2509.23459},
-  year={2025}
-}</code></p>
+<div class="language-bibtex highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="nc">@article</span><span class="p">{</span><span class="nl">abedini2025masksql</span><span class="p">,</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">  </span><span class="na">title</span><span class="p">=</span><span class="s">{MaskSQL: Safeguarding Privacy for LLM-Based Text-to-SQL via Abstraction}</span><span class="p">,</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">  </span><span class="na">author</span><span class="p">=</span><span class="s">{Abedini, Sepideh and Mohapatra, Shubhankar and Emerson, DB and Shafieinejad, Masoumeh and Cresswell, Jesse C and He, Xi}</span><span class="p">,</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">  </span><span class="na">journal</span><span class="p">=</span><span class="s">{arXiv preprint arXiv:2509.23459}</span><span class="p">,</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="w">  </span><span class="na">year</span><span class="p">=</span><span class="s">{2025}</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="p">}</span>
+</span></code></pre></div>
 <p><strong>Paper:</strong> <a href="https://arxiv.org/abs/2509.23459">https://arxiv.org/abs/2509.23459</a></p>
 
 
