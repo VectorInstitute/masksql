@@ -48,7 +48,7 @@ dependencies = [
     "torch>=2.12.0", # Pinning version to address vulnerability CVE-2025-3001
     "tqdm>=4.67.1",
     "transformers>=5.0.0", # Pinning version to address vulnerability CVE-2026-1839
-    "vcrpy>=7.0.0",
+    "vcrpy>=8.2.1",
     "ply>=3.11",
     "urllib3>=2.7.0", # Pinning version to address vulnerabilities PYSEC-2026-141, PYSEC-2026-142
 ]

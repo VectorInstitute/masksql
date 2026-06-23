@@ -1725,7 +1725,7 @@ requires-dist = [
     { name = "tqdm", specifier = ">=4.67.1" },
     { name = "transformers", specifier = ">=5.0.0" },
     { name = "urllib3", specifier = ">=2.7.0" },
-    { name = "vcrpy", specifier = ">=7.0.0" },
+    { name = "vcrpy", specifier = ">=8.2.1" },
     { name = "virtualenv", specifier = ">=20.36.2" },
     { name = "werkzeug", specifier = ">=3.1.6" },
 ]
