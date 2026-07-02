@@ -59,3 +59,5 @@ jobs:
             GHSA-4xh5-x5gv-qwph
             CVE-2026-0994
             CVE-2026-22702
+            PYSEC-2026-139
+            CVE-2025-3000

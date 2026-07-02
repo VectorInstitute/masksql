@@ -50,7 +50,7 @@ dependencies = [
     "transformers>=4.30.0",
     "vcrpy>=7.0.0",
     "ply>=3.11",
-    "urllib3>=2.7.0", # Pinning version to address vulnerabilities PYSEC-2026-142, PYSEC-2026-141
+    "urllib3>=2.7.0", # Pinning version to address vulnerabilities PYSEC-2026-141, PYSEC-2026-142
 ]
 
 [build-system]
@@ -65,7 +65,7 @@ dev = [
     "codecov>=2.1.13",
     "mypy>=1.14.1",
     "nbqa>=1.9.1",
-    "pip>=26.1", # Pinning version to address vulnerabilities GHSA-4xh5-x5gv-qwph, CVE-2026-1703, PYSEC-2026-196, CVE-2026-3219, CVE-2026-6357
+    "pip>=26.1.2", # Pinning version to address vulnerabilities GHSA-4xh5-x5gv-qwph, CVE-2026-1703, PYSEC-2026-196, CVE-2026-3219, CVE-2026-6357
     "pip-audit>=2.7.3",
     "pre-commit>=4.1.0",
     "pytest>=9.0.3", # Pinning version to address vulnerability CVE-2025-71176
@@ -79,6 +79,7 @@ docs = [
     "pymdown-extensions>=10.21.3", # Pinning version to address vulnerability CVE-2026-46338
     "mkdocs>=1.6.0",
     "mkdocs-material>=9.5.15",
+    "pymdown-extensions>=10.21.3", # Pinning version to address vulnerability CVE-2026-46338
     "mkdocstrings>=0.24.1",
     "mkdocstrings-python>=1.10.0",
     "ipykernel>=6.29.5",
