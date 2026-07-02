@@ -11,7 +11,7 @@ from src.masksql import MaskSQL
 
 os.environ["START"] = "0"
 os.environ["LIMIT"] = "1"
-os.environ["OPENAI_API_KEY"] = ""
+os.environ["OPENAI_API_KEY"] = "sk-test-placeholder"
 
 import pytest
 from dotenv import load_dotenv
