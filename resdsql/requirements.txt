@@ -20,7 +20,7 @@ MarkupSafe==2.1.2
 murmurhash==1.0.9
 nltk==3.9.4
 numpy==1.24.2
-oauthlib==3.3.1
+oauthlib==4.0.0
 packaging==25.0
 Pillow==12.2.0
 plac==1.1.3
